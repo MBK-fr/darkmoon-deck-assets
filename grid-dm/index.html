@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Animated Grid Pattern — Darkmoon</title>
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}
+svg{display:block;width:100%;height:100%}</style></head>
+<body>
+<svg id="g" aria-hidden="true"><defs><pattern id="p" width="40" height="40"
+ patternUnits="userSpaceOnUse" x="-1" y="-1">
+ <path d="M.5 40V.5H40" fill="none" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
+</pattern></defs>
+<rect width="100%" height="100%" fill="url(#p)"></rect>
+<g id="sq"></g></svg>
+<script>
+// Composant « Animated Grid Pattern » de dillionverma (21st.dev), porté en vanilla JS.
+// Même principe : une trame de 40 px et N carrés qui s'allument puis se replacent.
+// Adaptation Darkmoon : carrés bleus (Neon / Jordy), strictement carrés, sans rayon.
+const W = 40, H = 40, N = 46, MAXO = 0.34, DUR = 4, FILLS = ['#2667FF', '#87BFFF', '#DCEAF4'];
+const svg = document.getElementById('g'), layer = document.getElementById('sq');
+function place(r) {
+  const cols = Math.ceil(innerWidth / W), rows = Math.ceil(innerHeight / H);
+  r.setAttribute('x', Math.floor(Math.random() * cols) * W + 1);
+  r.setAttribute('y', Math.floor(Math.random() * rows) * H + 1);
+}
+for (let i = 0; i < N; i++) {
+  const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  r.setAttribute('width', W - 1); r.setAttribute('height', H - 1);
+  r.setAttribute('fill', FILLS[i % FILLS.length]);
+  r.setAttribute('stroke-width', '0'); r.setAttribute('opacity', '0');
+  place(r); layer.appendChild(r);
+  const a = r.animate([{opacity: 0}, {opacity: MAXO}, {opacity: 0}],
+    {duration: DUR * 1000, delay: i * 100, iterations: Infinity});
+  let cycle = 0;
+  setInterval(() => { if (++cycle) place(r); }, DUR * 1000 + i * 100);
+}
+addEventListener('resize', () => layer.querySelectorAll('rect').forEach(place));
+</script></body></html>
