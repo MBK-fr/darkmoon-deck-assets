@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Darkmoon — Product demo</title>
+<meta name="description" content="Interactive Darkmoon product dashboard demo (embeddable)." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+/* ───────── tokens ───────── */
+:root{
+  --bg3:#131313;
+  --line:rgba(255,255,255,.10);
+  --line-soft:rgba(255,255,255,.07);
+  --gray200:#e5e7eb; --gray300:#d1d5db; --gray400:#9ca3af; --gray500:#6b7280;
+  --gray600:#4b5563; --gray700:#374151;
+  --red:#ef4444; --orange:#f97316; --yellow:#eab308; --green:#22c55e; --blue:#3b82f6;
+  --indigo:#6366f1; --indigo400:#818cf8;
+  --sev-critical:#F44336; --sev-high:#FF7043; --sev-medium:#FFB300; --sev-low:#66BB6A; --sev-info:#42A5F5;
+  --pad:24px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:#000;color:var(--gray400);
+  font-family:"Poppins",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden;
+}
+.mono{font-family:"Space Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+table{border-collapse:collapse}
+
+/* ───────── browser chrome ───────── */
+.frame{
+  height:100%;display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid rgba(255,255,255,.09);border-radius:15px;background:#000;
+}
+.titlebar{
+  display:flex;align-items:center;gap:8px;height:36px;flex:0 0 36px;
+  padding:0 16px;background:#0a0a0a;border-bottom:1px solid var(--line-soft);
+}
+.dot{width:10px;height:10px;border-radius:9999px;background:rgba(255,255,255,.15)}
+.addr{
+  margin-left:12px;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  background:rgba(255,255,255,.05);border-radius:6px;padding:3px 12px;
+  font-family:"Space Mono",monospace;font-size:10.5px;color:rgba(255,255,255,.65);
+}
+.shell{display:flex;flex:1 1 auto;min-height:0;background:#000}
+
+/* ───────── sidebar ───────── */
+.sidebar{
+  display:flex;flex-direction:column;flex:0 0 212px;width:212px;
+  padding:16px;background:#0a0a0a;border-right:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:8px;padding:0 4px 20px}
+.brand svg{width:20px;height:20px;flex:none;color:var(--indigo400)}
+.brand span{font-family:"Space Mono",monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:#fff}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{
+  display:flex;align-items:center;gap:10px;border-radius:8px;padding:8px 10px;
+  font-size:13px;text-align:left;color:var(--gray400);
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.nav button svg{width:15px;height:15px;flex:none}
+.nav button:hover:not(:disabled):not(.active){background:rgba(255,255,255,.05);color:#fff}
+.nav button.active{background:rgba(255,255,255,.07);color:#fff}
+.nav button:disabled{color:var(--gray700);cursor:default}
+.side-label{margin-top:24px;padding:0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gray700)}
+.proj{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px;border-radius:8px;font-size:12.5px;color:var(--gray400)}
+.chip{display:flex;align-items:center;justify-content:center;flex:none;border-radius:4px;background:rgba(99,102,241,.2);color:var(--indigo400);font-weight:700}
+.chip.sm{width:20px;height:20px;font-size:9px}
+.chip.rd{width:28px;height:28px;border-radius:9999px;font-size:11px}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-foot{margin-top:auto;display:flex;align-items:center;gap:8px;padding-top:16px;border-top:1px solid var(--line)}
+.side-foot .who{min-width:0;flex:1 1 auto}
+.side-foot .who b{display:block;font-size:12px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-foot .who i{display:block;font-style:normal;font-size:10px;color:var(--gray600)}
+.side-foot > svg{width:14px;height:14px;color:var(--gray600);flex:none}
+
+/* ───────── content ───────── */
+.content{display:flex;flex-direction:column;flex:1 1 auto;min-width:0;overflow-y:auto;overflow-x:hidden;padding:var(--pad)}
+.content::-webkit-scrollbar{width:8px}
+.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+.view{display:none}
+.view.active{display:block;animation:fadeUp .4s cubic-bezier(.16,1,.3,1) both}
+/* the two "live" views stretch to fill the frame; the dashboard keeps its natural height */
+#view-dashboard.active{flex:0 0 auto}
+#view-campaign.active,#view-infra.active{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1.h,h2.h{
+  margin:0 0 18px;font-family:"Space Mono",monospace;font-weight:400;
+  text-transform:uppercase;color:#fff;line-height:1.15;
+}
+h1.h{font-size:32px}
+h2.h{font-size:24px;margin-bottom:14px}
+
+.grid4{display:grid;gap:16px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.grid3{display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.block{padding-bottom:22px}
+
+.card{
+  position:relative;overflow:hidden;border-radius:8px;background:var(--bg3);
+  padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line),0 1px 2px rgba(0,0,0,.05);
+  transition:box-shadow .22s ease,transform .22s ease;
+}
+.card:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 1px 2px rgba(0,0,0,.05);transform:translateY(-1px)}
+.card .ic{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:8px;color:#fff}
+.card .ic svg{width:38px;height:38px}
+.card .lb{margin:0 0 0 64px;font-size:14px;font-weight:500;text-transform:capitalize;color:var(--gray400);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .vl{margin:0 0 0 64px;display:flex;align-items:baseline}
+.card .vl b{font-size:30px;line-height:1.2;font-weight:600;font-variant-numeric:tabular-nums;color:#fff}
+.card .vl em{margin-left:8px;font-style:normal;font-size:14px;color:var(--gray400)}
+.c-critical{color:var(--red)!important} .c-high{color:var(--orange)!important}
+.c-medium{color:var(--yellow)!important} .c-low{color:var(--green)!important}
+
+/* table */
+.tablewrap{overflow:hidden;border:1px solid rgba(255,255,255,.15);border-radius:8px}
+table{width:100%;background:var(--bg3)}
+thead th{
+  padding:11px 12px;text-align:left;font-size:14px;font-weight:600;text-transform:capitalize;color:var(--gray200);
+  border-bottom:1px solid rgba(255,255,255,.15);white-space:nowrap;
+}
+thead th:first-child,tbody td:first-child{padding-left:20px}
+tbody td{padding:11px 12px;font-size:14px;color:var(--gray400);white-space:nowrap;border-top:1px solid var(--line)}
+tbody tr:first-child td{border-top:0}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody td.id{font-weight:500;color:#fff}
+
+/* badges */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;border-radius:9999px;padding:3px 8px;
+  font-size:12px;font-weight:500;color:var(--gray200);box-shadow:inset 0 0 0 1px var(--line);
+}
+.badge svg{width:6px;height:6px;flex:none}
+.badge span{text-transform:uppercase}
+.f-critical{fill:var(--red)} .f-high{fill:var(--orange)} .f-medium{fill:var(--yellow)}
+.f-low{fill:var(--green)} .f-info{fill:var(--blue)} .f-ok{fill:var(--green)} .f-run{fill:#facc15}
+
+/* ───────── campaign view ───────── */
+.camprow{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:18px}
+.camprow .meta{font-family:"Space Mono",monospace;font-size:12px;color:var(--gray500)}
+.progress{height:6px;border-radius:9999px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;border-radius:9999px;background:var(--indigo);width:0;transition:width .7s cubic-bezier(.16,1,.3,1)}
+.mcard{position:relative;overflow:hidden;border-radius:8px;background:var(--bg3);padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line)}
+.mcard p{margin:0;font-size:14px;font-weight:500;text-transform:capitalize;color:var(--gray400)}
+.mcard b{display:block;font-size:30px;line-height:1.25;font-weight:600;font-variant-numeric:tabular-nums;color:#fff}
+.streamhead{display:flex;align-items:center;gap:8px;margin:18px 0 8px}
+.streamhead svg{width:14px;height:14px;color:var(--indigo400)}
+.streamhead span{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gray300)}
+.log{
+  flex:1 1 auto;min-height:180px;max-height:360px;overflow:hidden;border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;background:#000;padding:12px;font-family:"Space Mono",monospace;font-size:12px;
+}
+.log .line{display:flex;gap:8px;padding:3px 0;line-height:1.6;animation:slideIn .3s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.log .n{flex:none;color:var(--gray700)}
+.log .t{flex:none;font-weight:700}
+.caret{display:inline-block;margin-left:28px;width:6px;height:14px;background:var(--indigo);vertical-align:middle;animation:blink 1.1s steps(1,end) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.15}}
+
+/* ───────── infra view ───────── */
+.infra-head{display:flex;align-items:center;gap:12px;padding-bottom:14px}
+.infra-head .box{display:flex;align-items:center;justify-content:center;flex:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7)}
+.infra-head .box svg{width:20px;height:20px}
+.infra-head p{margin:0;font-family:"Space Mono",monospace;font-size:14px;font-weight:600;color:#fff}
+.infra-head small{display:block;font-size:11px;color:rgba(255,255,255,.6)}
+.refresh{display:flex;align-items:center;gap:6px;margin-left:auto;border:1px solid var(--line-soft);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,.5);transition:background .2s,color .2s}
+.refresh svg{width:14px;height:14px;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.refresh:hover{background:rgba(255,255,255,.05);color:#fff}
+.refresh:hover svg{transform:rotate(180deg)}
+.refresh.spin svg{animation:spin .7s linear}
+@keyframes spin{to{transform:rotate(360deg)}}
+.istats{display:flex;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:8px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.istats div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 16px}
+.istats div+div{border-left:1px solid var(--line-soft)}
+.istats b{font-family:"Space Mono",monospace;font-size:13px;font-weight:700}
+.istats small{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6)}
+.ig-shell{
+  position:relative;width:100%;flex:1 1 auto;min-height:300px;overflow:hidden;border:1px solid var(--line-soft);
+  border-radius:8px;background:#000;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+.ig-shell > svg{position:absolute;inset:0;width:100%;height:100%}
+.ig-node{cursor:pointer}
+.ig-node rect.body{transition:stroke .2s ease}
+.ig-node:hover rect.body{stroke:#fff}
+.ig-tools{position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:4px}
+.ig-tools span{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#000;color:var(--gray500);transition:color .2s,border-color .2s}
+.ig-tools span:hover{color:#fff;border-color:rgba(255,255,255,.25)}
+.ig-legend{position:absolute;right:14px;top:14px;border:1px solid var(--line-soft);border-radius:10px;background:#000;padding:10px 12px}
+.ig-legend p{margin:0 0 6px;font-family:"Space Mono",monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.2)}
+.ig-legend div{display:flex;align-items:center;gap:6px;padding:1px 0}
+.ig-legend i{width:7px;height:7px;border-radius:9999px;display:block}
+.ig-legend span{font-size:11px;text-transform:capitalize;color:rgba(255,255,255,.6)}
+
+/* ───────── responsive (smaller iframes) ───────── */
+@media (max-width:1100px){
+  .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  :root{--pad:16px}
+  .sidebar{flex-basis:58px;width:58px;padding:8px}
+  .brand{justify-content:center;padding:0 0 12px}
+  .brand span,.side-label,.proj,.side-foot .who,.side-foot > svg{display:none}
+  .nav button{justify-content:center;padding:10px}
+  .nav button svg{width:18px;height:18px}
+  .nav button span{display:none}
+  .side-foot{justify-content:center}
+  h1.h{font-size:26px} h2.h{font-size:20px}
+  .grid3{grid-template-columns:1fr}
+  .istats div{padding:0 10px}
+}
+@media (max-width:620px){
+  .grid4{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="titlebar">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="addr" id="addr">demo.dark-moon.org/dashboard</span>
+  </div>
+  <div class="shell" id="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <svg viewBox="0 0 142 142" fill="currentColor" aria-hidden="true">
+          <rect x="64.68" y="37.41" width="15.53" height="32.23" transform="translate(-10.13 89.5) rotate(-60)"/>
+          <rect x="47.39" y="62.41" width="15.53" height="32.23"/>
+          <rect x="108.05" y="64.17" width="32.24" height="15.53" transform="translate(-19.29 68.71) rotate(-28.8)"/>
+          <rect x="100.19" y="93.13" width="15.53" height="32.23" transform="translate(-27.07 182.44) rotate(-73.8)"/>
+          <rect x="93.13" y="26.31" width="32.23" height="15.53" transform="translate(46.05 129.48) rotate(-73.8)"/>
+          <rect x="64.17" y="1.75" width="15.53" height="32.23" transform="translate(.29 36.87) rotate(-28.81)"/>
+          <rect x="62.34" y="108.05" width="15.53" height="32.23" transform="translate(-51.15 49.13) rotate(-28.8)"/>
+          <rect x="26.31" y="16.67" width="15.53" height="32.23" transform="translate(-6.91 56.37) rotate(-73.8)"/>
+          <rect x="16.67" y="100.19" width="32.23" height="15.53" transform="translate(-80.03 109.31) rotate(-73.79)"/>
+          <rect x="1.75" y="62.34" width="32.24" height="15.53" transform="translate(-31.56 17.28) rotate(-28.8)"/>
+          <rect x="69.36" y="73.45" width="32.24" height="15.53" transform="translate(-28.55 51.22) rotate(-28.8)"/>
+        </svg>
+        <span>DARKMOON</span>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="side-label">Your projects</div>
+      <div class="proj"><span class="chip sm">D</span><span class="truncate">Darkmoon Assessm…</span></div>
+      <div class="side-foot">
+        <span class="chip rd">D</span>
+        <span class="who"><b>Darkmoon Demo</b><i>Admin</i></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      </div>
+    </aside>
+
+    <main class="content" id="content">
+      <!-- dashboard -->
+      <section class="view" id="view-dashboard">
+        <h1 class="h">Dashboard</h1>
+        <div class="block">
+          <h2 class="h">statistics</h2>
+          <div class="grid4" id="stats"></div>
+        </div>
+        <div class="block">
+          <h2 class="h">Vulnerabilities by severity</h2>
+          <div class="grid4" id="severity"></div>
+        </div>
+        <div>
+          <h2 class="h">Last campaigns</h2>
+          <div class="tablewrap">
+            <table>
+              <thead><tr id="thead"></tr></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- campaign -->
+      <section class="view" id="view-campaign">
+        <h1 class="h">Live Campaign</h1>
+        <div class="camprow">
+          <span class="badge" id="camp-status">
+            <svg viewBox="0 0 6 6" class="f-run" aria-hidden="true"><circle r="3" cx="3" cy="3"/></svg>
+            <span>running</span>
+          </span>
+          <span class="meta">camp_20260426_3d2f · 172.19.0.3</span>
+        </div>
+        <div class="progress"><i id="camp-bar"></i></div>
+        <div class="grid3" id="camp-metrics"></div>
+        <div class="streamhead">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg>
+          <span>Agent event stream</span>
+        </div>
+        <div class="log" id="log"></div>
+      </section>
+
+      <!-- infra -->
+      <section class="view" id="view-infra">
+        <div class="infra-head">
+          <span class="box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>
+          </span>
+          <div>
+            <p>Infrastructure Map</p>
+            <small>Campaign · camp_20260426_3d2f… · 26 Apr 2026</small>
+          </div>
+          <button class="refresh" id="refresh" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="istats" id="istats"></div>
+        <div class="ig-shell">
+          <svg viewBox="0 0 920 540" preserveAspectRatio="xMidYMid meet" id="ig-svg" aria-label="Infrastructure graph"></svg>
+          <div class="ig-tools"><span>⤢</span><span>+</span><span>−</span></div>
+          <div class="ig-legend" id="ig-legend"><p>Severity</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $ = (s,r)=> (r||document).querySelector(s);
+const svgNS = "http://www.w3.org/2000/svg";
+
+/* ───────── icons (lucide, redrawn inline) ───────── */
+const I = {
+  dashboard:'<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+  radio:'<path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/>',
+  network:'<rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/>',
+  scheduler:'<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><circle cx="18" cy="18" r="4"/><path d="M18 16.5V18l1.2 1.2"/>',
+  history:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+  folder:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M2 10h20"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  layers:'<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 12.18-9.17 4.16a2 2 0 0 1-1.66 0L2 12.18"/><path d="m22 17.18-9.17 4.16a2 2 0 0 1-1.66 0L2 17.18"/>',
+  shield:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+  hexagon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
+  square:'<rect width="18" height="18" x="3" y="3" rx="2"/>',
+  triangle:'<path d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>',
+  circle:'<circle cx="12" cy="12" r="10"/>',
+  /* infra node glyphs */
+  monitor:'<rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  db:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>',
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 8.6-8.6"/><path d="m17 6 3 3"/><path d="m14.5 8.5 2.5 2.5"/>',
+  bank:'<path d="M3 21h18"/><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-7h6v7"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/>',
+  code:'<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>'
+};
+function icon(name, w, sw){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.75)+'" stroke-linecap="round" stroke-linejoin="round"'+(w?' style="width:'+w+'px;height:'+w+'px"':'')+'>'+I[name]+'</svg>';
+}
+
+/* ───────── data (demo only, from the product source) ───────── */
+const NAV = [
+  {id:"dashboard", icon:"dashboard", label:"Dashboard"},
+  {id:"campaign",  icon:"radio",     label:"Live Campaign"},
+  {id:"infra",     icon:"network",   label:"Infrastructure"},
+  {id:null,        icon:"scheduler", label:"Scheduler"},
+  {id:null,        icon:"history",   label:"History"}
+];
+const PATHS = {
+  dashboard:"demo.dark-moon.org/dashboard",
+  campaign:"demo.dark-moon.org/campaign/camp_20260426_3d2f",
+  infra:"demo.dark-moon.org/infra/camp_20260426_3d2f"
+};
+const STATS = [
+  {icon:"folder", label:"projects", value:1},
+  {icon:"target", label:"targets", value:1},
+  {icon:"layers", label:"campaigns", value:6},
+  {icon:"shield", label:"vulnerabilities", value:57}
+];
+const SEVERITY = [
+  {icon:"hexagon",  level:"critical", count:8},
+  {icon:"square",   level:"high",     count:24},
+  {icon:"triangle", level:"medium",   count:21},
+  {icon:"circle",   level:"low",      count:4}
+];
+const CAMPAIGNS = [
+  {id:"camp_20260426_3d2f", target:"172.19.0.3", date:"Apr 26, 2026", dur:"28.5", risk:"critical", vulns:57},
+  {id:"camp_20260419_a1b2", target:"172.19.0.3", date:"Apr 19, 2026", dur:"32",   risk:"critical", vulns:49},
+  {id:"camp_20260412_e5f6", target:"172.19.0.3", date:"Apr 12, 2026", dur:"25.6", risk:"high",     vulns:44},
+  {id:"camp_20260405_c9d0", target:"172.19.0.3", date:"Apr 5, 2026",  dur:"22",   risk:"high",     vulns:38}
+];
+const EVENTS = [
+  {t:"recon",  m:"14 subdomains resolved · acme.test", k:"info"},
+  {t:"web",    m:"katana · 248 endpoints crawled", k:"info"},
+  {t:"web",    m:"nuclei · probing POST /login", k:"info"},
+  {t:"!",      m:"CRITICAL · SQL injection · /login", k:"critical"},
+  {t:"web",    m:"testing reflected params · /search", k:"info"},
+  {t:"!",      m:"HIGH · reflected XSS · /search", k:"high"},
+  {t:"infra",  m:"naabu · 6379/tcp open · redis", k:"info"},
+  {t:"!",      m:"CRITICAL · unauthenticated Redis", k:"critical"},
+  {t:"ad",     m:"bloodhound · kerberoast 3 SPNs", k:"info"},
+  {t:"!",      m:"HIGH · AS-REP roastable account", k:"high"},
+  {t:"k8s",    m:"kubescape · RBAC + CIS scan", k:"info"},
+  {t:"report", m:"scoring CVSS 3.1 + MITRE ATT&CK", k:"info"},
+  {t:"ok",     m:"campaign complete · 57 findings", k:"ok"}
+];
+const evColor = k => k==="info" ? "#9ca3af" : k==="ok" ? "#22c55e" : k==="critical" ? "#ef4444" : k==="high" ? "#f97316" : "#eab308";
+
+const IG_SEV = {critical:"#F44336", high:"#FF7043", medium:"#FFB300", low:"#66BB6A", info:"#42A5F5"};
+const IGNODES = [
+  {id:"tg", x:460, y:76,  g:"target",  label:"acme.test"},
+  {id:"fw", x:200, y:210, g:"shield",  label:"edge-fw"},
+  {id:"h1", x:460, y:210, g:"monitor", label:"172.19.0.3", sev:"critical", count:31},
+  {id:"h2", x:720, y:210, g:"monitor", label:"172.19.0.8"},
+  {id:"ng", x:200, y:344, g:"gear",    label:":443 nginx"},
+  {id:"rd", x:380, y:344, g:"db",      label:":6379 redis", sev:"critical", count:4},
+  {id:"kb", x:560, y:344, g:"key",     label:":88 kerberos", sev:"high", count:3},
+  {id:"dc", x:720, y:344, g:"bank",    label:"DC01", sev:"high", count:6},
+  {id:"lg", x:200, y:478, g:"globe",   label:"/login", sev:"critical", count:9},
+  {id:"se", x:380, y:478, g:"globe",   label:"/search", sev:"high", count:5},
+  {id:"ap", x:560, y:478, g:"code",    label:"api v2", sev:"medium", count:3}
+];
+const IGEDGES = [["tg","fw"],["tg","h1"],["tg","h2"],["fw","ng"],["h1","rd"],["h1","kb"],["h2","dc"],["ng","lg"],["rd","se"],["kb","ap"]];
+
+/* ───────── count-up ───────── */
+function countUp(el, target, duration, fmt){
+  duration = duration || 950;
+  const t0 = performance.now();
+  if (el._raf) cancelAnimationFrame(el._raf);
+  const tick = n => {
+    const t = Math.min(1, (n - t0) / duration);
+    const v = target * (1 - Math.pow(1 - t, 3));
+    el.textContent = fmt ? fmt(v) : String(Math.round(v));
+    if (t < 1) el._raf = requestAnimationFrame(tick);
+    else el.textContent = fmt ? fmt(target) : String(Math.round(target));
+  };
+  el._raf = requestAnimationFrame(tick);
+}
+
+/* ───────── build: sidebar ───────── */
+const nav = $("#nav");
+NAV.forEach(n => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.title = n.label;
+  b.innerHTML = icon(n.icon) + "<span>" + n.label + "</span>";
+  if (n.id) { b.dataset.view = n.id; b.addEventListener("click", () => go(n.id, true)); }
+  else b.disabled = true;
+  nav.appendChild(b);
+});
+
+/* ───────── build: dashboard ───────── */
+function statCard(cfg){
+  const el = document.createElement("div");
+  el.className = "card";
+  const cls = cfg.level ? " c-" + cfg.level : "";
+  el.innerHTML =
+    '<div class="ic'+cls+'">'+icon(cfg.icon, 38, 1.6)+'</div>'+
+    '<p class="lb">'+cfg.label+'</p>'+
+    '<div class="vl"><b class="'+(cfg.level?"c-"+cfg.level:"")+'" data-count="'+cfg.value+'">0</b>'+
+    (cfg.level ? '<em>'+((cfg.value/57)*100).toFixed(2)+' %</em>' : '')+'</div>';
+  return el;
+}
+STATS.forEach(s => $("#stats").appendChild(statCard({icon:s.icon, label:s.label, value:s.value})));
+SEVERITY.forEach(s => $("#severity").appendChild(statCard({icon:s.icon, label:s.level, value:s.count, level:s.level})));
+
+$("#thead").innerHTML = ["#","target","date","duration","risk","vulnerabilities","status"]
+  .map(h => '<th scope="col">'+h+'</th>').join("");
+function badge(cls, text){
+  return '<span class="badge"><svg viewBox="0 0 6 6" class="f-'+cls+'" aria-hidden="true"><circle r="3" cx="3" cy="3"/></svg><span>'+text+'</span></span>';
+}
+$("#tbody").innerHTML = CAMPAIGNS.map(c =>
+  '<tr><td class="id">'+c.id+'</td><td>'+c.target+'</td><td>'+c.date+'</td><td>'+c.dur+' min</td>'+
+  '<td>'+badge(c.risk, c.risk)+'</td><td>'+c.vulns+'</td><td>'+badge("ok","completed")+'</td></tr>'
+).join("");
+
+/* ───────── build: campaign ───────── */
+const METRICS = [
+  {label:"vulnerabilities", cls:"c-critical", id:"m-vulns", val:"0"},
+  {label:"agents active",   cls:"",           id:"m-agents", val:"6"},
+  {label:"progress",        cls:"c-low",      id:"m-progress", val:"0%"}
+];
+$("#camp-metrics").innerHTML = METRICS.map(m =>
+  '<div class="mcard"><p>'+m.label+'</p><b class="'+m.cls+'" id="'+m.id+'">'+m.val+'</b></div>').join("");
+
+const logEl = $("#log");
+let logTimer = null, shown = 0;
+function renderLog(){
+  logEl.innerHTML = EVENTS.slice(0, shown).map((e,i) =>
+    '<div class="line"><span class="n">'+String(i+1).padStart(2,"0")+'</span>'+
+    '<span class="t" style="color:'+evColor(e.k)+'">['+e.t+']</span>'+
+    '<span style="color:'+(e.k==="info" ? "#9ca3af" : evColor(e.k))+'">'+e.m+'</span></div>').join("")
+    + (shown < EVENTS.length ? '<span class="caret"></span>' : '');
+  logEl.scrollTop = logEl.scrollHeight;
+
+  const done = shown >= EVENTS.length;
+  const progress = Math.min(100, Math.round((shown / EVENTS.length) * 100));
+  $("#camp-bar").style.width = progress + "%";
+  $("#m-progress").textContent = progress + "%";
+  countUp($("#m-vulns"), Math.round(57 * shown / EVENTS.length), 600);
+  const st = $("#camp-status");
+  st.querySelector("svg").setAttribute("class", done ? "f-ok" : "f-run");
+  st.querySelector("span").textContent = done ? "completed" : "running";
+}
+function stepLog(){
+  if (shown >= EVENTS.length){ logTimer = setTimeout(() => { shown = 0; renderLog(); stepLog(); }, 3600); return; }
+  logTimer = setTimeout(() => { shown++; renderLog(); stepLog(); }, shown === 0 ? 350 : 820);
+}
+function startLog(){ stopLog(); shown = 0; renderLog(); stepLog(); }
+function stopLog(){ if (logTimer) { clearTimeout(logTimer); logTimer = null; } }
+
+/* ───────── build: infra ───────── */
+$("#istats").innerHTML = [
+  {v:"11", l:"Nodes", c:"#fff"},
+  {v:"10", l:"Connections", c:"#fff"},
+  {v:"57", l:"Vulnerabilities", c:"#ef4444"},
+  {v:"8",  l:"critical", c:"#ef4444"},
+  {v:"24", l:"high", c:"#f97316"},
+  {v:"21", l:"medium", c:"#eab308"},
+  {v:"4",  l:"low", c:"#22c55e"}
+].map(s => '<div><b style="color:'+s.c+'">'+s.v+'</b><small>'+s.l+'</small></div>').join("");
+
+$("#ig-legend").innerHTML = '<p>Severity</p>' + Object.keys(IG_SEV)
+  .map(k => '<div><i style="background:'+IG_SEV[k]+'"></i><span>'+k+'</span></div>').join("");
+
+function orthPath(x1,y1,x2,y2){
+  const sy = y1 + 30, ey = y2 - 30;
+  if (Math.abs(x1-x2) < 1) return "M"+x1+" "+sy+" L"+x2+" "+ey;
+  const my = (sy+ey)/2, r = 11, d = x2 > x1 ? 1 : -1;
+  return "M"+x1+" "+sy+" L"+x1+" "+(my-r)+" Q"+x1+" "+my+" "+(x1+d*r)+" "+my+
+         " L"+(x2-d*r)+" "+my+" Q"+x2+" "+my+" "+x2+" "+(my+r)+" L"+x2+" "+ey;
+}
+(function buildGraph(){
+  const byId = {}; IGNODES.forEach(n => byId[n.id] = n);
+  let s = '<defs><marker id="ig-arrow" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto-start-reverse">'+
+          '<path d="M0 0 L6 3 L0 6 Z" fill="rgba(255,255,255,0.32)"/></marker></defs>';
+  IGEDGES.forEach(e => {
+    const a = byId[e[0]], b = byId[e[1]];
+    s += '<path d="'+orthPath(a.x,a.y,b.x,b.y)+'" fill="none" stroke="rgba(255,255,255,0.32)" stroke-width="1.5" marker-end="url(#ig-arrow)"/>';
+  });
+  IGNODES.forEach((n, i) => {
+    const hv = !!n.sev, c = hv ? IG_SEV[n.sev] : "rgba(255,255,255,0.12)";
+    const bw = (n.count || 0) >= 10 ? 21 : 16;
+    s += '<g class="ig-node" style="'+(hv ? 'filter:drop-shadow(0 0 7px '+IG_SEV[n.sev]+'99);' : '')+
+         'opacity:0;animation:fadeUp .45s cubic-bezier(.16,1,.3,1) '+(0.05*i)+'s both">';
+    s += '<rect class="body" x="'+(n.x-30)+'" y="'+(n.y-30)+'" width="60" height="60" rx="12" fill="#000" stroke="'+c+'" stroke-width="'+(hv?2:1)+'"/>';
+    s += '<g transform="translate('+(n.x-11)+' '+(n.y-11)+') scale(0.92)" fill="none" stroke="'+(hv?c:"rgba(255,255,255,0.75)")+'" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+I[n.g]+'</g>';
+    s += '<text x="'+n.x+'" y="'+(n.y+45)+'" font-size="10.5" fill="#D0D5DD" text-anchor="middle">'+n.label+'</text>';
+    if (hv){
+      s += '<rect x="'+(n.x+26-bw/2)+'" y="'+(n.y-33.5)+'" width="'+bw+'" height="15" rx="7.5" fill="'+IG_SEV[n.sev]+'"/>';
+      s += '<text x="'+(n.x+26)+'" y="'+(n.y-25.5)+'" font-size="9" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">'+n.count+'</text>';
+    }
+    s += '</g>';
+  });
+  $("#ig-svg").innerHTML = s;
+})();
+$("#refresh").addEventListener("click", function(){
+  this.classList.remove("spin"); void this.offsetWidth; this.classList.add("spin");
+});
+
+/* ───────── view switching ───────── */
+let view = null, auto = true, autoTimer = null;
+function go(v, user){
+  if (user) { auto = false; if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
+  if (v === view) return;
+  view = v;
+  document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-"+v));
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  $("#addr").textContent = PATHS[v];
+  $("#content").scrollTop = 0;
+  stopLog();
+  if (v === "dashboard") document.querySelectorAll("#view-dashboard [data-count]")
+    .forEach(el => countUp(el, Number(el.dataset.count)));
+  if (v === "campaign") startLog();
+}
+document.addEventListener("pointerdown", () => {
+  if (auto) { auto = false; if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
+}, true);
+
+go("dashboard", false);
+const ORDER = ["dashboard","campaign","infra"];
+autoTimer = setInterval(() => {
+  if (!auto) return;
+  go(ORDER[(ORDER.indexOf(view)+1) % ORDER.length], false);
+}, 8000);
+})();
+</script>
+</body>
+</html>
