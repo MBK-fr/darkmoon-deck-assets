@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_2" data-name="Calque 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 115.7 115.71">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #dceaf4;
+      }
+    </style>
+  </defs>
+  <g id="Calque_1" data-name="Calque 1">
+    <g>
+      <rect class="cls-1" x="21.09" width="10.52" height="10.52"/>
+      <rect class="cls-1" x="41.92" y="10.52" width="31.55" height="10.52"/>
+      <rect class="cls-1" x="21.06" y="63.11" width="10.52" height="31.58"/>
+      <rect class="cls-1" x="83.97" y="21.02" width="10.52" height="31.58"/>
+      <rect class="cls-1" x="41.92" y="52.6" width="31.55" height="10.52"/>
+      <rect class="cls-1" x="41.92" y="94.69" width="31.55" height="10.52"/>
+      <polygon class="cls-1" points="31.55 31.54 31.55 21.02 21.04 21.02 21.04 10.52 10.58 10.52 10.58 0 .06 0 .06 10.52 10.52 10.52 10.52 21.02 0 21.02 0 31.54 10.52 31.54 10.52 21.04 21.04 21.04 21.04 31.54 31.55 31.54"/>
+      <polygon class="cls-1" points="105.13 94.69 94.67 94.69 94.67 84.17 84.15 84.17 84.15 94.69 94.61 94.69 94.61 105.19 84.09 105.19 84.09 115.71 94.61 115.71 94.61 105.21 105.13 105.21 105.13 115.71 115.65 115.71 115.65 105.19 105.13 105.19 105.13 94.69"/>
+      <rect class="cls-1" x="105.19" y="84.17" width="10.52" height="10.52"/>
+    </g>
+  </g>
+</svg>
