@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Darkmoon — Le pentest, en continu.</title>
+<meta name="description" content="Pentest autonome, souverain, open source. Vos systèmes testés à chaque évolution, chaque faille prouvée.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Grammaire relevée sur apple.com/fr/ipad-pro : fond noir, titres 80px w600
+     interlettrage négatif, corps 28px, un message par chapitre, produit en héros.
+     Technique relevée sur les clones Apple GitHub : sections épinglées (pin) et
+     animations asservies au scroll (scrub), séquence d'images sur canvas. */
+  :root{
+    --paper:#f5f5f7; --body:rgba(250,250,250,.72); --muted:rgba(250,250,250,.46);
+    --royal:#0A2472; --neon:#2667FF; --jordy:#87BFFF; --alice:#DCEAF4;
+    --mono:'Space Mono',ui-monospace,monospace; --sans:'Poppins',-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:auto}
+  body{background:#000;color:var(--paper);font-family:var(--sans);overflow-x:hidden;
+       -webkit-font-smoothing:antialiased}
+  .chapter{position:relative;min-height:100vh;display:flex;align-items:center;
+           justify-content:center;padding:0 6vw}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.36em;
+          text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+  h1,h2{font-weight:600;letter-spacing:-.02em;line-height:1.04;color:var(--paper)}
+  h1{font-size:clamp(40px,5.6vw,80px)}
+  h2{font-size:clamp(32px,4.4vw,64px)}
+  .lead{font-size:clamp(17px,1.5vw,22px);line-height:1.55;color:var(--body);max-width:46ch}
+  .note{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--muted);
+        text-transform:uppercase}
+  .center{text-align:center;max-width:1100px}
+  .split{display:grid;grid-template-columns:minmax(0,42%) minmax(0,1fr);gap:6vw;
+         align-items:center;width:100%;max-width:1400px}
+  .word{display:inline-block;opacity:.14}
+  /* ── chapitre héros */
+  #hero{flex-direction:column;gap:0}
+  #hero .mark{width:min(56vw,620px);opacity:0}
+  /* ── séquence canvas épinglée */
+  #seq{padding:0}
+  #seq canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  #seq .overlay{position:relative;z-index:2;text-align:center;max-width:900px}
+  /* ── chiffres */
+  .figures{display:grid;grid-template-columns:repeat(4,1fr);gap:4vw;width:100%;max-width:1300px}
+  .figure .n{font-size:clamp(44px,6vw,86px);font-weight:600;letter-spacing:-.03em;line-height:1}
+  .figure .l{margin-top:14px;font-size:15px;color:var(--body);line-height:1.5}
+  .figure .s{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+             color:var(--muted);text-transform:uppercase}
+  /* ── produit épinglé */
+  #product{padding:0}
+  #product .stage{position:relative;width:100%;height:100vh;display:flex;
+                  align-items:center;justify-content:center}
+  #product .shot{position:absolute;width:min(78vw,1080px);opacity:0;
+                 will-change:transform,opacity}
+  #product .caption{position:absolute;bottom:9vh;text-align:center;width:100%}
+  #product .caption .t{font-size:clamp(22px,2.6vw,38px);font-weight:600;letter-spacing:-.02em}
+  #product .caption .d{margin-top:10px;font-size:16px;color:var(--body)}
+  /* ── listes sobres */
+  .rows{width:100%;max-width:1200px}
+  .row{display:grid;grid-template-columns:minmax(0,30%) minmax(0,1fr);gap:4vw;
+       padding:34px 0;border-top:1px solid rgba(255,255,255,.1)}
+  .row:last-child{border-bottom:1px solid rgba(255,255,255,.1)}
+  .row h3{font-size:clamp(19px,1.8vw,26px);font-weight:600;letter-spacing:-.01em}
+  .row p{font-size:16px;line-height:1.6;color:var(--body)}
+  /* ── prix */
+  .price{font-size:clamp(56px,9vw,132px);font-weight:600;letter-spacing:-.04em;line-height:1}
+  .price small{font-size:.26em;font-weight:500;letter-spacing:-.01em;color:var(--body)}
+  /* ── démo */
+  #demo iframe{width:min(92vw,1180px);aspect-ratio:16/9;border:0;background:#0a0a0a}
+  /* ── pied */
+  footer{padding:14vh 6vw 10vh;text-align:center}
+  footer img{width:min(46vw,420px);opacity:.9}
+  footer .line{margin-top:28px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;
+               color:var(--muted);text-transform:uppercase}
+  .progress{position:fixed;left:0;top:0;height:2px;width:100%;transform:scaleX(0);
+            transform-origin:0 50%;background:var(--neon);z-index:99}
+  @media (prefers-reduced-motion:reduce){.word{opacity:1}}
+  @media (max-width:820px){
+    .split{grid-template-columns:1fr;gap:32px}
+    .figures{grid-template-columns:repeat(2,1fr);gap:36px}
+    .row{grid-template-columns:1fr;gap:10px}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<!-- ═══ 1 · HÉROS : le logo se pose, le titre se révèle mot à mot -->
+<section class="chapter" id="hero">
+  <p class="kicker">Pentest autonome · souverain · open source</p>
+  <img class="mark" src="../logo-horizontal-alice.svg" alt="Darkmoon">
+  <h1 class="center reveal" style="margin-top:6vh">Le pentest, en continu.</h1>
+  <p class="lead center" style="margin-top:26px;max-width:none">
+    Vos systèmes testés à chaque évolution. Chaque faille prouvée.</p>
+</section>
+
+<!-- ═══ 2 · LE CONSTAT -->
+<section class="chapter">
+  <div class="center">
+    <p class="kicker">Le constat</p>
+    <h1 class="reveal">Un audit par an. Des attaques tous les jours.</h1>
+    <p class="lead center" style="margin:30px auto 0">
+      Un audit fige la sécurité à une date. Les sous-traitants sont quatre fois plus
+      visés que les grands comptes, et NIS2 comme DORA rendent le test obligatoire.</p>
+    <p class="note" style="margin-top:34px">Verizon Data Breach Investigations Report 2025</p>
+  </div>
+</section>
+
+<!-- ═══ 3 · LES CHIFFRES : compteurs asservis au scroll -->
+<section class="chapter">
+  <div class="figures">
+    <div class="figure"><div class="n" data-count="4" data-prefix="×">×0</div>
+      <div class="l">de compromissions chez les sous-traitants face aux grandes entreprises</div>
+      <div class="s">Verizon DBIR 2025</div></div>
+    <div class="figure"><div class="n" data-count="88" data-suffix=" %">0 %</div>
+      <div class="l">des attaques visant les PME sont des ransomwares</div>
+      <div class="s">Verizon DBIR 2025</div></div>
+    <div class="figure"><div class="n" data-count="45" data-suffix=" %">0 %</div>
+      <div class="l">des organisations subiront un arrêt causé par un tiers d'ici deux ans</div>
+      <div class="s">Gartner 2023</div></div>
+    <div class="figure"><div class="n" data-count="58" data-suffix=" %">0 %</div>
+      <div class="l">des PME européennes touchées subissent un impact économique</div>
+      <div class="s">Eurobaromètre 2022</div></div>
+  </div>
+</section>
+
+<!-- ═══ 4 · LE PROBLÈME -->
+<section class="chapter">
+  <div class="rows">
+    <p class="kicker">Le problème · impossible de tout tester à la main</p>
+    <div class="row"><h3>Lent</h3><p>Des semaines par campagne, du cadrage à la restitution.</p></div>
+    <div class="row"><h3>Cher</h3><p>Plusieurs milliers d'euros par jour d'expertise.</p></div>
+    <div class="row"><h3>Ponctuel</h3><p>Une à deux campagnes par an. Entre les deux, l'angle mort.</p></div>
+    <div class="row"><h3>Inégal</h3><p>La qualité dépend du testeur, du périmètre et du temps disponible.</p></div>
+  </div>
+</section>
+
+<!-- ═══ 5 · SÉQUENCE ÉPINGLÉE : l'onde Darkmoon défile image par image -->
+<section class="chapter" id="seq">
+  <canvas id="seqCanvas"></canvas>
+  <div class="overlay">
+    <p class="kicker">La surface d'attaque</p>
+    <h1 class="reveal">Le marché s'arrête au web.</h1>
+    <p class="lead center" style="margin:28px auto 0">
+      Applications web · API · Active Directory · Kubernetes · cloud ·
+      réseaux internes · systèmes legacy · CMS et e-commerce.</p>
+  </div>
+</section>
+
+<!-- ═══ 6 · LA SOLUTION -->
+<section class="chapter">
+  <div class="center">
+    <p class="kicker">La solution</p>
+    <h1 class="reveal">Darkmoon teste vos systèmes en continu, tout seul.</h1>
+    <p class="lead center" style="margin:30px auto 0">
+      Vous confiez une cible. Il explore, trouve les failles, les prouve
+      par l'exploitation — et livre un rapport clair, validé par un humain.</p>
+  </div>
+</section>
+
+<!-- ═══ 7 · LA MÉTHODE -->
+<section class="chapter">
+  <div class="rows">
+    <p class="kicker">La méthode · quatre temps</p>
+    <div class="row"><h3>Découverte</h3><p>Il cartographie seul votre environnement : web, API, cloud, Active Directory, Kubernetes, réseau.</p></div>
+    <div class="row"><h3>Sélection</h3><p>Il choisit les outils et les scénarios d'attaque adaptés au terrain rencontré.</p></div>
+    <div class="row"><h3>Exploitation</h3><p>Il teste et prouve chaque faille : démontrée par l'exploitation, pas seulement signalée.</p></div>
+    <div class="row"><h3>Restitution</h3><p>Un rapport clair et actionnable, livré en continu à chaque campagne.</p></div>
+  </div>
+</section>
+
+<!-- ═══ 8 · PRODUIT ÉPINGLÉ : les captures se succèdent sans quitter l'écran -->
+<section id="product">
+  <div class="stage">
+    <img class="shot" data-i="0" src="../ui-vue-campagne.png" alt="Campagne en temps réel">
+    <img class="shot" data-i="1" src="../ui-infra-map.png" alt="Cartographie d'infrastructure">
+    <img class="shot" data-i="2" src="../ui-scheduler.png" alt="Planification et CI/CD">
+    <img class="shot" data-i="3" src="../ui-vuln-detail.png" alt="Preuve et remédiation">
+    <div class="caption">
+      <div class="t" id="capT">57 vulnérabilités. 8 critiques. Prouvées.</div>
+      <div class="d" id="capD">Chaque finding porte la trace de l'attaque qui l'a démontré.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9 · DÉMO -->
+<section class="chapter" id="demo">
+  <div class="center">
+    <p class="kicker">Démo interactive</p>
+    <h2 class="reveal" style="margin-bottom:5vh">Cliquez : c'est la vraie interface.</h2>
+    <iframe data-src="../demo/" title="Démo Darkmoon" loading="lazy"></iframe>
+  </div>
+</section>
+
+<!-- ═══ 10 · SOUVERAINETÉ -->
+<section class="chapter">
+  <div class="split">
+    <div>
+      <p class="kicker">Souveraineté</p>
+      <h2 class="reveal">Vos données restent chez vous.</h2>
+    </div>
+    <p class="lead">Darkmoon fonctionne avec une IA commerciale, européenne ou
+      100 % locale. Un proxy remplace vos valeurs sensibles par des jetons avant
+      tout appel externe : l'IA ne voit jamais vos vraies données. Le cœur est
+      open source sous GPLv3, éprouvé par 30 000 utilisateurs depuis 2013.</p>
+  </div>
+</section>
+
+<!-- ═══ 11 · VALIDATION -->
+<section class="chapter">
+  <div class="figures" style="grid-template-columns:repeat(3,1fr)">
+    <div class="figure"><div class="n" data-count="420" data-suffix="+">0</div>
+      <div class="l">publications analysées (2024-2026). Le multi-agents orchestré via MCP
+        est reconnu comme l'état de l'art — l'architecture de Darkmoon.</div>
+      <div class="s">PentestMCP 2025</div></div>
+    <div class="figure"><div class="n">&lt; 1 €</div>
+      <div class="l">par test documenté : 0,30 à 0,60 $, contre plusieurs milliers d'euros
+        par jour en manuel.</div>
+      <div class="s">RapidPen 2025 · arXiv 2502.16730</div></div>
+    <div class="figure"><div class="n">Humain</div>
+      <div class="l">dans la boucle : la recherche le recommande, Darkmoon l'applique.
+        L'Active Directory réel reste la vraie difficulté.</div>
+      <div class="s">AutoPentester 2025 · arXiv 2502.04227</div></div>
+  </div>
+</section>
+
+<!-- ═══ 12 · PREUVE PRESSE -->
+<section class="chapter">
+  <div class="center">
+    <p class="kicker">Ils en parlent</p>
+    <h2 class="reveal">« La plupart des outils de pentest IA s'arrêtent au web.
+      Darkmoon va plus loin. »</h2>
+    <p class="note" style="margin-top:36px">Cyber Security News · mai 2026 ·
+      Developpez.com depuis 2019 · Product Hunt 2026</p>
+  </div>
+</section>
+
+<!-- ═══ 13 · MARCHÉ ET DIFFÉRENCIANT -->
+<section class="chapter">
+  <div class="rows">
+    <p class="kicker">Marché &amp; différenciant · d'environ 2 Md$ à 5 Md$ d'ici 2030, +15 % par an</p>
+    <div class="row"><h3>Ouvert</h3><p>Open source GPLv3, auditable — jamais une boîte noire.</p></div>
+    <div class="row"><h3>Souverain</h3><p>IA commerciale, européenne ou 100 % locale : c'est vous qui choisissez.</p></div>
+    <div class="row"><h3>Privé</h3><p>Tokenisation locale : l'IA externe ne voit jamais vos vraies valeurs.</p></div>
+    <div class="row"><h3>Complet</h3><p>Web, API, Active Directory, Kubernetes, cloud, réseau interne.</p></div>
+  </div>
+</section>
+
+<!-- ═══ 14 · OFFRES -->
+<section class="chapter">
+  <div class="center">
+    <p class="kicker">Offre Pro, à partir de</p>
+    <div class="price">149 €<small> / mois</small></div>
+    <p class="lead center" style="margin:30px auto 0">
+      Pentesters et équipes sécurité : rapports professionnels, durcissement, support.</p>
+    <p class="note" style="margin-top:30px">Community gratuit · Custom sur devis ·
+      Pentest on Demand 799 € par engagement, cadre légal inclus</p>
+  </div>
+</section>
+
+<!-- ═══ 15 · ÉQUIPE ET COMMUNAUTÉ -->
+<section class="chapter">
+  <div class="rows">
+    <p class="kicker">L'équipe · dix ans de terrain</p>
+    <div class="row"><h3>Mehdi Boutayeb</h3><p>Fondateur · créateur de Dark Moon, open source depuis 2013. Pentester de métier.</p></div>
+    <div class="row"><h3>ASC-IT</h3><p>Éditeur · Toulouse · Made in France.</p></div>
+    <div class="row"><h3>30 000 utilisateurs</h3><p>Sur GitHub et le Microsoft Store. La communauté alimente le produit, l'offre Pro finance la R&amp;D.</p></div>
+  </div>
+</section>
+
+<!-- ═══ 16 · SORTIE -->
+<footer>
+  <h1 class="reveal" style="margin-bottom:8vh">Discutons de votre surface d'attaque.</h1>
+  <img src="../logo-horizontal-alice.svg" alt="Darkmoon">
+  <p class="line">dark-moon.org · ASC-IT · Toulouse</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* barre de progression */
+gsap.to('#progress', {scaleX: 1, ease: 'none',
+  scrollTrigger: {trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0}});
+
+/* révélation mot à mot — la signature typographique d'Apple */
+document.querySelectorAll('.reveal').forEach(el => {
+  const words = el.textContent.trim().split(/\s+/);
+  el.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
+  gsap.to(el.querySelectorAll('.word'), {
+    opacity: 1, stagger: 0.06, ease: 'none',
+    scrollTrigger: {trigger: el, start: 'top 88%', end: 'bottom 55%', scrub: 0.4}});
+});
+
+/* héros : le logo se pose, puis s'éloigne */
+gsap.timeline({scrollTrigger: {trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.5}})
+  .fromTo('#hero .mark', {opacity: 0, scale: 1.14, y: 40},
+          {opacity: 1, scale: 1, y: 0, duration: 0.4})
+  .to('#hero .mark', {scale: 0.86, opacity: 0.25, duration: 0.6}, 0.4);
+
+/* compteurs asservis au scroll */
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseFloat(el.dataset.count);
+  const pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+  const o = {v: 0};
+  gsap.to(o, {v: target, ease: 'none',
+    scrollTrigger: {trigger: el, start: 'top 90%', end: 'top 45%', scrub: 0.5},
+    onUpdate: () => {el.textContent = pre + Math.round(o.v).toLocaleString('fr-FR') + suf;}});
+});
+
+/* séquence d'images sur canvas, épinglée et asservie au scroll */
+(function sequence() {
+  const canvas = document.getElementById('seqCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const COUNT = 72, images = [], state = {frame: 0};
+  const size = () => {
+    const r = canvas.parentElement.getBoundingClientRect();
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    draw();
+  };
+  const draw = () => {
+    const img = images[Math.round(state.frame)];
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!img || !img.complete) return;
+    const k = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.82;
+    const w = img.width * k, h = img.height * k;
+    ctx.globalAlpha = 0.85;
+    ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+    ctx.globalAlpha = 1;
+  };
+  for (let i = 0; i < COUNT; i++) {
+    const im = new Image();
+    im.src = `../seq/${String(i).padStart(4, '0')}.jpg`;
+    if (i === 0) im.onload = draw;
+    images.push(im);
+  }
+  addEventListener('resize', size); size();
+  gsap.to(state, {frame: COUNT - 1, ease: 'none', onUpdate: draw,
+    scrollTrigger: {trigger: '#seq', start: 'top top', end: '+=180%', pin: true, scrub: 0.25}});
+})();
+
+/* produit épinglé : les captures se relaient sans quitter l'écran */
+(function product() {
+  const shots = gsap.utils.toArray('#product .shot');
+  const caps = [
+    ['57 vulnérabilités. 8 critiques. Prouvées.',
+     "Chaque finding porte la trace de l'attaque qui l'a démontré."],
+    ["Ce que l'agent a découvert seul.",
+     'Hôtes, services, technologies : rien à déclarer en amont.'],
+    ['Planifié, ou déclenché par votre CI/CD.',
+     'Le build échoue si une faille critique apparaît.'],
+    ['La preuve, puis la remédiation.',
+     'Chaque vulnérabilité documentée, reproductible, corrigeable.']];
+  const t = document.getElementById('capT'), d = document.getElementById('capD');
+  gsap.set(shots[0], {opacity: 1, scale: 1});
+  const tl = gsap.timeline({scrollTrigger: {
+    trigger: '#product', start: 'top top', end: '+=' + (shots.length * 110) + '%',
+    pin: '#product .stage', scrub: 0.4}});
+  shots.forEach((s, i) => {
+    if (i === 0) return;
+    tl.to(shots[i - 1], {opacity: 0, scale: 0.94, duration: 0.5})
+      .fromTo(s, {opacity: 0, scale: 1.06}, {opacity: 1, scale: 1, duration: 0.5,
+        onStart: () => {t.textContent = caps[i][0]; d.textContent = caps[i][1];},
+        onReverseComplete: () => {t.textContent = caps[i - 1][0]; d.textContent = caps[i - 1][1];}
+      }, '<');
+  });
+})();
+
+/* la démo ne se charge que lorsqu'elle approche */
+(function lazyDemo() {
+  const f = document.querySelector('#demo iframe');
+  if (!f) return;
+  ScrollTrigger.create({trigger: '#demo', start: 'top 140%',
+    once: true, onEnter: () => {f.src = f.dataset.src;}});
+})();
+</script>
+</body>
+</html>
