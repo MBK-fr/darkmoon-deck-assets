@@ -12,8 +12,10 @@
                 background: #000; }
   body { font-family: var(--font-geist-sans), system-ui, sans-serif;
           color: var(--foreground); }
-  .scene { width: 1280px; height: 720px; padding: 56px 72px; display: flex;
+  .scene { width: 1280px; height: 720px; padding: 52px 72px; display: flex;
             flex-direction: column; }
+  /* le bloc de contenu se cale au centre optique, le pied reste en bas */
+  .scene::before { content: ""; flex: 0.62; }
   .pied { margin-top: auto; display: flex; justify-content: space-between;
            font-family: var(--font-space-mono); font-size: 10.5px;
            letter-spacing: .2em; text-transform: uppercase; color: #767f8e; }
