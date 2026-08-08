@@ -12,12 +12,12 @@
   .eyebrow{font-size:12px;letter-spacing:.24em;text-transform:uppercase;
            color:#ffffff;font-weight:300;opacity:.6}
   h1{font-size:30px;font-weight:300;letter-spacing:.005em;margin:8px 0 0}
-  .grille{flex:1;display:grid;grid-template-columns:repeat(3,1fr);
-          grid-template-rows:repeat(2,1fr);gap:26px;margin-top:26px}
+  .grille{flex:1;display:grid;grid-template-columns:repeat(2,1fr);
+          grid-template-rows:repeat(3,1fr);gap:18px;margin-top:22px}
   /* la carte, classes du composant */
-  .carte{border:1px solid var(--border);border-radius:16px;overflow:hidden;
+  .carte{border:1px solid var(--border);border-radius:10px;overflow:hidden;
          background:var(--background);padding:10px;
-         box-shadow:0 0 0 1px rgba(255,255,255,.03),0 24px 60px rgba(0,0,0,.55)}
+         box-shadow:0 18px 44px rgba(0,0,0,.5)}
   .lines{background-image:repeating-linear-gradient(45deg,
          rgba(255,255,255,.16) 0 1.4px,transparent 1.4px 13px);
          background-size:30px 30px;height:100%;box-sizing:border-box}
@@ -25,16 +25,16 @@
          radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.07),transparent 60%),
          linear-gradient(to top right,rgba(8,9,11,.92),rgba(8,9,11,.45) 55%,
          rgba(8,9,11,.12))}
-  .contenu{padding:18px 22px;height:100%;box-sizing:border-box;
+  .contenu{padding:20px 26px;height:100%;box-sizing:border-box;
            display:flex;flex-direction:column}
-  .glow{width:100%;height:84px;display:block;overflow:visible}
+  .glow{width:230px;height:62px;display:block;overflow:visible}
   /* le composant au repos : lettres creuses, contour blanc */
-  .socle{font-family:Helvetica,Arial,sans-serif;font-weight:700;font-size:62px;
+  .socle{font-family:Helvetica,Arial,sans-serif;font-weight:700;font-size:70px;
          paint-order:stroke;stroke-linejoin:round}
   .titre{font-size:16px;font-weight:300;margin:6px 0 0;color:var(--foreground)}
   .corps{font-size:14px;line-height:1.45;margin:4px 0 0;
          color:#ffffff}
-  .src{font-size:12px;letter-spacing:.1em;margin:auto 0 0;color:#ffffff;opacity:.55}
+  .src{letter-spacing:.06em;color:#ffffff;opacity:.5}
   .pied{display:flex;justify-content:space-between;margin-top:16px;font-size:11px;
         letter-spacing:.16em;color:#ffffff;opacity:.5}
 </style></head><body>
@@ -65,9 +65,7 @@
         stroke="url(#g0)" stroke-width="3.4" fill="none"
         mask="url(#m0)">×4</text>
 </svg>
-        <h3 class="titre">de compromissions vs</h3>
-        <p class="corps">les grandes entreprises</p>
-        <p class="src">Verizon DBIR 2025</p>
+        <p class="corps"><span class="lab">de compromissions vs</span> les grandes entreprises <span class="src">Verizon DBIR 2025</span></p>
       </div>
     </div>
   </div>
@@ -94,9 +92,7 @@
         stroke="url(#g1)" stroke-width="3.4" fill="none"
         mask="url(#m1)">88 %</text>
 </svg>
-        <h3 class="titre">des attaques sur PME</h3>
-        <p class="corps">sont des ransomwares</p>
-        <p class="src">Verizon DBIR 2025</p>
+        <p class="corps"><span class="lab">des attaques sur PME</span> sont des ransomwares <span class="src">Verizon DBIR 2025</span></p>
       </div>
     </div>
   </div>
@@ -123,9 +119,7 @@
         stroke="url(#g2)" stroke-width="3.4" fill="none"
         mask="url(#m2)">45 %</text>
 </svg>
-        <h3 class="titre">des organisations : arrêt</h3>
-        <p class="corps">via un tiers en 2 ans</p>
-        <p class="src">Gartner 2023</p>
+        <p class="corps"><span class="lab">des organisations : arrêt</span> via un tiers en 2 ans <span class="src">Gartner 2023</span></p>
       </div>
     </div>
   </div>
@@ -152,9 +146,7 @@
         stroke="url(#g3)" stroke-width="3.4" fill="none"
         mask="url(#m3)">58 %</text>
 </svg>
-        <h3 class="titre">des PME UE touchées</h3>
-        <p class="corps">subissent un impact économique</p>
-        <p class="src">Eurobarometer 2022</p>
+        <p class="corps"><span class="lab">des PME UE touchées</span> subissent un impact économique <span class="src">Eurobarometer 2022</span></p>
       </div>
     </div>
   </div>
@@ -181,9 +173,7 @@
         stroke="url(#g4)" stroke-width="3.4" fill="none"
         mask="url(#m4)">34 %</text>
 </svg>
-        <h3 class="titre">Régions les plus attaquées</h3>
-        <p class="corps">Asie-Pacifique 34 %&nbsp; ·&nbsp; Amérique du Nord 24 %&nbsp; des incidents mondiaux (2024).</p>
-        
+        <p class="corps"><span class="lab">Régions les plus attaquées</span> Asie-Pacifique 34 %&nbsp; ·&nbsp; Amérique du Nord 24 %&nbsp; des incidents mondiaux (2024).</p>
       </div>
     </div>
   </div>
@@ -210,9 +200,7 @@
         stroke="url(#g5)" stroke-width="3.4" fill="none"
         mask="url(#m5)">27,7 %</text>
 </svg>
-        <h3 class="titre">Secteur n°1 : l'industrie</h3>
-        <p class="corps">27,7 % de toutes les attaques — 5ᵉ année consécutive en tête.</p>
-        
+        <p class="corps"><span class="lab">Secteur n°1 : l'industrie</span> 27,7 % de toutes les attaques — 5ᵉ année consécutive en tête.</p>
       </div>
     </div>
   </div>
