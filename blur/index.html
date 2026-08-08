@@ -4,34 +4,23 @@
 <style>
   html,body{margin:0;height:100%;background:#000;overflow:hidden}
   .scene{position:relative;height:100%;display:flex;flex-direction:column;
-         justify-content:center;padding:64px 96px;box-sizing:border-box}
-  .eyebrow{font-family:Lato,sans-serif;font-size:15px;font-weight:300;
-           letter-spacing:.34em;text-transform:uppercase;color:#fff;
-           opacity:0;transition:opacity 1.4s ease .1s}
-  .on .eyebrow{opacity:.5}
+         align-items:center;justify-content:center;padding:64px 110px;
+         box-sizing:border-box}
+  /* carton de générique : centré, aéré, sans ornement */
   .phrase{font-family:Lato,'Avenir Next',Avenir,system-ui,sans-serif;
-          font-weight:300;color:#b9c0cc;font-size:46px;line-height:1.42;
-          letter-spacing:.01em;margin:26px 0 0;max-width:1000px;
-          perspective:900px}
+          font-weight:300;color:rgba(255,255,255,.5);font-size:44px;
+          line-height:1.62;letter-spacing:.015em;margin:0;max-width:1060px;
+          text-align:center;perspective:900px}
   /* les mots qui portent : même graisse, mais ils émettent de la lumière */
-  .phrase .fort{color:#fff;text-shadow:0 0 16px rgba(255,255,255,.85),
-                0 0 44px rgba(255,255,255,.35),0 0 92px rgba(91,120,255,.45)}
+  .phrase .fort{color:#fff}
   .m{display:inline-block;margin-right:.35em;opacity:0;
      transition-timing-function:cubic-bezier(.25,.46,.45,.94);
      transition-property:opacity,filter,transform,text-shadow;
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
-  .pied{position:absolute;left:96px;right:96px;bottom:52px;display:flex;
-        justify-content:space-between;align-items:baseline;gap:40px;
-        font-family:Lato,sans-serif;font-weight:300;font-size:20px;
-        letter-spacing:.01em;color:#b9c0cc;
-        opacity:0;transition:opacity 1.8s ease 2.2s}
-  .on .pied{opacity:.5}
 </style></head><body>
 <div class="scene" id="s">
-  <div class="eyebrow">LE CONSTAT</div>
   <p class="phrase" id="p"></p>
-  <div class="pied"><span>Source : Verizon Data Breach Investigations Report 2025.</span><span>DARKMOON · ASC-IT &nbsp;·&nbsp; 02 / 14</span></div>
 </div>
 <script>
 const MOTS = [{"t": "Un", "p": "fort", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "p": "fort", "d": 2.487, "r": 0.081, "b": 12, "s": 0.91}, {"t": "par", "p": "fort", "d": 2.448, "r": 0.144, "b": 13, "s": 0.919}, {"t": "an.", "p": "fort", "d": 2.386, "r": 0.236, "b": 12, "s": 0.928}, {"t": "Des", "p": "fort", "d": 2.309, "r": 0.34, "b": 15, "s": 0.936}, {"t": "attaques", "p": "fort", "d": 2.221, "r": 0.372, "b": 18, "s": 0.942}, {"t": "tous", "p": "fort", "d": 2.132, "r": 0.466, "b": 15, "s": 0.947}, {"t": "les", "p": "fort", "d": 2.049, "r": 0.524, "b": 18, "s": 0.949}, {"t": "jours.", "p": "fort", "d": 1.979, "r": 0.596, "b": 13, "s": 0.95}, {"t": "Une", "p": "normal", "d": 1.929, "r": 0.714, "b": 12, "s": 0.949}, {"t": "photo", "p": "normal", "d": 1.903, "r": 0.769, "b": 18, "s": 0.945}, {"t": "à", "p": "normal", "d": 1.904, "r": 0.815, "b": 15, "s": 0.94}, {"t": "l'instant", "p": "normal", "d": 1.931, "r": 0.888, "b": 14, "s": 0.934}, {"t": "T.", "p": "normal", "d": 1.982, "r": 0.973, "b": 14, "s": 0.926}, {"t": "Un", "p": "normal", "d": 2.053, "r": 1.058, "b": 16, "s": 0.917}, {"t": "audit", "p": "normal", "d": 2.137, "r": 1.131, "b": 14, "s": 0.907}, {"t": "fige", "p": "normal", "d": 2.226, "r": 1.18, "b": 15, "s": 0.897}, {"t": "la", "p": "normal", "d": 2.313, "r": 1.266, "b": 13, "s": 0.887}, {"t": "sécurité", "p": "normal", "d": 2.39, "r": 1.347, "b": 15, "s": 0.878}, {"t": "à", "p": "normal", "d": 2.45, "r": 1.415, "b": 18, "s": 0.869}, {"t": "une", "p": "normal", "d": 2.488, "r": 1.501, "b": 19, "s": 0.862}, {"t": "date.", "p": "normal", "d": 2.5, "r": 1.563, "b": 19, "s": 0.856}, {"t": "La", "p": "normal", "d": 2.485, "r": 1.623, "b": 15, "s": 0.852}, {"t": "cible", "p": "normal", "d": 2.445, "r": 1.716, "b": 15, "s": 0.85}, {"t": ":", "p": "normal", "d": 2.383, "r": 1.751, "b": 16, "s": 0.85}, {"t": "les", "p": "normal", "d": 2.304, "r": 1.845, "b": 17, "s": 0.852}, {"t": "sous-traitants.", "p": "normal", "d": 2.216, "r": 1.926, "b": 16, "s": 0.856}, {"t": "4×", "p": "normal", "d": 2.127, "r": 1.991, "b": 13, "s": 0.861}, {"t": "plus", "p": "normal", "d": 2.044, "r": 2.037, "b": 18, "s": 0.868}, {"t": "de", "p": "normal", "d": 1.975, "r": 2.11, "b": 17, "s": 0.877}, {"t": "victimes", "p": "normal", "d": 1.927, "r": 2.18, "b": 19, "s": 0.886}, {"t": "que", "p": "normal", "d": 1.902, "r": 2.264, "b": 13, "s": 0.896}, {"t": "les", "p": "normal", "d": 1.905, "r": 2.351, "b": 17, "s": 0.906}, {"t": "grands", "p": "normal", "d": 1.933, "r": 2.401, "b": 17, "s": 0.916}, {"t": "comptes.", "p": "normal", "d": 1.986, "r": 2.484, "b": 19, "s": 0.925}, {"t": "NIS2,", "p": "normal", "d": 2.057, "r": 2.528, "b": 13, "s": 0.933}, {"t": "DORA.", "p": "normal", "d": 2.142, "r": 2.642, "b": 19, "s": 0.94}, {"t": "Tester", "p": "fort", "d": 2.231, "r": 2.7, "b": 13, "s": 0.945}, {"t": "devient", "p": "fort", "d": 2.318, "r": 2.738, "b": 16, "s": 0.948}, {"t": "obligatoire.", "p": "fort", "d": 2.394, "r": 2.837, "b": 19, "s": 0.95}];
@@ -52,7 +41,7 @@ function repos() {
     e.style.opacity = 0;
     e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
     e.style.transform = 'translateY(20px) scale(' + w.s + ') rotateX(-15deg)';
-    e.style.textShadow = '0 0 40px rgba(255,255,255,.4)';
+    e.style.textShadow = '0 0 40px rgba(255,255,255,.28)';
   });
 }
 function jouer() {
@@ -63,10 +52,7 @@ function jouer() {
       e.style.opacity = 1;
       e.style.filter = 'blur(0px) brightness(1)';
       e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
-      e.style.textShadow = e.classList.contains('fort')
-        ? '0 0 16px rgba(255,255,255,.85), 0 0 44px rgba(255,255,255,.35), '
-          + '0 0 92px rgba(91,120,255,.45)'
-        : '0 2px 8px rgba(255,255,255,.1)';
+      e.style.textShadow = 'none';
     });
   }, 200));
   const fin = Math.max(...MOTS.map(w => w.r + w.d));
