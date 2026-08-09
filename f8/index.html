@@ -163,21 +163,20 @@
     --muted:0 0% 32%;
     --muted-foreground:0 0% 22%;
     --primary:0 0% 0%;
-    --radius:0px;                 /* cartes a angle vif */
+    --radius:20px;                /* le rayon du biseau, cote CSS */
   }
-  /* bords a zero, angles vifs. Un gris reste pose en dur sous le canevas :
-     si WebGL manque, la carte est grise, jamais noire. */
-  .bg-card{border-width:0;border-radius:0;background:#b9bec3;isolation:isolate}
-  .bg-card>*:not(.metal){position:relative;z-index:1}
-  .metal{position:absolute;inset:0;z-index:0;overflow:hidden}
-  /* Le metal du bouton descend a 0.1 de luminosite : mesure faite, il tombe
-     a 28/255 sous certains mots, ou du texte noir ne se lit plus. On releve
-     les noirs en mode `screen` plutot qu'avec un voile blanc : screen ne
-     touche pas les hautes lumieres, l'eclat du metal est conserve. */
-  .metal::after{content:"";position:absolute;inset:0;pointer-events:none;
-                background:#7d7d7d;mix-blend-mode:screen}
-  .metal canvas{position:absolute!important;top:0!important;left:0!important;
-                width:100%!important;height:100%!important;display:block!important}
+  /* la carte n'a plus de fond ni de bord : le metal est peint par la scene
+     three.js, en dessous, a l'emplacement exact de la carte */
+  .bg-card{border-width:0;background:transparent}
+  #metal{position:absolute;inset:0;z-index:0;display:block}
+  /* Le metal du pen descend a 5/255 dans ses creux : du texte noir n'y tient
+     pas. Une plaque par carte releve les noirs en mode `screen`, qui ne
+     touche pas les hautes lumieres : l'eclat et l'irisation sont conserves.
+     Elle est posee en frere du canevas, pas dans la section, sinon la section
+     formerait un contexte d'empilement et le fondu ne verrait plus le metal. */
+  .releve{position:absolute;z-index:0;pointer-events:none;
+          background:#787878;mix-blend-mode:screen;border-radius:var(--radius)}
+  #scene>section{position:relative;z-index:1}
 
   /* les details du composant qui etaient regles pour du fond sombre */
   .dark\:text-white{color:#000}
@@ -213,31 +212,334 @@ caler();
 window.addEventListener('resize', caler);
 </script>
 <script type="module">
-import { ShaderMount } from './pds/shader-mount.js';
-import { liquidMetalFragmentShader } from './pds/shaders/liquid-metal.js';
+import * as THREE from './three/three.module.js';
+import { SVGLoader } from './three/addons/loaders/SVGLoader.js';
+import { RoomEnvironment } from './three/addons/environments/RoomEnvironment.js';
 
-const UNIFORMES = {
-  u_repetition: 4,
-  u_softness: 0.5,
-  u_shiftRed: 0.3,
-  u_shiftBlue: 0.3,
-  u_distortion: 0,
-  u_contour: 0,
-  u_angle: 45,
-  u_scale: 8,
-  u_shape: 0,
-  u_offsetX: 0.1,
-  u_offsetY: -0.1,
+// ── bruit simplex 3D — repris du pen, tel quel
+const simplex3D = `
+            vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+            vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+            float snoise(vec3 v){
+                const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+                const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+                vec3 i  = floor(v + dot(v, C.yyy) );
+                vec3 x0 = v - i + dot(i, C.xxx) ;
+                vec3 g = step(x0.yzx, x0.xyz);
+                vec3 l = 1.0 - g;
+                vec3 i1 = min( g.xyz, l.zxy );
+                vec3 i2 = max( g.xyz, l.zxy );
+                vec3 x1 = x0 - i1 + 1.0 * C.xxx;
+                vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+                vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
+                i = mod(i, 289.0 );
+                vec4 p = permute( permute( permute(
+                           i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                         + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+                         + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+                float n_ = 1.0/7.0;
+                vec3  ns = n_ * D.wyz - D.xzx;
+                vec4 j = p - 49.0 * floor(p * ns.z *ns.z);
+                vec4 x_ = floor(j * ns.z);
+                vec4 y_ = floor(j - 7.0 * x_ );
+                vec4 x = x_ *ns.x + ns.yyyy;
+                vec4 y = y_ *ns.x + ns.yyyy;
+                vec4 h = 1.0 - abs(x) - abs(y);
+                vec4 b0 = vec4( x.xy, y.xy );
+                vec4 b1 = vec4( x.zw, y.zw );
+                vec4 s0 = floor(b0)*2.0 + 1.0;
+                vec4 s1 = floor(b1)*2.0 + 1.0;
+                vec4 sh = -step(h, vec4(0.0));
+                vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+                vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+                vec3 p0 = vec3(a0.xy,h.x);
+                vec3 p1 = vec3(a0.zw,h.y);
+                vec3 p2 = vec3(a1.xy,h.z);
+                vec3 p3 = vec3(a1.zw,h.w);
+                vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+                p0 *= norm.x;
+                p1 *= norm.y;
+                p2 *= norm.z;
+                p3 *= norm.w;
+                vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                m = m * m;
+                return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+            }
+        `;
+
+const scene = new THREE.Scene();
+scene.background = null;
+
+const toile = document.createElement('canvas');
+toile.id = 'metal';
+const cadre = document.getElementById('scene');
+cadre.prepend(toile);
+
+const L = cadre.offsetWidth, H = cadre.offsetHeight;
+const camera = new THREE.PerspectiveCamera(45, L / H, 0.1, 8000);
+// les unites monde tombent au pixel pres sur la grille : la hauteur visible
+// en z=0 vaut exactement H
+camera.position.set(0, 0, (H / 2) / Math.tan(22.5 * Math.PI / 180));
+
+const renderer = new THREE.WebGLRenderer({ canvas: toile, antialias: true, alpha: true });
+renderer.setSize(L, H, false);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.3;
+
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture;
+
+const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
+dirLight1.position.set(10, 20, 10);
+scene.add(dirLight1);
+const dirLight2 = new THREE.DirectionalLight(0xffffff, 1);
+dirLight2.position.set(-10, -10, 10);
+scene.add(dirLight2);
+
+const dummyTex = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1);
+dummyTex.needsUpdate = true;
+
+// ── le materiau du pen, valeurs comprises
+function faireMateriau() {
+  const m = new THREE.MeshPhysicalMaterial({
+    color: 0xeeeeee,
+    metalness: 0.587,
+    roughness: 0.452,
+    clearcoat: 0.071,
+    clearcoatRoughness: 0.0,
+    iridescence: 0.907,
+    iridescenceIOR: 1.0,
+    iridescenceThicknessRange: [759, 800],
+    iridescenceThicknessMap: dummyTex,
+    dithering: true
+  });
+  m.userData = {
+    uTime: { value: 0 },
+    uSpeed: { value: 0.0 },
+    uScale: { value: 0.00298 },
+    uDistortion: { value: 1.52 },
+    uEdgeProtection: { value: 1.0 },
+    uShapeReactivity: { value: 1.0 },
+    uShapeMask: { value: dummyTex },
+    uShapeBounds: { value: new THREE.Vector4(0, 0, 1, 1) }
+  };
+  m.onBeforeCompile = shader => {
+    shader.uniforms.uTime = m.userData.uTime;
+    shader.uniforms.uSpeed = m.userData.uSpeed;
+    shader.uniforms.uScale = m.userData.uScale;
+    shader.uniforms.uDistortion = m.userData.uDistortion;
+    shader.uniforms.uEdgeProtection = m.userData.uEdgeProtection;
+    shader.uniforms.uShapeReactivity = m.userData.uShapeReactivity;
+    shader.uniforms.uShapeMask = m.userData.uShapeMask;
+    shader.uniforms.uShapeBounds = m.userData.uShapeBounds;
+
+    shader.vertexShader = `
+                varying vec3 vWorldPos;
+                varying vec3 vLocalPos;
+                varying vec3 vOriginalNormal;
+            ` + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <worldpos_vertex>',
+      `
+                #include <worldpos_vertex>
+                vWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
+                vLocalPos = position;
+                vOriginalNormal = normal;
+                `);
+
+    shader.fragmentShader = `
+                uniform float uTime;
+                uniform float uSpeed;
+                uniform float uScale;
+                uniform float uDistortion;
+                uniform float uEdgeProtection;
+                uniform float uShapeReactivity;
+
+                uniform sampler2D uShapeMask;
+                uniform vec4 uShapeBounds;
+
+                varying vec3 vWorldPos;
+                varying vec3 vLocalPos;
+                varying vec3 vOriginalNormal;
+
+                float vFluidNoise;
+
+                ${simplex3D}
+            ` + shader.fragmentShader;
+
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <normal_fragment_begin>',
+      `
+                #include <normal_fragment_begin>
+
+                vec2 shapeUV = (vLocalPos.xy - uShapeBounds.xy) / uShapeBounds.zw;
+
+                vec2 texEps = vec2(4.0 / 1024.0);
+                float maskC = texture2D(uShapeMask, shapeUV).r;
+                float maskR = texture2D(uShapeMask, shapeUV + vec2(texEps.x, 0.0)).r;
+                float maskL = texture2D(uShapeMask, shapeUV - vec2(texEps.x, 0.0)).r;
+                float maskT = texture2D(uShapeMask, shapeUV + vec2(0.0, texEps.y)).r;
+                float maskB = texture2D(uShapeMask, shapeUV - vec2(0.0, texEps.y)).r;
+
+                float smoothDist = (maskC + maskR + maskL + maskT + maskB) * 0.2;
+
+                vec2 maskGrad = vec2(maskR - maskL, maskT - maskB) / (2.0 * texEps.x);
+
+                vec3 p = vLocalPos * uScale;
+
+                p.z += smoothDist * uShapeReactivity * 150.0 * uScale;
+
+                vec2 contourTangent = vec2(-maskGrad.y, maskGrad.x);
+                p.xy += contourTangent * (uTime * uSpeed * 0.5);
+                p.y -= uTime * uSpeed * 0.1;
+
+                vec3 warp;
+                warp.x = snoise(p + vec3(0.0, 0.0, uTime * 0.1));
+                warp.y = snoise(p + vec3(114.5, 22.1, uTime * 0.1));
+                warp.z = snoise(p + vec3(233.2, 51.5, uTime * 0.1));
+                vec3 warpedP = p + warp * 1.5;
+
+                float eps = 0.03;
+                float n0 = snoise(warpedP);
+                float nx = snoise(warpedP + vec3(eps, 0.0, 0.0));
+                float ny = snoise(warpedP + vec3(0.0, eps, 0.0));
+                float nz = snoise(warpedP + vec3(0.0, 0.0, eps));
+
+                vFluidNoise = n0 + (smoothDist * uShapeReactivity * 2.0);
+
+                vec3 noiseNormal = normalize(vec3(nx - n0, ny - n0, nz - n0));
+                vec3 viewNoiseNormal = normalize((viewMatrix * vec4(noiseNormal, 0.0)).xyz);
+
+                float isFlatFace = smoothstep(0.1, 0.9, abs(vOriginalNormal.z));
+                float edgeMask = mix(1.0, isFlatFace, uEdgeProtection);
+
+                normal = normalize(normal + viewNoiseNormal * uDistortion * edgeMask);
+                `);
+
+    shader.fragmentShader = shader.fragmentShader.replace(
+      /texture2D\(\s*iridescenceThicknessMap\s*,\s*vIridescenceThicknessMapUv\s*\)/g,
+      'vec4(vFluidNoise * 0.5 + 0.5)');
+  };
+  return m;
+}
+
+// ── generateur de masque de forme — repris du pen
+function masqueDeForme(shapes, materiau) {
+  const bounds = new THREE.Box2();
+  for (const shape of shapes) {
+    const pts = shape.getPoints();
+    for (const pt of pts) bounds.expandByPoint(pt);
+  }
+  const width = bounds.max.x - bounds.min.x;
+  const height = bounds.max.y - bounds.min.y;
+  const maxDim = Math.max(width, height);
+  const pad = maxDim * 0.25;
+  const paddedMinX = bounds.min.x - pad;
+  const paddedMinY = bounds.min.y - pad;
+  const paddedWidth = width + pad * 2;
+  const paddedHeight = height + pad * 2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024; canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const scaleX = canvas.width / paddedWidth;
+  const scaleY = canvas.height / paddedHeight;
+  ctx.save();
+  ctx.filter = 'blur(45px)';
+  ctx.fillStyle = 'white';
+  ctx.scale(scaleX, scaleY);
+  ctx.translate(-paddedMinX, -paddedMinY);
+  ctx.beginPath();
+  for (const shape of shapes) {
+    const pts = shape.getPoints(100);
+    if (pts.length) {
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    }
+  }
+  ctx.fill('evenodd');
+  ctx.restore();
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.flipY = false;
+  materiau.userData.uShapeMask.value = tex;
+  materiau.userData.uShapeBounds.value.set(paddedMinX, paddedMinY, paddedWidth, paddedHeight);
+}
+
+// ── parametres d'extrusion du pen
+const extrudeSettings = {
+  depth: 1.5,
+  bevelEnabled: true,
+  bevelSegments: 96,
+  steps: 2,
+  bevelSize: 2.5,
+  bevelThickness: 2.5
 };
 
-document.querySelectorAll('.bg-card').forEach((carte, i) => {
-  const hote = document.createElement('div');
-  hote.className = 'metal';
-  carte.prepend(hote);
-  // decalage d'origine par carte : sans lui les cinq nappes sont identiques
-  new ShaderMount(hote, liquidMetalFragmentShader,
-    { ...UNIFORMES, u_offsetX: 0.1 + i * 0.93, u_offsetY: -0.1 - i * 0.71 },
-    undefined, 0.6);
+const BISEAU = 2.5;        // bevelSize, en unites SVG
+const RAYON = 8;           // coins arrondis, en unites SVG (hauteur = 100)
+const loader = new SVGLoader();
+const materiaux = [];
+
+function rectArrondi(w, h, r) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">`
+    + `<path d="M ${r},0 H ${w - r} A ${r},${r} 0 0 1 ${w},${r} V ${h - r}`
+    + ` A ${r},${r} 0 0 1 ${w - r},${h} H ${r} A ${r},${r} 0 0 1 0,${h - r}`
+    + ` V ${r} A ${r},${r} 0 0 1 ${r},0 Z"/></svg>`;
+}
+
+const boite = cadre.getBoundingClientRect();
+document.querySelectorAll('.bg-card').forEach(carte => {
+  const r = carte.getBoundingClientRect();
+  // en CSS px, non transformes : la scene est mise a l'echelle par ailleurs
+  const cw = r.width / (boite.width / L), ch = r.height / (boite.height / H);
+  const cx = (r.left - boite.left) / (boite.width / L);
+  const cy = (r.top - boite.top) / (boite.height / H);
+
+  // hauteur SVG 100 : le biseau du pen (2.5) garde la meme taille relative.
+  // la boite extrudee mesure (w + 2*BISEAU) x (100 + 2*BISEAU), on la veut
+  // au format de la carte.
+  const hs = 100, ws = (hs + 2 * BISEAU) * (cw / ch) - 2 * BISEAU;
+  const data = loader.parse(rectArrondi(ws.toFixed(3), hs, RAYON));
+
+  const materiau = faireMateriau();
+  materiaux.push(materiau);
+  const groupe = new THREE.Group();
+  const formes = [];
+  for (const path of data.paths) {
+    for (const forme of SVGLoader.createShapes(path)) {
+      formes.push(forme);
+      groupe.add(new THREE.Mesh(new THREE.ExtrudeGeometry(forme, extrudeSettings), materiau));
+    }
+  }
+  masqueDeForme(formes, materiau);
+
+  const k = ch / (hs + 2 * BISEAU);
+  groupe.scale.set(k, -k, k);
+  groupe.updateMatrixWorld();
+  const bb = new THREE.Box3().setFromObject(groupe);
+  const centre = bb.getCenter(new THREE.Vector3());
+  groupe.position.sub(centre);
+  groupe.position.x += cx + cw / 2 - L / 2;
+  groupe.position.y += H / 2 - (cy + ch / 2);
+  scene.add(groupe);
+
+  const plaque = document.createElement('div');
+  plaque.className = 'releve';
+  plaque.style.cssText = `left:${cx}px;top:${cy}px;width:${cw}px;height:${ch}px`;
+  cadre.insertBefore(plaque, cadre.firstChild.nextSibling);
 });
+
+const clock = new THREE.Clock();
+function animer() {
+  requestAnimationFrame(animer);
+  const t = clock.getElapsedTime();
+  for (const m of materiaux) m.userData.uTime.value = t;
+  renderer.render(scene, camera);
+}
+animer();
 </script>
 </body></html>
