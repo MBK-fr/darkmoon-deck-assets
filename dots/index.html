@@ -1,12 +1,12 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8">
 <style>
-  html,body{margin:0;height:100%;background:#000;overflow:hidden;
+  html,body{margin:0;height:100%;background:#0a0a0a;overflow:hidden;
             font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";color:#fff}
-  .scene{height:100%;box-sizing:border-box;padding:54px 76px 40px;
+  .scene{height:100%;box-sizing:border-box;padding:44px 76px 34px;
          display:flex;flex-direction:column}
 
   /* ── blur-text-animation */
-  .phrase{font-size:27px;font-weight:300;line-height:1.62;letter-spacing:.01em;
+  .phrase{font-size:23px;font-weight:300;line-height:1.6;letter-spacing:.01em;
           margin:0;max-width:1128px;perspective:900px}
   .m{display:inline-block;margin-right:.35em;opacity:0;
      transition-property:opacity,filter,transform,text-shadow;
@@ -15,10 +15,11 @@
      backface-visibility:hidden}
 
   /* ── moving-dot-card, structure et keyframes du composant */
-  .cartes{margin-top:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
-  .outer{position:relative;width:100%;height:132px;border-radius:14px;
-         padding:1px;background:radial-gradient(circle 100px at 20% 0%,
-         rgba(255,255,255,.22),transparent 60%),rgba(255,255,255,.05);
+  .cartes{margin-top:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  /* 600 × 500 dans la capture : on garde le ratio 1,20 */
+  .outer{position:relative;width:100%;aspect-ratio:1.2;border-radius:14px;
+         padding:1px;background:radial-gradient(circle 130px at 12% 2%,
+         rgba(255,255,255,.55),transparent 55%),rgba(255,255,255,.07);
          opacity:0;animation:apparition 1.6s cubic-bezier(.25,.46,.45,.94) var(--d) both}
   @keyframes apparition{from{opacity:0;filter:blur(10px);transform:translateY(14px)}
                         to{opacity:1;filter:blur(0);transform:none}}
@@ -29,22 +30,22 @@
     25%{top:10%;right:calc(100% - 35px)}
     50%{top:calc(100% - 30px);right:calc(100% - 35px)}
     75%{top:calc(100% - 30px);right:10%}}
-  .card{position:relative;height:100%;border-radius:13px;background:#0a0a0c;
+  .card{position:relative;height:100%;border-radius:13px;background:#181919;
         display:flex;flex-direction:column;align-items:center;
         justify-content:center;overflow:hidden}
-  .ray{position:absolute;width:200px;height:44px;border-radius:100px;
-       background:#c7d2fe;opacity:.28;filter:blur(38px);top:-14px;left:-38px;
-       transform:rotate(40deg)}
-  .text{font-size:30px;font-weight:700;letter-spacing:-.02em;
-        background:linear-gradient(45deg,#dbeafe 0%,#3b82f6 100%);
+  .ray{position:absolute;width:66%;height:34%;border-radius:100px;
+       background:#e8eefc;opacity:.30;filter:blur(52px);top:-16%;left:-14%;
+       transform:rotate(38deg)}
+  .text{font-size:56px;font-weight:700;letter-spacing:-.02em;
+        background:linear-gradient(45deg,#e8f1fd 0%,#63baf9 100%);
         -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .label{font-size:10px;letter-spacing:.22em;text-transform:uppercase;
-         color:#8a8a92;margin-top:6px}
+  .label{font-size:14px;letter-spacing:.24em;text-transform:uppercase;
+         color:#9b9b9f;margin-top:10px}
   .line{position:absolute;background:rgba(255,255,255,.12)}
-  .topl{top:14%;left:0;width:100%;height:1px}
-  .bottoml{bottom:14%;left:0;width:100%;height:1px}
-  .leftl{left:14%;top:0;height:100%;width:1px}
-  .rightl{right:14%;top:0;height:100%;width:1px}
+  .topl{top:10%;left:0;width:100%;height:1px}
+  .bottoml{top:89%;left:0;width:100%;height:1px}
+  .leftl{left:10%;top:0;height:100%;width:1px}
+  .rightl{left:89%;top:0;height:100%;width:1px}
 
   .bas{display:flex;justify-content:space-between;font-size:11.5px;
        letter-spacing:.14em;color:#fff;opacity:.34;margin-top:22px;
@@ -52,7 +53,7 @@
 </style></head><body>
 <div class="scene">
   <p class="phrase" id="p"></p>
-  <div class="cartes"><div class="outer" style="--d:2.40s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">×4</div><div class="label">compromissions</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.58s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">88 %</div><div class="label">ransomwares</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.76s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">45 %</div><div class="label">via un tiers</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.94s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">58 %</div><div class="label">PME UE</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:3.12s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">34 %</div><div class="label">Asie-Pacifique</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:3.30s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">27,7 %</div><div class="label">industrie</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div></div>
+  <div class="cartes"><div class="outer" style="--d:2.40s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">×4</div><div class="label">compromissions</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.58s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">88 %</div><div class="label">ransomwares</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.76s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">45 %</div><div class="label">via un tiers</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div></div>
   <div class="bas"><span>Verizon DBIR 2025 · Gartner 2023 · Eurobarometer 2022 · IBM X-Force Threat Intelligence Index 2025 &amp; 2026</span><span>DARKMOON · ASC-IT &nbsp;·&nbsp; 03 / 14</span></div>
 </div>
 <script>
