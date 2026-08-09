@@ -1,0 +1,45 @@
+<!doctype html><html lang="fr" class="dark"><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;height:100%;background:#05060a;overflow:hidden;
+            font-family:'Avenir Next', Avenir, system-ui, sans-serif;font-weight:300;color:#fff}
+  /* la couche du composant, portée à 250 % et centrée : elle déborde du cadre */
+  .fond{position:absolute;inset:0;overflow:hidden}
+  .zoom{position:absolute;top:50%;left:50%;width:250%;height:250%;
+        transform:translate(-50%,-50%);filter:blur(100px)}
+  .cercle{position:absolute;opacity:.15;
+          animation:background-gradient var(--background-gradient-speed,15s)
+                    cubic-bezier(.445,.05,.55,.95) infinite}
+  @keyframes background-gradient{
+    0%,100%{transform:translate(0,0);transform-origin:50% 50%}
+    20%{transform:translate(calc(100% * var(--tx-1)),calc(100% * var(--ty-1)))}
+    40%{transform:translate(calc(100% * var(--tx-2)),calc(100% * var(--ty-2)))}
+    60%{transform:translate(calc(100% * var(--tx-3)),calc(100% * var(--ty-3)))}
+    80%{transform:translate(calc(100% * var(--tx-4)),calc(100% * var(--ty-4)))}}
+
+  .scene{position:relative;height:100%;box-sizing:border-box;
+         padding:46px 64px 32px;display:flex;flex-direction:column}
+  .eyebrow{font-size:12px;letter-spacing:.26em;text-transform:uppercase;opacity:.6}
+  h1{font-size:34px;font-weight:300;letter-spacing:.005em;margin:10px 0 0}
+  .grille{flex:1;display:grid;grid-template-columns:repeat(3,1fr);
+          grid-template-rows:repeat(2,1fr);gap:16px 44px;
+          align-content:center;margin-top:8px}
+  .stat{display:flex;flex-direction:column}
+  /* les chiffres : Helvetica bold, lettres creuses, comme demandé */
+  .num{font-family:Helvetica,Arial,sans-serif;font-weight:700;font-size:74px;
+       line-height:1;color:transparent;-webkit-text-stroke:1.4px #fff;
+       letter-spacing:-.01em}
+  .lab{font-size:17px;margin:14px 0 0;color:#fff}
+  .txt{font-size:15px;line-height:1.45;margin:3px 0 0;color:#fff;opacity:.72;
+       max-width:30ch}
+  .src{font-size:12px;letter-spacing:.08em;margin:9px 0 0;color:#fff;opacity:.5}
+  .pied{display:flex;justify-content:space-between;font-size:11.5px;
+        letter-spacing:.16em;color:#fff;opacity:.5;margin-top:14px}
+</style></head><body>
+<div class="fond"><div class="zoom"><svg class="cercle" style="top:31.5%;left:39.6%;--background-gradient-speed:4s;--tx-1:-0.048; --ty-1:0.060; --tx-2:0.424; --ty-2:-0.034; --tx-3:0.008; --ty-3:0.087; --tx-4:-0.315; --ty-4:0.012;" width="1600" height="1600" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0A2472"/></svg><svg class="cercle" style="top:32.7%;left:30.8%;--background-gradient-speed:4s;--tx-1:-0.406; --ty-1:-0.197; --tx-2:-0.409; --ty-2:0.310; --tx-3:0.193; --ty-3:-0.458; --tx-4:0.482; --ty-4:0.465;" width="1600" height="1600" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#2667FF"/></svg><svg class="cercle" style="top:22.0%;left:42.1%;--background-gradient-speed:4s;--tx-1:-0.343; --ty-1:-0.485; --tx-2:0.028; --ty-2:-0.440; --tx-3:-0.310; --ty-3:-0.258; --tx-4:-0.470; --ty-4:-0.036;" width="1600" height="1600" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#87BFFF"/></svg><svg class="cercle" style="top:42.0%;left:35.4%;--background-gradient-speed:4s;--tx-1:0.019; --ty-1:0.140; --tx-2:-0.000; --ty-2:0.162; --tx-3:-0.043; --ty-3:-0.222; --tx-4:0.498; --ty-4:0.496;" width="1600" height="1600" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#1B3FA0"/></svg><svg class="cercle" style="top:47.9%;left:42.4%;--background-gradient-speed:4s;--tx-1:-0.185; --ty-1:-0.270; --tx-2:-0.211; --ty-2:-0.430; --tx-3:0.266; --ty-3:-0.100; --tx-4:0.347; --ty-4:-0.113;" width="1600" height="1600" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#DCEAF4"/></svg><svg class="cercle" style="top:38.9%;left:13.5%;--background-gradient-speed:4s;--tx-1:-0.499; --ty-1:-0.290; --tx-2:0.410; --ty-2:-0.030; --tx-3:0.480; --ty-3:-0.103; --tx-4:-0.427; --ty-4:0.129;" width="1600" height="1600" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#123387"/></svg></div></div>
+<div class="scene">
+  <div class="eyebrow">L'EXPOSITION EN CHIFFRES</div>
+  <h1>PME et sous-traitants : les plus exposés.</h1>
+  <div class="grille"><div class="stat"><div class="num">×4</div><p class="lab">de compromissions vs</p><p class="txt">les grandes entreprises</p><p class="src">Verizon DBIR 2025</p></div><div class="stat"><div class="num">88 %</div><p class="lab">des attaques sur PME</p><p class="txt">sont des ransomwares</p><p class="src">Verizon DBIR 2025</p></div><div class="stat"><div class="num">45 %</div><p class="lab">des organisations : arrêt</p><p class="txt">via un tiers en 2 ans</p><p class="src">Gartner 2023</p></div><div class="stat"><div class="num">58 %</div><p class="lab">des PME UE touchées</p><p class="txt">subissent un impact économique</p><p class="src">Eurobarometer 2022</p></div><div class="stat"><div class="num">34 %</div><p class="lab">Régions les plus attaquées</p><p class="txt">Asie-Pacifique 34 %&nbsp; ·&nbsp; Amérique du Nord 24 %&nbsp; des incidents mondiaux (2024).</p></div><div class="stat"><div class="num">27,7 %</div><p class="lab">Secteur n°1 : l'industrie</p><p class="txt">27,7 % de toutes les attaques — 5ᵉ année consécutive en tête.</p></div></div>
+  <div class="pied"><span>IBM X-Force Threat Intelligence Index 2025 &amp; 2026</span><span>DARKMOON · ASC-IT &nbsp;·&nbsp; 03 / 14</span></div>
+</div>
+</body></html>
