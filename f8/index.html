@@ -171,7 +171,7 @@
   *,*::before,*::after{border-color:rgb(255 255 255 / .25)}
   .ring-background{--tw-ring-color:rgb(255 255 255 / .22)}
 
-  /* comme la slide 1 : fond noir sous l'aurore */
+  /* le champ part de vec3(0.) : fond noir, comme la demo du composant */
   .bg-card{border-width:0;background:#000;position:relative}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
@@ -203,13 +203,14 @@ caler();
 window.addEventListener('resize', caler);
 </script>
 <script>
-const VERTEX = "#version 300 es\nprecision highp float;\n\nlayout(location = 0) in vec2 a_position;\nout vec2 vUv;\nvoid main() {\n  gl_Position = vec4(a_position, 0.0, 1.0);\n  vUv = a_position * 0.5 + 0.5;\n}\n";
+// le vertex shader que three.js prefixe pour un ShaderMaterial
+const VERTEX = "attribute vec3 position;\nvoid main() {\n  gl_Position = vec4( position, 1.0 );\n}";
 
-const FRAGMENT = "#version 300 es\nprecision highp float;\n\nuniform vec3 u_resolution;\nuniform float u_time;\nuniform float u_mix;\nout vec4 fragColor;\n\nvoid main() {\n  vec2 fragCoord = gl_FragCoord.xy;\n  vec2 r = u_resolution.xy;\n  vec2 p = (fragCoord + fragCoord - r) / r.y;\n  vec2 z = vec2(0.5);\n  vec2 i = vec2(0.1);\n  vec2 f = p * (z += 5. - 6. * exp(.4 - dot(p, p)));\n  vec4 O = vec4(0.0);\n  for (i.y = 1.0; i.y <= 8.0; i.y += 1.0) {\n    O += (tanh(f) + 1.0).xyyx * abs(f.x - f.y);\n    f += tanh(f.yx * i.y + i + u_time) / i.y + 0.7;\n  }\n  O = tanh(5.0 * exp(z.x - 4.0 - p.y * vec4(-1.0, 1.0, 2.0, 0.0)) / O);\n\n  float mixPhase = dot(p, p) + z.x + u_time + sin(p.x * 1.5 + p.y * 2.5 + u_time * 0.5);\n  float channel = cos(mixPhase * 4.0);\n  // Charte Darkmoon : Royal #0A2472 -> Neon #2667FF -> Jordy #87BFFF -> Alice #DCEAF4\n  float t = 0.5 + 0.5 * channel;\n  vec3 royal = vec3(0.039, 0.141, 0.447);\n  vec3 neon  = vec3(0.149, 0.404, 1.000);\n  vec3 jordy = vec3(0.529, 0.749, 1.000);\n  vec3 alice = vec3(0.863, 0.918, 0.957);\n  vec3 glow = t < 0.34 ? mix(royal, neon, t / 0.34)\n            : t < 0.67 ? mix(neon, jordy, (t - 0.34) / 0.33)\n                       : mix(jordy, alice, (t - 0.67) / 0.33);\n  float lum = dot(O.rgb, vec3(0.299, 0.587, 0.114));\n  O.rgb = glow * lum * 1.15;\n\n  fragColor = O;\n}\n";
+const FRAGMENT = "\n      #define TWO_PI 6.2831853072\n      #define PI 3.14159265359\n\n      precision highp float;\n      uniform vec2 resolution;\n      uniform float time;\n        \n      float random (in float x) {\n          return fract(sin(x)*1e4);\n      }\n      float random (vec2 st) {\n          return fract(sin(dot(st.xy,\n                               vec2(12.9898,78.233)))*\n              43758.5453123);\n      }\n      \n      varying vec2 vUv;\n\n      void main(void) {\n        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);\n        \n        vec2 fMosaicScal = vec2(4.0, 2.0);\n        vec2 vScreenSize = vec2(256,256);\n        uv.x = floor(uv.x * vScreenSize.x / fMosaicScal.x) / (vScreenSize.x / fMosaicScal.x);\n        uv.y = floor(uv.y * vScreenSize.y / fMosaicScal.y) / (vScreenSize.y / fMosaicScal.y);       \n          \n        float t = time*0.06+random(uv.x)*0.4;\n        float lineWidth = 0.0008;\n\n        vec3 color = vec3(0.0);\n        for(int j = 0; j < 3; j++){\n          for(int i=0; i < 5; i++){\n            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*1.0 - length(uv));        \n          }\n        }\n\n        gl_FragColor = vec4(color[2],color[1],color[0],1.0);\n      }\n    ";
 
-// La slide 1 avance a la seconde reelle. Sur les cartes on garde le
-// ralentissement demande plus tot.
-const LENTEUR = 0.35;
+// Le composant fait +0.05 par image, soit 3.0 par seconde a 60 Hz. On garde
+// cette cadence, mais sur l'horloge, et ralentie du facteur demande plus tot.
+const CADENCE = 3.0, LENTEUR = 0.35;
 // decalage de phase par carte : sinon les cinq affichent la meme image
 const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
 const boucles = [];
@@ -223,7 +224,7 @@ document.querySelectorAll('.bg-card').forEach((carte, i) => {
   fond.append(toile, voile);
   carte.prepend(fond);
 
-  const gl = toile.getContext('webgl2', { antialias: false, alpha: false });
+  const gl = toile.getContext('webgl', { antialias: false });
   if (!gl) return;
   function compile(type, src) {
     const sh = gl.createShader(type);
@@ -240,33 +241,32 @@ document.querySelectorAll('.bg-card').forEach((carte, i) => {
     return console.error(gl.getProgramInfoLog(prog));
   gl.useProgram(prog);
 
-  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
-  const vbo = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),
-                gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(0);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  const vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  // le PlaneBufferGeometry(2,2) de la demo, en deux triangles
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1,-1,0,  1,-1,0,  -1,1,0,   -1,1,0,  1,-1,0,  1,1,0]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, 'position');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
 
-  const uTime = gl.getUniformLocation(prog, 'u_time');
-  const uRes = gl.getUniformLocation(prog, 'u_resolution');
-  const uMix = gl.getUniformLocation(prog, 'u_mix');
-  if (uMix) gl.uniform1f(uMix, 0.5);
+  const uTime = gl.getUniformLocation(prog, 'time');
+  const uRes = gl.getUniformLocation(prog, 'resolution');
 
   // clientWidth, pas getBoundingClientRect : la scene porte un `scale`, le
   // rect renvoie la taille a l'ecran et le canevas serait trop petit.
-  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const dpr = window.devicePixelRatio || 1;
   boucles.push(secondes => {
-    const w = Math.max(1, Math.floor(fond.clientWidth * dpr));
-    const h = Math.max(1, Math.floor(fond.clientHeight * dpr));
+    const w = Math.max(1, Math.round(fond.clientWidth * dpr));
+    const h = Math.max(1, Math.round(fond.clientHeight * dpr));
     gl.useProgram(prog);
-    gl.bindVertexArray(vao);
     if (toile.width !== w || toile.height !== h) {
       toile.width = w; toile.height = h;
       gl.viewport(0, 0, w, h);
-      if (uRes) gl.uniform3f(uRes, w, h, 1);
+      gl.uniform2f(uRes, w, h);
     }
-    if (uTime) gl.uniform1f(uTime, secondes + DEPHASAGE[i % DEPHASAGE.length]);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.uniform1f(uTime, secondes * CADENCE + DEPHASAGE[i % DEPHASAGE.length]);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
   });
 });
 
