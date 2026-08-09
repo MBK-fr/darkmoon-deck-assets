@@ -164,23 +164,16 @@
 // (1024 + gouttières) puis mis à l'échelle d'un bloc. Rien n'est recomposé :
 // on change l'échelle, pas la mise en page.
 //
-// On cale sur la grille, pas sur la section : les 8rem de `md:py-32` sont du
-// vide, les rogner remplit la slide sans rien couper du composant.
+// On cale sur la SECTION entière, pas sur la grille : les 8rem de `md:py-32`
+// font partie du composant, les garder est ce qui donne aux cartes leur
+// taille juste. Les rogner remplissait la slide mais rendait tout trop gros.
 const L = 1088, scene = document.getElementById('scene');
-const grille = scene.querySelector('.grid');
 scene.style.width = L + 'px';
 function caler() {
-  // mesurer sans transformation : offsetTop se compte depuis le premier
-  // ancêtre positionné, ici `div.relative`, et donnerait un décalage faux.
   scene.style.transform = 'none';
-  const s0 = scene.getBoundingClientRect(), g0 = grille.getBoundingClientRect();
-  const dy = (g0.top + g0.height / 2) - (s0.top + s0.height / 2);
-  // 24 px de respiration en haut et en bas : les cartes ne touchent pas
-  // le bord de la slide.
-  const k = Math.min(window.innerWidth / L,
-                     (window.innerHeight - 48) / g0.height);
-  scene.style.transform =
-    'translate(-50%,calc(-50% - ' + dy * k + 'px)) scale(' + k + ')';
+  const h = scene.getBoundingClientRect().height;
+  const k = Math.min(window.innerWidth / L, window.innerHeight / h);
+  scene.style.transform = 'translate(-50%,-50%) scale(' + k + ')';
 }
 caler();
 window.addEventListener('resize', caler);
