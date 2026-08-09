@@ -176,22 +176,63 @@
   .gap-4{gap:1rem}
   /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
      noire ne se voit pas, autant ne rien peindre */
-  /* Le filet etait deja a 1 px, pas 2. Chromium ramene toute bordure
-     inferieure a 1 pixel-ecran, `.5px` ne change donc rien : le seul levier
-     pour l'affiner visuellement est de baisser l'opacite du blanc. */
-  .bg-card{border:1px solid rgb(255 255 255 / .5);background:#000;
-           position:relative;
-           box-shadow:none}
+  /* filet blanc annule ; grosse ombre noire pour detacher les cartes du fond
+     etheral, qui est clair par endroits */
+  .bg-card{border-width:0;background:#000;position:relative;
+           box-shadow:0 26px 70px rgb(0 0 0 / .92),
+                      0 0 46px 12px rgb(0 0 0 / .78)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
+
+  /* @jatin-yadav05/etheral-shadow, en fond de slide.
+     Structure et valeurs reprises du composant : le calque deborde de N,
+     porte `url(#filtre) blur(4px)`, et contient un aplat de couleur masque
+     par l'image du composant. Le grain est un second calque au-dessus. */
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 -webkit-mask-image:url('ether-mask.png');
+                 mask-image:url('ether-mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('ether-noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+  #scene{z-index:1}
   /* Pas de voile sur ce fond-la : mesure faite, le texte blanc y tient a
      12,6:1 sans aide. La carte montre le composant, rien d'autre. */
 </style></head>
 <body class="bg-background text-foreground">
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <!-- le composant anime `values` de 0 a 360 ; duree = B/25 avec
+               B = mapRange(speed 90, 1, 100, 1000, 50) = 146 ms, soit 5,84 s -->
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
 <div id="scene"><section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex h-24 w-56 items-center justify-center gap-4"><img class="" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:52px;width:52px"><span class="block w-fit text-5xl font-semibold">×4</span></div><h2 class="mt-6 text-center text-3xl font-semibold">de compromissions vs les grandes entreprises</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">88 % des attaques sur PME</h2><p class="text-foreground">sont des ransomwares</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">45 % des organisations : arrêt</h2><p class="text-foreground">via un tiers en 2 ans</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">58 % des PME UE touchées</h2><p class="text-foreground">subissent un impact économique</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">Régions les plus attaquées</h2><p class="text-foreground">Asie-Pacifique 34 %, Amérique du Nord 24 % des incidents mondiaux (2024). Secteur n°1 : l'industrie, 27,7 % de toutes les attaques, 5ᵉ année consécutive en tête.</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Verizon DBIR 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Gartner 2023</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Eurobarometer 2022</span></div></div></div></div></div></div></div></div></section></div>
 <script>
 // La slide fait 1280 x 720 ; le composant est composé à sa largeur naturelle
