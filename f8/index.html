@@ -211,6 +211,11 @@
                       transform 1.9s cubic-bezier(.22,.61,.36,1),
                       filter 1.9s cubic-bezier(.22,.61,.36,1)}
   .bg-card.entree{opacity:1;transform:none;filter:blur(0)}
+  /* Une fois l'ouverture finie on retire le filtre : `blur(0)` maintient la
+     carte dans un calque composite, rasterise a part puis remis a l'echelle
+     0,78 de la scene, ce qui ramollit texte et filets. `none` la fait
+     repeindre dans le flux normal, au piqué de l'ecran. */
+  .bg-card.fini{filter:none;transition:none}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
@@ -357,7 +362,10 @@ function ouvrir() {
   derniereOuverture = performance.now();
   rideau.classList.remove('leve');
   ether.classList.remove('net');
-  cartes.forEach(c => { c.classList.remove('entree'); c.style.transitionDelay = '0s'; });
+  cartes.forEach(c => {
+    c.classList.remove('entree', 'fini');
+    c.style.transitionDelay = '0s';
+  });
   void document.body.offsetWidth;          // force le retour a l'etat ferme
   requestAnimationFrame(() => {
     rideau.classList.add('leve');
@@ -368,6 +376,12 @@ function ouvrir() {
     });
   });
 }
+
+// fin de l'ouverture : on sort les cartes du calque de filtre
+cartes.forEach(c => c.addEventListener('transitionend', e => {
+  if (e.propertyName === 'filter' && c.classList.contains('entree'))
+    c.classList.add('fini');
+}));
 ouvrir();
 
 // Rejouer a chaque retour sur la slide. Le lecteur masque les slides non
