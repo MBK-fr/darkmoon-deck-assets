@@ -176,7 +176,11 @@
   .gap-4{gap:1rem}
   /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
      noire ne se voit pas, autant ne rien peindre */
-  .bg-card{border:1px solid #fff;background:#000;position:relative;
+  /* Le filet etait deja a 1 px, pas 2. Chromium ramene toute bordure
+     inferieure a 1 pixel-ecran, `.5px` ne change donc rien : le seul levier
+     pour l'affiner visuellement est de baisser l'opacite du blanc. */
+  .bg-card{border:1px solid rgb(255 255 255 / .5);background:#000;
+           position:relative;
            box-shadow:none}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
