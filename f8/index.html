@@ -200,12 +200,17 @@
      Un rideau noir couvre tout, puis se leve ; les cartes montent derriere
      lui, decalees les unes des autres. */
   #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
-          opacity:1;transition:opacity 1.6s cubic-bezier(.22,.61,.36,1)}
+          opacity:1;transition:opacity 2.4s cubic-bezier(.22,.61,.36,1)}
   #rideau.leve{opacity:0}
-  .bg-card{opacity:0;transform:translateY(22px) scale(.988);
-           transition:opacity 1.15s cubic-bezier(.22,.61,.36,1),
-                      transform 1.15s cubic-bezier(.22,.61,.36,1)}
-  .bg-card.entree{opacity:1;transform:none}
+  /* le fond se fait aussi la mise au point, sinon seules les cartes piquent
+     et le decor reste plat */
+  #ether{filter:blur(12px);transition:filter 2.6s cubic-bezier(.22,.61,.36,1)}
+  #ether.net{filter:none}
+  .bg-card{opacity:0;transform:translateY(26px) scale(.985);filter:blur(16px);
+           transition:opacity 1.9s cubic-bezier(.22,.61,.36,1),
+                      transform 1.9s cubic-bezier(.22,.61,.36,1),
+                      filter 1.9s cubic-bezier(.22,.61,.36,1)}
+  .bg-card.entree{opacity:1;transform:none;filter:blur(0)}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
@@ -347,15 +352,18 @@ document.body.appendChild(rideau);
 const cartes = [...document.querySelectorAll('.bg-card')];
 let derniereOuverture = 0;
 
+const ether = document.getElementById('ether');
 function ouvrir() {
   derniereOuverture = performance.now();
   rideau.classList.remove('leve');
+  ether.classList.remove('net');
   cartes.forEach(c => { c.classList.remove('entree'); c.style.transitionDelay = '0s'; });
   void document.body.offsetWidth;          // force le retour a l'etat ferme
   requestAnimationFrame(() => {
     rideau.classList.add('leve');
+    ether.classList.add('net');
     cartes.forEach((c, i) => {
-      c.style.transitionDelay = (0.28 + i * 0.13) + 's';
+      c.style.transitionDelay = (0.35 + i * 0.19) + 's';
       c.classList.add('entree');
     });
   });
