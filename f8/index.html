@@ -173,7 +173,7 @@
 
   /* la teinte la plus sombre de la palette sort en alpha 0 : on pose dessous
      le noir bleute de cette meme teinte, sinon c'est le noir de la slide */
-  .bg-card{border:9px solid #fff;background:#3f7eb2;position:relative}
+  .bg-card{border:4px solid #fff;background:#00050d;position:relative}
   .bg-card>*:not(.fond){position:relative;z-index:1}
   .fond{position:absolute;inset:0;z-index:0;overflow:hidden}
   .fond canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
@@ -203,20 +203,10 @@ window.addEventListener('resize', caler);
 </script>
 <script>
 // ── palette et constantes du composant, telles quelles
-const PALETTE_COMPOSANT = [[0,.02,.05],[0,.04,.08],[0,.06,.12],[0,.08,.18],
-  [0,.1,.24],[0,.14,.32],[0,.2,.4],[0,.24,.48],[0,.3,.55],[.05,.35,.6],
-  [.08,.4,.65],[.1,.45,.7],[.15,.5,.75],[.2,.58,.8],[.25,.65,.85],[.3,.72,.9],
-  [.4,.78,.92],[.5,.85,.95],[.7,.9,.97],[.85,.95,1]];
-
-// Le fond du composant part d'un bleu nuit presque noir. On le tire vers le
-// ciel SANS toucher aux crêtes : le poids vaut 1 sur la teinte la plus sombre
-// et retombe à 0 sur la plus claire, les nuages restent exactement ce qu'ils
-// étaient.
-const CIEL = [.30, .60, .84], FORCE = .82;
-const PALETTE = PALETTE_COMPOSANT.map((c, i) => {
-  const w = Math.pow(1 - i / 19, 1.35) * FORCE;
-  return c.map((v, k) => +(v + (CIEL[k] - v) * w).toFixed(4));
-});
+const PALETTE = [[0,.02,.05],[0,.04,.08],[0,.06,.12],[0,.08,.18],[0,.1,.24],
+  [0,.14,.32],[0,.2,.4],[0,.24,.48],[0,.3,.55],[.05,.35,.6],[.08,.4,.65],
+  [.1,.45,.7],[.15,.5,.75],[.2,.58,.8],[.25,.65,.85],[.3,.72,.9],[.4,.78,.92],
+  [.5,.85,.95],[.7,.9,.97],[.85,.95,1]];
 const ZOOM = .3, AMPLI = .2, AMPLI_VAR = .15, FREQ = 4, VITESSE = .25,
       TOURBILLON = 1.2, TOURBILLON_R = 5, EFFET = .2, OCTAVES = 10;
 
