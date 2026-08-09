@@ -174,11 +174,10 @@
   /* `gap-4` n'est pas dans le port CSS : le composant ne s'en sert pas, mais
      le nettoyage de la carte 1 en a besoin pour separer le picto du nombre. */
   .gap-4{gap:1rem}
-  /* le halo passe apres `.shadow-sm` du composant, meme specificite,
-     donc c'est bien celui-ci qui s'applique */
+  /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
+     noire ne se voit pas, autant ne rien peindre */
   .bg-card{border:1px solid #fff;background:#000;position:relative;
-           box-shadow:0 0 22px rgb(255 255 255 / .13),
-                      0 0 6px rgb(255 255 255 / .10)}
+           box-shadow:none}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
