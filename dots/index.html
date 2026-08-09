@@ -1,0 +1,87 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;
+            font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";color:#fff}
+  .scene{height:100%;box-sizing:border-box;padding:54px 76px 40px;
+         display:flex;flex-direction:column}
+
+  /* ── blur-text-animation */
+  .phrase{font-size:27px;font-weight:300;line-height:1.62;letter-spacing:.01em;
+          margin:0;max-width:1128px;perspective:900px}
+  .m{display:inline-block;margin-right:.35em;opacity:0;
+     transition-property:opacity,filter,transform,text-shadow;
+     transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+     will-change:filter,transform,opacity;transform-style:preserve-3d;
+     backface-visibility:hidden}
+
+  /* ── moving-dot-card, structure et keyframes du composant */
+  .cartes{margin-top:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+  .outer{position:relative;width:100%;height:132px;border-radius:14px;
+         padding:1px;background:radial-gradient(circle 100px at 20% 0%,
+         rgba(255,255,255,.22),transparent 60%),rgba(255,255,255,.05);
+         opacity:0;animation:apparition 1.6s cubic-bezier(.25,.46,.45,.94) var(--d) both}
+  @keyframes apparition{from{opacity:0;filter:blur(10px);transform:translateY(14px)}
+                        to{opacity:1;filter:blur(0);transform:none}}
+  .dot{position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;
+       z-index:3;box-shadow:0 0 10px #fff;animation:moveDot 6s linear infinite}
+  @keyframes moveDot{
+    0%,100%{top:10%;right:10%}
+    25%{top:10%;right:calc(100% - 35px)}
+    50%{top:calc(100% - 30px);right:calc(100% - 35px)}
+    75%{top:calc(100% - 30px);right:10%}}
+  .card{position:relative;height:100%;border-radius:13px;background:#0a0a0c;
+        display:flex;flex-direction:column;align-items:center;
+        justify-content:center;overflow:hidden}
+  .ray{position:absolute;width:200px;height:44px;border-radius:100px;
+       background:#c7d2fe;opacity:.28;filter:blur(38px);top:-14px;left:-38px;
+       transform:rotate(40deg)}
+  .text{font-size:30px;font-weight:700;letter-spacing:-.02em;
+        background:linear-gradient(45deg,#dbeafe 0%,#3b82f6 100%);
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .label{font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+         color:#8a8a92;margin-top:6px}
+  .line{position:absolute;background:rgba(255,255,255,.12)}
+  .topl{top:14%;left:0;width:100%;height:1px}
+  .bottoml{bottom:14%;left:0;width:100%;height:1px}
+  .leftl{left:14%;top:0;height:100%;width:1px}
+  .rightl{right:14%;top:0;height:100%;width:1px}
+
+  .bas{display:flex;justify-content:space-between;font-size:11.5px;
+       letter-spacing:.14em;color:#fff;opacity:.34;margin-top:22px;
+       animation:apparition 1.6s ease 3.6s both}
+</style></head><body>
+<div class="scene">
+  <p class="phrase" id="p"></p>
+  <div class="cartes"><div class="outer" style="--d:2.40s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">×4</div><div class="label">compromissions</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.58s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">88 %</div><div class="label">ransomwares</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.76s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">45 %</div><div class="label">via un tiers</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:2.94s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">58 %</div><div class="label">PME UE</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:3.12s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">34 %</div><div class="label">Asie-Pacifique</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div><div class="outer" style="--d:3.30s"><div class="dot"></div><div class="card"><div class="ray"></div><div class="text">27,7 %</div><div class="label">industrie</div><div class="line topl"></div><div class="line leftl"></div><div class="line bottoml"></div><div class="line rightl"></div></div></div></div>
+  <div class="bas"><span>Verizon DBIR 2025 · Gartner 2023 · Eurobarometer 2022 · IBM X-Force Threat Intelligence Index 2025 &amp; 2026</span><span>DARKMOON · ASC-IT &nbsp;·&nbsp; 03 / 14</span></div>
+</div>
+<script>
+const MOTS = [{"t": "L'EXPOSITION", "d": 2.5, "r": -0.012, "b": 14, "s": 0.9}, {"t": "EN", "d": 2.487, "r": 0.067, "b": 14, "s": 0.91}, {"t": "CHIFFRES.", "d": 2.448, "r": 0.133, "b": 14, "s": 0.919}, {"t": "PME", "d": 2.386, "r": 0.151, "b": 15, "s": 0.928}, {"t": "et", "d": 2.309, "r": 0.235, "b": 12, "s": 0.936}, {"t": "sous-traitants", "d": 2.221, "r": 0.273, "b": 12, "s": 0.942}, {"t": ":", "d": 2.132, "r": 0.354, "b": 14, "s": 0.947}, {"t": "les", "d": 2.049, "r": 0.361, "b": 16, "s": 0.949}, {"t": "plus", "d": 1.979, "r": 0.451, "b": 18, "s": 0.95}, {"t": "exposés.", "d": 1.929, "r": 0.51, "b": 16, "s": 0.949}, {"t": "×4", "d": 1.903, "r": 0.532, "b": 15, "s": 0.945}, {"t": "de", "d": 1.904, "r": 0.591, "b": 18, "s": 0.94}, {"t": "compromissions", "d": 1.931, "r": 0.652, "b": 18, "s": 0.934}, {"t": "vs", "d": 1.982, "r": 0.702, "b": 13, "s": 0.926}, {"t": "les", "d": 2.053, "r": 0.739, "b": 16, "s": 0.917}, {"t": "grandes", "d": 2.137, "r": 0.808, "b": 14, "s": 0.907}, {"t": "entreprises.", "d": 2.226, "r": 0.847, "b": 19, "s": 0.897}, {"t": "88", "d": 2.313, "r": 0.903, "b": 16, "s": 0.887}, {"t": "%", "d": 2.39, "r": 0.938, "b": 17, "s": 0.878}, {"t": "des", "d": 2.45, "r": 0.992, "b": 19, "s": 0.869}, {"t": "attaques", "d": 2.488, "r": 1.044, "b": 16, "s": 0.862}, {"t": "sur", "d": 2.5, "r": 1.102, "b": 14, "s": 0.856}, {"t": "PME", "d": 2.485, "r": 1.162, "b": 15, "s": 0.852}, {"t": "sont", "d": 2.445, "r": 1.212, "b": 15, "s": 0.85}, {"t": "des", "d": 2.383, "r": 1.27, "b": 14, "s": 0.85}, {"t": "ransomwares.", "d": 2.304, "r": 1.29, "b": 19, "s": 0.852}, {"t": "45", "d": 2.216, "r": 1.357, "b": 18, "s": 0.856}, {"t": "%", "d": 2.127, "r": 1.435, "b": 12, "s": 0.861}, {"t": "des", "d": 2.044, "r": 1.45, "b": 19, "s": 0.868}, {"t": "organisations", "d": 1.975, "r": 1.53, "b": 19, "s": 0.877}, {"t": ":", "d": 1.927, "r": 1.572, "b": 14, "s": 0.886}, {"t": "arrêt", "d": 1.902, "r": 1.628, "b": 16, "s": 0.896}, {"t": "via", "d": 1.905, "r": 1.686, "b": 17, "s": 0.906}, {"t": "un", "d": 1.933, "r": 1.703, "b": 17, "s": 0.916}, {"t": "tiers", "d": 1.986, "r": 1.769, "b": 14, "s": 0.925}, {"t": "en", "d": 2.057, "r": 1.839, "b": 15, "s": 0.933}, {"t": "2", "d": 2.142, "r": 1.88, "b": 15, "s": 0.94}, {"t": "ans.", "d": 2.231, "r": 1.938, "b": 12, "s": 0.945}, {"t": "58", "d": 2.318, "r": 1.974, "b": 12, "s": 0.948}, {"t": "%", "d": 2.394, "r": 2.014, "b": 17, "s": 0.95}, {"t": "des", "d": 2.453, "r": 2.055, "b": 15, "s": 0.949}, {"t": "PME", "d": 2.489, "r": 2.105, "b": 13, "s": 0.947}, {"t": "UE", "d": 2.5, "r": 2.192, "b": 14, "s": 0.943}, {"t": "touchées", "d": 2.483, "r": 2.201, "b": 12, "s": 0.937}, {"t": "subissent", "d": 2.442, "r": 2.296, "b": 17, "s": 0.929}, {"t": "un", "d": 2.378, "r": 2.33, "b": 12, "s": 0.921}, {"t": "impact", "d": 2.299, "r": 2.354, "b": 16, "s": 0.911}, {"t": "économique.", "d": 2.211, "r": 2.404, "b": 16, "s": 0.901}, {"t": "Régions", "d": 2.122, "r": 2.494, "b": 13, "s": 0.891}, {"t": "les", "d": 2.04, "r": 2.546, "b": 17, "s": 0.882}, {"t": "plus", "d": 1.972, "r": 2.592, "b": 12, "s": 0.873}, {"t": "attaquées", "d": 1.925, "r": 2.599, "b": 17, "s": 0.865}, {"t": ":", "d": 1.902, "r": 2.657, "b": 19, "s": 0.859}, {"t": "Asie-Pacifique", "d": 1.906, "r": 2.711, "b": 15, "s": 0.854}, {"t": "34", "d": 1.936, "r": 2.764, "b": 12, "s": 0.851}, {"t": "%", "d": 1.989, "r": 2.818, "b": 14, "s": 0.85}, {"t": "", "d": 2.062, "r": 2.887, "b": 16, "s": 0.851}, {"t": "·", "d": 2.147, "r": 2.921, "b": 15, "s": 0.854}, {"t": "", "d": 2.236, "r": 2.963, "b": 15, "s": 0.859}, {"t": "Amérique", "d": 2.323, "r": 3.018, "b": 15, "s": 0.865}, {"t": "du", "d": 2.398, "r": 3.079, "b": 18, "s": 0.873}, {"t": "Nord", "d": 2.456, "r": 3.11, "b": 17, "s": 0.882}, {"t": "24", "d": 2.491, "r": 3.171, "b": 17, "s": 0.892}, {"t": "%", "d": 2.5, "r": 3.22, "b": 13, "s": 0.902}, {"t": "", "d": 2.482, "r": 3.253, "b": 12, "s": 0.912}, {"t": "des", "d": 2.439, "r": 3.33, "b": 12, "s": 0.921}, {"t": "incidents", "d": 2.374, "r": 3.382, "b": 16, "s": 0.93}, {"t": "mondiaux", "d": 2.294, "r": 3.409, "b": 19, "s": 0.937}, {"t": "(2024).", "d": 2.206, "r": 3.499, "b": 18, "s": 0.943}, {"t": "Secteur", "d": 2.117, "r": 3.516, "b": 16, "s": 0.947}, {"t": "n°1", "d": 2.036, "r": 3.575, "b": 14, "s": 0.95}, {"t": ":", "d": 1.969, "r": 3.606, "b": 12, "s": 0.95}, {"t": "l'industrie", "d": 1.923, "r": 3.654, "b": 14, "s": 0.948}, {"t": "—", "d": 1.901, "r": 3.709, "b": 16, "s": 0.945}, {"t": "27,7", "d": 1.907, "r": 3.779, "b": 16, "s": 0.939}, {"t": "%", "d": 1.938, "r": 3.8, "b": 14, "s": 0.933}, {"t": "de", "d": 1.993, "r": 3.853, "b": 19, "s": 0.924}, {"t": "toutes", "d": 2.066, "r": 3.92, "b": 18, "s": 0.915}, {"t": "les", "d": 2.152, "r": 3.95, "b": 16, "s": 0.905}, {"t": "attaques", "d": 2.241, "r": 4.004, "b": 12, "s": 0.895}, {"t": "—", "d": 2.327, "r": 4.063, "b": 14, "s": 0.886}, {"t": "5ᵉ", "d": 2.402, "r": 4.142, "b": 15, "s": 0.876}, {"t": "année", "d": 2.458, "r": 4.192, "b": 14, "s": 0.868}, {"t": "consécutive", "d": 2.492, "r": 4.2, "b": 17, "s": 0.861}, {"t": "en", "d": 2.499, "r": 4.249, "b": 16, "s": 0.856}, {"t": "tête.", "d": 2.48, "r": 4.335, "b": 15, "s": 0.852}];
+const p = document.getElementById('p');
+MOTS.forEach(w => {
+  const e = document.createElement('span');
+  e.className = 'm'; e.textContent = w.t;
+  e.style.transitionDuration = w.d + 's';
+  e.style.transitionDelay = w.r + 's';
+  p.appendChild(e);
+});
+const spans = [...p.children];
+function repos(){
+  spans.forEach((e,i)=>{ const w = MOTS[i];
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
+    e.style.transform = 'translateY(20px) scale(' + w.s + ') rotateX(-15deg)';
+    e.style.textShadow = '0 0 40px rgba(255,255,255,.28)'; });
+}
+function jouer(){
+  repos();
+  requestAnimationFrame(()=>setTimeout(()=>{
+    spans.forEach(e=>{ e.style.opacity = 1;
+      e.style.filter = 'blur(0px) brightness(1)';
+      e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+      e.style.textShadow = 'none'; }); }, 200));
+  const fin = Math.max(...MOTS.map(w=>w.r + w.d));
+  setTimeout(jouer, (fin + 1) * 1000 + 6000);
+}
+jouer();
+</script></body></html>
