@@ -176,11 +176,12 @@
   .gap-4{gap:1rem}
   /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
      noire ne se voit pas, autant ne rien peindre */
-  /* filet blanc annule ; grosse ombre noire pour detacher les cartes du fond
-     etheral, qui est clair par endroits */
-  .bg-card{border-width:0;background:#000;position:relative;
-           box-shadow:0 26px 70px rgb(0 0 0 / .92),
-                      0 0 46px 12px rgb(0 0 0 / .78)}
+  /* filet blanc de 2 px, et une ombre noire large et franche pour detacher
+     les cartes du fond etheral, qui est clair par endroits */
+  .bg-card{border:2px solid #fff;background:#000;position:relative;
+           box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
+                      0 0 90px 40px rgb(0 0 0 / .92),
+                      0 0 28px 6px rgb(0 0 0 / .85)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
