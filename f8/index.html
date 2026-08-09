@@ -196,6 +196,17 @@
      Structure et valeurs reprises du composant : le calque deborde de N,
      porte `url(#filtre) blur(4px)`, et contient un aplat de couleur masque
      par l'image du composant. Le grain est un second calque au-dessus. */
+  /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
+     Un rideau noir couvre tout, puis se leve ; les cartes montent derriere
+     lui, decalees les unes des autres. */
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:1;transition:opacity 1.6s cubic-bezier(.22,.61,.36,1)}
+  #rideau.leve{opacity:0}
+  .bg-card{opacity:0;transform:translateY(22px) scale(.988);
+           transition:opacity 1.15s cubic-bezier(.22,.61,.36,1),
+                      transform 1.15s cubic-bezier(.22,.61,.36,1)}
+  .bg-card.entree{opacity:1;transform:none}
+
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
                  filter:url(#ether-filtre) blur(4px)}
@@ -328,5 +339,38 @@ function rendre() {
   requestAnimationFrame(rendre);
 }
 rendre();
+
+// ── Ouverture : le rideau noir se leve, les cartes montent derriere
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const cartes = [...document.querySelectorAll('.bg-card')];
+let derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  rideau.classList.remove('leve');
+  cartes.forEach(c => { c.classList.remove('entree'); c.style.transitionDelay = '0s'; });
+  void document.body.offsetWidth;          // force le retour a l'etat ferme
+  requestAnimationFrame(() => {
+    rideau.classList.add('leve');
+    cartes.forEach((c, i) => {
+      c.style.transitionDelay = (0.28 + i * 0.13) + 's';
+      c.classList.add('entree');
+    });
+  });
+}
+ouvrir();
+
+// Rejouer a chaque retour sur la slide. Le lecteur masque les slides non
+// courantes, le navigateur gele alors les rAF de l'iframe : un trou de plus
+// d'une demi-seconde signale donc que la slide revient a l'ecran.
+let precedent = performance.now();
+(function veille() {
+  const t = performance.now();
+  if (t - precedent > 500 && t - derniereOuverture > 2500) ouvrir();
+  precedent = t;
+  requestAnimationFrame(veille);
+})();
 </script>
 </body></html>
