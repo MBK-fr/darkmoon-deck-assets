@@ -175,7 +175,7 @@
      Elle est posee en frere du canevas, pas dans la section, sinon la section
      formerait un contexte d'empilement et le fondu ne verrait plus le metal. */
   .releve{position:absolute;z-index:0;pointer-events:none;
-          background:#787878;mix-blend-mode:screen;border-radius:var(--radius)}
+          background:#363636;mix-blend-mode:screen;border-radius:var(--radius)}
   #scene>section{position:relative;z-index:1}
 
   /* les details du composant qui etaient regles pour du fond sombre */
@@ -479,6 +479,8 @@ const extrudeSettings = {
   bevelThickness: 2.5
 };
 
+const GEL = [73.45, 18.08, 18.08, 91.53, 91.53];
+
 const BISEAU = 2.5;        // bevelSize, en unites SVG
 const RAYON = 8;           // coins arrondis, en unites SVG (hauteur = 100)
 const loader = new SVGLoader();
@@ -533,12 +535,26 @@ document.querySelectorAll('.bg-card').forEach(carte => {
   cadre.insertBefore(plaque, cadre.firstChild.nextSibling);
 });
 
+window.__mats = materiaux;   // point d'entree pour les mesures
+// Chaque carte est figee sur un instant choisi du metal (voir GEL). Le pen
+// derive lentement ; sur une slide cette derive finit toujours par amener une
+// flaque sombre sous un mot. On choisit l'instant plutot que de le subir.
+window.__gel = GEL;
 const clock = new THREE.Clock();
-function animer() {
-  requestAnimationFrame(animer);
-  const t = clock.getElapsedTime();
-  for (const m of materiaux) m.userData.uTime.value = t;
+function rendre(t) {
+  materiaux.forEach((m, i) => {
+    m.userData.uTime.value = window.__gel ? window.__gel[i] : t;
+  });
   renderer.render(scene, camera);
+}
+window.__rendre = () => rendre(0);
+// Une fois gele, on ne rend plus en boucle : le metal est une matiere, pas une
+// animation. On laisse passer quelques images le temps que l'environnement
+// PMREM et les masques soient prets, puis on s'arrete.
+let images = 0;
+function animer() {
+  rendre(clock.getElapsedTime());
+  if (!window.__gel || ++images < 40) requestAnimationFrame(animer);
 }
 animer();
 </script>
