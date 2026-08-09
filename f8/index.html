@@ -173,7 +173,9 @@
 
   /* la teinte la plus sombre de la palette sort en alpha 0 : on pose dessous
      le noir bleute de cette meme teinte, sinon c'est le noir de la slide */
-  .bg-card{border:4px solid #fff;background:#00050d;position:relative}
+  .bg-card{border-width:0;background:#00050d;position:relative}
+  /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
+  .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
   .fond{position:absolute;inset:0;z-index:0;overflow:hidden}
   .fond canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
