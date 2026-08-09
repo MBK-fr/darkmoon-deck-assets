@@ -202,6 +202,9 @@
   #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
           opacity:1;transition:opacity 2.4s cubic-bezier(.22,.61,.36,1)}
   #rideau.leve{opacity:0}
+  /* rideau retire du composite une fois leve : un calque plein ecran, meme
+     totalement transparent, reste un calque */
+  #rideau.range{display:none}
   /* le fond se fait aussi la mise au point, sinon seules les cartes piquent
      et le decor reste plat */
   #ether{filter:blur(12px);transition:filter 2.6s cubic-bezier(.22,.61,.36,1)}
@@ -360,7 +363,7 @@ let derniereOuverture = 0;
 const ether = document.getElementById('ether');
 function ouvrir() {
   derniereOuverture = performance.now();
-  rideau.classList.remove('leve');
+  rideau.classList.remove('leve', 'range');
   ether.classList.remove('net');
   cartes.forEach(c => {
     c.classList.remove('entree', 'fini');
@@ -374,14 +377,23 @@ function ouvrir() {
       c.style.transitionDelay = (0.35 + i * 0.19) + 's';
       c.classList.add('entree');
     });
+    setTimeout(figer, 3400);
   });
 }
 
-// fin de l'ouverture : on sort les cartes du calque de filtre
+// Fin de l'ouverture : on sort les cartes du calque de filtre. `transitionend`
+// ne se declenche pas si la transition est interrompue (retour rapide sur la
+// slide, onglet en arriere-plan), d'ou le repli sur minuterie.
+function figer() {
+  cartes.forEach(c => { if (c.classList.contains('entree')) c.classList.add('fini'); });
+  if (rideau.classList.contains('leve')) rideau.classList.add('range');
+}
 cartes.forEach(c => c.addEventListener('transitionend', e => {
   if (e.propertyName === 'filter' && c.classList.contains('entree'))
     c.classList.add('fini');
 }));
+const finOuverture = () => setTimeout(figer, 3400);   // 0,35 + 4x0,19 + 1,9 s
+finOuverture();
 ouvrir();
 
 // Rejouer a chaque retour sur la slide. Le lecteur masque les slides non
