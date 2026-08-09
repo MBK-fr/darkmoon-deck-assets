@@ -157,7 +157,7 @@
     .lg\:space-y-6>*+*{margin-top:1.5rem}
   }
 </style><style>
-  :root{ --radius:28px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
+  :root{ --radius:0px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
   /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
      sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
      plus clair que la carte) en les passant en blanc a faible alpha. */
@@ -176,9 +176,9 @@
   .gap-4{gap:1rem}
   /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
      noire ne se voit pas, autant ne rien peindre */
-  /* filet retire ; angles tres arrondis. `--radius` pilote a la fois la carte
-     (`rounded-lg`) et le cadre du fond anime, les deux restent alignes. */
-  .bg-card{border-width:0;background:#000;position:relative;
+  /* filet blanc de 2 px, et une ombre noire large et franche pour detacher
+     les cartes du fond etheral, qui est clair par endroits */
+  .bg-card{border:2px solid #fff;background:#000;position:relative;
            box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
                       0 0 28px 6px rgb(0 0 0 / .85)}
