@@ -217,15 +217,10 @@
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
   .bg-card{border-width:0;position:relative;background:#04060c;
            box-shadow:0 1px 0 rgb(0 0 0 / .9), 0 0 22px rgb(0 0 0 / .5)}
-  /* Les deux passes d'eclairage, au-dessus du fond anime, sous le texte.
-     La classe est doublee dans le selecteur pour passer devant la regle
-     `.bg-card>*:not(.fond){position:relative;z-index:1}` du composant :
-     elle remettait ces calques en `position:relative`, donc `inset:0` ne
-     s'appliquait plus et ils sortaient a zero pixel de large. */
-  .bg-card>.relief.relief{position:absolute;inset:0;z-index:0;
-          border-radius:inherit;pointer-events:none;background:#fff}
-  .relief.joue{filter:url(#dm-joue);mix-blend-mode:screen}
-  .relief.spec{filter:url(#dm-spec);mix-blend-mode:screen}
+  /* Le biseau est peint par le script, pixel par pixel : voir le montage.
+     Aucun filtre SVG, aucune ombre : une carte de hauteur et un eclairage. */
+  .bg-card>.biseau.biseau{position:absolute;inset:0;z-index:0;
+          pointer-events:none;border-radius:inherit}
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -412,68 +407,7 @@
   </div>
   <div class="grain"></div>
 </div>
-<div id="scene"><svg width="0" height="0" style="position:absolute"
-     aria-hidden="true"><defs>
-  <!-- La carte de hauteur : l'alpha de la forme, floute sur 2,4 px. Le flou
-       fait la PENTE ; plus il est court, plus le chanfrein est vif. -->
-  <!-- LARGEUR DE LA PENTE. A 2,4 px de flou le biseau ne faisait que trois
-       pixels : a l'ecran ca se lit comme un trait blanc, pas comme une pente.
-       On passe a 8 px, donc une vraie joue de biseau que l'oeil peut suivre,
-       et on baisse l'exposant a 12 : un materiau mat etale son reflet, seul
-       un verre poli le concentre en un fil. -->
-  <!-- LA JOUE de la pente. Le speculaire ne donne qu'un fil de lumiere ;
-       c'est le terme diffus, en cosinus, qui donne la matiere sur toute la
-       largeur du biseau.
-       La lumiere est BLANCHE ici, et la teinte est appliquee apres coup par
-       `feColorMatrix`. En colorant directement la lampe, les trois canaux
-       n'avaient pas le meme plancher : soustraire la meme valeur a tous les
-       trois vidait le rouge, gardait le bleu, et la joue sortait en neon. -->
-  <filter id="dm-joue" x="-8%" y="-8%" width="116%" height="116%"
-          color-interpolation-filters="sRGB">
-    <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="pente"/>
-    <feDiffuseLighting in="pente" surfaceScale="-34" diffuseConstant="1"
-                       lighting-color="#ffffff" result="lum">
-      <feDistantLight azimuth="225" elevation="34"/>
-    </feDiffuseLighting>
-    <feComponentTransfer in="lum" result="net">
-      <feFuncR type="linear" slope="2.2" intercept="-1.232"/>
-      <feFuncG type="linear" slope="2.2" intercept="-1.232"/>
-      <feFuncB type="linear" slope="2.2" intercept="-1.232"/>
-      <feFuncA type="linear" slope="2.2" intercept="-1.232"/>
-    </feComponentTransfer>
-    <feColorMatrix in="net" type="matrix" result="teinte"
-      values="0.6 0 0 0 0  0 0.7 0 0 0  0 0 0.85 0 0  0 0 0 0.85 0"/>
-    <feComposite in="teinte" in2="SourceAlpha" operator="in"/>
-  </filter>
-  <filter id="dm-spec" x="-8%" y="-8%" width="116%" height="116%"
-          color-interpolation-filters="sRGB">
-    <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="pente"/>
-    <feSpecularLighting in="pente" surfaceScale="-30" specularConstant="1.25"
-                        specularExponent="12" lighting-color="#eaf3ff"
-                        result="lum">
-      <feDistantLight azimuth="225" elevation="34"/>
-    </feSpecularLighting>
-    <!-- Le seuil n'est pas devine, il est mesure : calque isole sur fond
-         noir, le speculaire brut rend 0,433 sur le plat et culmine a 0,706
-         sur l'arete. On soustrait donc ce plancher et on redresse, en
-         LINEAIRE : une table a paliers coupait si net que l'arete sortait en
-         rail blanc d'un pixel au lieu d'une pente. La droite passe par
-         (0,433 ; 0) et rend 0,68 au sommet, en degrade continu.
-         L'ALPHA subit la meme correction : `feSpecularLighting` sort une
-         opacite egale a son plus fort canal, et sans cette coupe le mode
-         ecran remontait toute la carte de 21 niveaux. -->
-    <feComponentTransfer in="lum" result="net">
-      <feFuncR type="linear" slope="2.5" intercept="-1.0825"/>
-      <feFuncG type="linear" slope="2.5" intercept="-1.0825"/>
-      <feFuncB type="linear" slope="2.5" intercept="-1.0825"/>
-      <feFuncA type="linear" slope="2.5" intercept="-1.0825"/>
-    </feComponentTransfer>
-    <feComposite in="net" in2="SourceAlpha" operator="in"/>
-  </filter>
-
-
-</defs></svg>
-<section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex h-24 w-56 items-center justify-center gap-4"><img class="" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:52px;width:52px"><span class="block w-fit text-5xl font-semibold">×4</span></div><h2 class="mt-6 text-center text-3xl font-semibold">de compromissions vs les grandes entreprises</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">88 % des attaques sur PME</h2><p class="text-foreground">sont des ransomwares</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">45 % des organisations : arrêt</h2><p class="text-foreground">via un tiers en 2 ans</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">58 % des PME UE touchées</h2><p class="text-foreground">subissent un impact économique</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">Régions les plus attaquées</h2><p class="text-foreground">Asie-Pacifique 34 %, Amérique du Nord 24 % des incidents mondiaux (2024). Secteur n°1 : l'industrie, 27,7 % de toutes les attaques, 5ᵉ année consécutive en tête.</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Verizon DBIR 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Gartner 2023</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Eurobarometer 2022</span></div></div></div></div></div></div></div></div></section></div>
+<div id="scene"><section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex h-24 w-56 items-center justify-center gap-4"><img class="" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:52px;width:52px"><span class="block w-fit text-5xl font-semibold">×4</span></div><h2 class="mt-6 text-center text-3xl font-semibold">de compromissions vs les grandes entreprises</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">88 % des attaques sur PME</h2><p class="text-foreground">sont des ransomwares</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">45 % des organisations : arrêt</h2><p class="text-foreground">via un tiers en 2 ans</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">58 % des PME UE touchées</h2><p class="text-foreground">subissent un impact économique</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">Régions les plus attaquées</h2><p class="text-foreground">Asie-Pacifique 34 %, Amérique du Nord 24 % des incidents mondiaux (2024). Secteur n°1 : l'industrie, 27,7 % de toutes les attaques, 5ᵉ année consécutive en tête.</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Verizon DBIR 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Gartner 2023</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Eurobarometer 2022</span></div></div></div></div></div></div></div></div></section></div>
 <script>
 // La slide fait 1280 x 720 ; le composant est composé à sa largeur naturelle
 // (1024 + gouttières) puis mis à l'échelle d'un bloc. Rien n'est recomposé :
@@ -494,6 +428,93 @@ caler();
 window.addEventListener('resize', caler);
 </script>
 <script>
+// ── Le biseau, calcule pixel par pixel ────────────────────────────────────
+// Ni box-shadow ni filtre SVG : les deux ne savent poser qu'une tache le long
+// d'un bord, et sur un rectangle ca donne un trait, jamais un volume. Ici on
+// fabrique vraiment la piece :
+//   1. distance signee au rectangle arrondi, donc on sait ou on est dans le
+//      chanfrein et dans quelle direction regarde le bord ;
+//   2. profil de hauteur en cosinus : pente forte a l'arete, nulle au fond ;
+//   3. normale, puis Lambert et Phong avec UNE lumiere en haut a gauche.
+// Le plat rend exactement l'ambiance, qu'on soustrait : au-dessus la paroi
+// s'eclaire, en dessous elle s'assombrit. Les QUATRE cotes existent donc,
+// deux dans la lumiere, deux dans l'ombre, ce qu'aucune de mes versions
+// precedentes ne faisait.
+const BISEAU = { largeur: 16, rayon: 18, pente: 1.35, grain: 0.16,
+                 lumiere: [-0.52, -0.52, 0.678], exposant: 26,
+                 teinte: [206, 226, 248], gainDiffus: 2.6, gainSpec: 1.5 };
+
+function biseauter(carte) {
+  const toile = document.createElement('canvas');
+  toile.className = 'biseau';
+  carte.append(toile);
+  const peindre = () => {
+    // La scene entiere est mise a l'echelle par un `transform`, donc
+    // `getBoundingClientRect` rend des pixels ECRAN et pas les pixels de mise
+    // en page : s'en servir dessinait le biseau a 75 pour cent, en retrait
+    // du bord. On prend la taille de mise en page, et on ne garde l'echelle
+    // que pour la finesse du rendu.
+    const r = {width: carte.offsetWidth, height: carte.offsetHeight};
+    if (r.width < 8) return;
+    const ecran = carte.getBoundingClientRect();
+    const echelle = ecran.width / r.width || 1;
+    const dpr = Math.min(3, (window.devicePixelRatio || 1) * echelle);
+    const L = BISEAU.lumiere, W = BISEAU.largeur, R = BISEAU.rayon;
+    const cw = Math.round(r.width * dpr), ch = Math.round(r.height * dpr);
+    toile.width = cw; toile.height = ch;
+    toile.style.width = r.width + 'px'; toile.style.height = r.height + 'px';
+    const ctx = toile.getContext('2d');
+    const img = ctx.createImageData(cw, ch), D = img.data;
+    const hw = r.width / 2, hh = r.height / 2;
+    // demi-vecteur de Phong, pour le reflet
+    const Hx = L[0], Hy = L[1], Hz = L[2] + 1;
+    const hn = Math.hypot(Hx, Hy, Hz);
+    const ambiance = L[2];              // ce que rend une surface plate
+    for (let y = 0; y < ch; y++) {
+      for (let x = 0; x < cw; x++) {
+        const px = x / dpr - hw, py = y / dpr - hh;
+        const qx = Math.abs(px) - (hw - R), qy = Math.abs(py) - (hh - R);
+        const d = Math.hypot(Math.max(qx, 0), Math.max(qy, 0))
+                  + Math.min(Math.max(qx, qy), 0) - R;
+        const i = (y * cw + x) * 4;
+        const t = -d / W;
+        if (d > 0 || t >= 1) { D[i + 3] = 0; continue; }
+        // direction du bord, vers l'exterieur
+        let gx, gy;
+        if (qx > 0 && qy > 0) {
+          const l = Math.hypot(qx, qy) || 1; gx = qx / l; gy = qy / l;
+        } else if (qx > qy) { gx = 1; gy = 0; } else { gx = 0; gy = 1; }
+        gx *= px < 0 ? -1 : 1; gy *= py < 0 ? -1 : 1;
+        // la pente, plus le grain : c'est la SURFACE qui est grenue, donc le
+        // reflet l'est aussi, au lieu d'un bruit colle par-dessus
+        const pente = Math.cos(t * Math.PI / 2) * BISEAU.pente
+                      * (1 + (Math.random() - 0.5) * BISEAU.grain);
+        const inv = 1 / Math.hypot(pente, 1);
+        const nx = -gx * pente * inv, ny = -gy * pente * inv, nz = inv;
+        const diffus = nx * L[0] + ny * L[1] + nz * L[2];
+        const v = (diffus - ambiance) * BISEAU.gainDiffus;
+        const spec = Math.pow(Math.max(0, (nx * Hx + ny * Hy + nz * Hz) / hn),
+                              BISEAU.exposant) * BISEAU.gainSpec;
+        let cr, cg, cb, a;
+        if (v >= 0) { cr = BISEAU.teinte[0]; cg = BISEAU.teinte[1];
+                      cb = BISEAU.teinte[2]; a = v; }
+        else { cr = 0; cg = 0; cb = 0; a = -v; }
+        // le reflet se pose par-dessus, en blanc
+        const as = Math.min(1, spec);
+        const at = Math.min(1, a + as);
+        if (at <= 0.002) { D[i + 3] = 0; continue; }
+        D[i]     = Math.round((cr * a + 255 * as) / at);
+        D[i + 1] = Math.round((cg * a + 255 * as) / at);
+        D[i + 2] = Math.round((cb * a + 255 * as) / at);
+        D[i + 3] = Math.round(at * 255);
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  };
+  peindre();
+  new ResizeObserver(peindre).observe(carte);
+}
+
 // ── tables de 1024 valeurs et acces `& 1023`, comme le composant
 const SIN = new Float32Array(1024), COS = new Float32Array(1024);
 for (let i = 0; i < 1024; i++) {
@@ -520,11 +541,7 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
-  for (const genre of ['joue', 'spec']) {
-    const couche = document.createElement('div');
-    couche.className = 'relief ' + genre;
-    carte.append(couche);
-  }
+  biseauter(carte);
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
