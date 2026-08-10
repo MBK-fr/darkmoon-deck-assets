@@ -336,8 +336,8 @@
        blanche dans un decor bleu ne peut pas etre naturelle.
        La clarte prend donc l'alice de la charte, et l'ombre un indigo tres
        sombre plutot qu'un noir neutre. Geometrie et alphas du pen inchanges. */
-    box-shadow:rgba(6,10,28,.15) 9.6px 16px 10px inset,
-               rgba(220,234,244,.416) -9.6px -16px 10px inset}
+    box-shadow:var(--dm-sombre,rgba(6,10,28,.15)) 9.6px 16px 10px inset,
+               var(--dm-clair,rgba(220,234,244,.416)) -9.6px -16px 10px inset}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -468,6 +468,57 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
+  // ── La couleur du relief vient du motif de LA carte ──────────────────
+  // Chaque carte a sa propre vague, avec ses teintes : celle du haut gauche
+  // tire sur le rouge sombre, celles du bas sur le turquoise. Poser la meme
+  // lumiere partout, prise dans le decor ou dans la charte, donne un
+  // eclairage qui ne vient pas de la matiere qu'il eclaire. On echantillonne
+  // donc le canvas de la carte, on en tire la teinte dominante, et on en
+  // fabrique le couple clair / sombre du biseau.
+  const teinter = () => {
+    const c = fond.querySelector('canvas');
+    if (!c || !c.width) return;
+    let px;
+    try { px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; }
+    catch (e) { return; }
+    // Histogramme de teintes, PAS une moyenne : la vague melange un accent
+    // chaud et un fond froid, et la moyenne circulaire de 0 et 240 degres
+    // tombe a 300, soit un magenta que la charte interdit et qui n'existe
+    // nulle part dans l'image. On prend donc le sommet de l'histogramme.
+    const bacs = new Float32Array(36);
+    let poids = 0, n = 0;
+    const pas = Math.max(4, Math.round(c.width / 60)) * 4;
+    for (let i = 0; i < px.length; i += pas * 4) {
+      const r = px[i] / 255, g = px[i + 1] / 255, b = px[i + 2] / 255;
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+      const l = (mx + mn) / 2;
+      if (mx - mn < 0.02 || l < 0.02) continue;
+      const d = mx - mn;
+      let h;
+      if (mx === r) h = ((g - b) / d + (g < b ? 6 : 0));
+      else if (mx === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h *= Math.PI / 3;
+      const deg = (h * 180 / Math.PI + 360) % 360;
+      bacs[Math.floor(deg / 10) % 36] += d;   // les pixels satures pesent plus
+      poids += d; n++;
+    }
+    if (!poids || !n) return;
+    let meilleur = 0;
+    for (let k = 1; k < 36; k++) if (bacs[k] > bacs[meilleur]) meilleur = k;
+    // barycentre du sommet et de ses deux voisins, pour ne pas quantifier
+    const g0 = bacs[(meilleur + 35) % 36], g1 = bacs[meilleur],
+          g2 = bacs[(meilleur + 1) % 36];
+    const dec = (g2 - g0) / (g0 + g1 + g2) * 10;
+    const teinte = (meilleur * 10 + 5 + dec + 360) % 360;
+    const sat = Math.min(0.5, (poids / n) * 3.2);
+    carte.style.setProperty('--dm-clair',
+      `hsla(${teinte.toFixed(0)}, ${(sat * 100).toFixed(0)}%, 86%, .416)`);
+    carte.style.setProperty('--dm-sombre',
+      `hsla(${teinte.toFixed(0)}, ${(Math.min(0.65, sat * 1.6) * 100).toFixed(0)}%, 7%, .15)`);
+  };
+  setTimeout(teinter, 1400);
+  setInterval(teinter, 5000);
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
