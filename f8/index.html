@@ -192,6 +192,17 @@
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
 
+  /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
+     Rien n'est fait en transitions CSS. L'etat AU REPOS est l'etat final
+     (carte visible, aucun filtre, rideau invisible) ; l'ouverture est jouee
+     par l'API Web Animations en `fill: backwards`, qui applique la premiere
+     image pendant le delai puis rend l'element a son etat naturel.
+     Deux problemes disparaissent ensemble : plus de calque composite
+     residuel qui ramollit le texte, et le rejeu est immediat, alors qu'en
+     transitions retirer la classe relancait l'animation A REBOURS. */
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+
   
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
@@ -329,53 +340,52 @@ rendre();
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
-const cartes = [...document.querySelectorAll('.bg-card')];
-let derniereOuverture = 0;
-
 const ether = document.getElementById('ether');
+const cartes = [...document.querySelectorAll('.bg-card')];
+const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+let animations = [], derniereOuverture = 0;
+
 function ouvrir() {
   derniereOuverture = performance.now();
-  rideau.classList.remove('leve', 'range');
-  ether.classList.remove('net');
-  cartes.forEach(c => {
-    c.classList.remove('entree', 'fini');
-    c.style.transitionDelay = '0s';
-  });
-  void document.body.offsetWidth;          // force le retour a l'etat ferme
-  requestAnimationFrame(() => {
-    rideau.classList.add('leve');
-    ether.classList.add('net');
-    cartes.forEach((c, i) => {
-      c.style.transitionDelay = (0.35 + i * 0.19) + 's';
-      c.classList.add('entree');
-    });
-    setTimeout(figer, 3400);
-  });
+  animations.forEach(a => a.cancel());
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2400, easing: COURBE, fill: 'backwards' }),
+    ether.animate([{ filter: 'blur(12px)' }, { filter: 'blur(0px)' }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' }),
+    ...cartes.map((c, i) => c.animate([
+      { opacity: 0, transform: 'translateY(26px) scale(.985)', filter: 'blur(16px)' },
+      { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
+      { duration: 1900, delay: 350 + i * 190, easing: COURBE, fill: 'backwards' }))
+  ];
 }
-
-// Fin de l'ouverture : on sort les cartes du calque de filtre. `transitionend`
-// ne se declenche pas si la transition est interrompue (retour rapide sur la
-// slide, onglet en arriere-plan), d'ou le repli sur minuterie.
-function figer() {
-  cartes.forEach(c => { if (c.classList.contains('entree')) c.classList.add('fini'); });
-  if (rideau.classList.contains('leve')) rideau.classList.add('range');
-}
-cartes.forEach(c => c.addEventListener('transitionend', e => {
-  if (e.propertyName === 'filter' && c.classList.contains('entree'))
-    c.classList.add('fini');
-}));
-const finOuverture = () => setTimeout(figer, 3400);   // 0,35 + 4x0,19 + 1,9 s
-finOuverture();
 ouvrir();
 
-// Rejouer a chaque retour sur la slide. Le lecteur masque les slides non
-// courantes, le navigateur gele alors les rAF de l'iframe : un trou de plus
-// d'une demi-seconde signale donc que la slide revient a l'ecran.
+// Rejouer a chaque retour sur la slide.
+//
+// Le lecteur ne masque pas les slides voisines : il les translate hors du
+// cadre. Le navigateur ne gele donc pas nos rAF, il les BRIDE (une image par
+// seconde environ pour une iframe hors ecran). Un simple trou entre deux
+// images se produit donc aussi pendant qu'on est ailleurs — c'est ce qui
+// faisait jouer l'ouverture dans le vide, et il ne restait rien a voir en
+// arrivant.
+//
+// Le signal fiable n'est pas le trou, c'est la REPRISE d'une cadence pleine :
+// on attend six images consecutives a moins de 40 ms apres un trou.
 let precedent = performance.now();
+let reprise = false, rapides = 0;
 (function veille() {
   const t = performance.now();
-  if (t - precedent > 500 && t - derniereOuverture > 2500) ouvrir();
+  const dt = t - precedent;
   precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
   requestAnimationFrame(veille);
 })();
 </script>
