@@ -191,25 +191,34 @@
      la charte — c'est la meme forme que les pictogrammes — et un filet d'un
      pixel sur lequel une lumiere fait le tour de la carte en sept secondes.
      La carte se detache par ses angles, pas par un trait continu. */
-  .bg-card{background:#000;position:relative;
-           box-shadow:0 0 28px rgb(220 234 244 / .28),
+  /* le composant pose la classe `border` sur ses cartes : sans ce zero,
+     il reste un trait d'un pixel sous la lueur, exactement celui que
+     Mehdi voyait encore */
+  .bg-card{border-width:0;background:#000;position:relative;
+           box-shadow:-1px -1px 15px rgb(220 234 244 / var(--lueur)),
+                      0 0 42px rgb(220 234 244 / calc(var(--lueur) * .42)),
                       0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
-                      0 0 28px 6px rgb(0 0 0 / .85)}
+                      0 0 28px 6px rgb(0 0 0 / .85);
+           animation:respire 11s ease-in-out infinite}
+  .bg-card:nth-child(2){animation-duration:13s;animation-delay:-3s}
+  .bg-card:nth-child(3){animation-duration:9.5s;animation-delay:-6s}
+  .bg-card:nth-child(4){animation-duration:14s;animation-delay:-1.5s}
+  .bg-card:nth-child(5){animation-duration:12s;animation-delay:-8s}
+  @keyframes respire{0%,100%{--lueur:.22}50%{--lueur:.40}}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
 
-  /* ── Bordure floue ────────────────────────────────────────────────────
-     Le trait demande, `2px solid rgb(220 234 244 / .8)`, mais passe au flou :
-     une lueur qui tient lieu de bord au lieu d'une arete nette.
-     Deux morceaux, parce que la carte est en `overflow:hidden` et rognerait
-     la moitie exterieure d'un flou pose a l'interieur :
-       . un cadre flou plaque en dedans, pour la retombee interne ;
-       . une ombre portee claire, non rognee, pour la retombee externe. */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:2;
-    pointer-events:none;border:2px solid rgb(220 234 244 / .8);
-    filter:blur(5px)}
+  /* ── Lisiere neon ─────────────────────────────────────────────────────
+     Plus aucun element borde : tout ce qui est pose A L'INTERIEUR de la carte
+     est rogne net par son `overflow:hidden`, et ce rognage redonne justement
+     l'arete d'un pixel qu'on cherche a supprimer.
+     Ici il n'y a qu'une lueur portee, dessinee HORS de la boite, donc jamais
+     rognee et sans aucune arete. Elle est decentree vers le haut gauche,
+     comme la lumiere du fond etheral, et respire lentement, chaque carte a
+     son propre rythme. */
+  @property --lueur{syntax:'<number>';initial-value:.30;inherits:false}
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
