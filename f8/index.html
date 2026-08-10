@@ -213,12 +213,13 @@
               pour que la carte se dissolve dans le decor au lieu de projeter
               une ombre vers le bas. Toujours sans propagation, la gouttiere
               ne fait que 18 px. */
-           box-shadow:0 0 30px rgb(0 0 0 / .92),
-                      0 0 70px rgb(0 0 0 / .85),
-                      0 0 130px rgb(0 0 0 / .72),
-                      0 0 220px rgb(0 0 0 / .55),
-                      0 40px 120px rgb(0 0 0 / .8),
-                      0 100px 220px rgb(0 0 0 / .6);
+           box-shadow:0 0 0 1px rgb(0 0 0 / .95),
+                      0 0 10px rgb(0 0 0 / .9),
+                      0 0 34px rgb(0 0 0 / .78),
+                      0 0 26px rgb(150 180 255 / .13),
+                      0 0 90px rgb(96 130 220 / .10),
+                      0 34px 90px rgb(0 0 0 / .8),
+                      0 90px 190px rgb(0 0 0 / .6);
 }
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
@@ -235,10 +236,11 @@
      cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:inset 0 0 14px rgb(0 0 0 / .85),
-               inset 0 0 40px 6px rgb(0 0 0 / .72),
-               inset 0 0 80px 16px rgb(0 0 0 / .55),
-               inset 0 0 140px 30px rgb(0 0 0 / .38)}
+    box-shadow:inset 0 1.5px 0 rgb(255 255 255 / .30),
+               inset 0 0 0 1px rgb(255 255 255 / .085),
+               inset 0 -1.5px 0 rgb(255 255 255 / .07),
+               inset 0 6px 18px rgb(0 0 0 / .78),
+               inset 0 0 34px 6px rgb(0 0 0 / .6)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
@@ -264,10 +266,21 @@
      diagonale qui l'eteint, aux valeurs relevees dans la capture :
      74/255 au coin haut gauche, 43 au quart, 15 a la moitie, 0 ensuite. */
   /* la nappe : l'interieur de la carte s'eclaire au coin haut gauche */
+  /* ── La carte comme un trou ────────────────────────────────────────────
+     Trois choses font lire un percement plutot qu'un cadre :
+       . l'interieur s'assombrit fortement EN ALLANT VERS LE BORD, le centre
+         restant ouvert sur le fond anime, comme si on voyait au travers ;
+       . une arete de verre attrape la lumiere, franche en haut, faible en
+         bas, la ou l'epaisseur renverrait le rebond ;
+       . a l'exterieur, un contact tres serre puis une lueur froide qui
+         s'echappe, comme une lumiere qui fuit par l'ouverture. */
   .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
     border-radius:inherit;z-index:1;
-    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
-      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
+    background:radial-gradient(125% 105% at 50% 46%,
+        rgb(0 0 0 / 0) 26%, rgb(0 0 0 / .34) 56%,
+        rgb(0 0 0 / .72) 80%, rgb(0 0 0 / .95) 100%),
+      linear-gradient(135deg,rgb(255 255 255 / .07) 0%,
+        rgb(255 255 255 / .015) 30%,rgb(255 255 255 / 0) 56%)}
   /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
      s'eteint donc le long du bord comme dans l'artwork de la reference.
      Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
