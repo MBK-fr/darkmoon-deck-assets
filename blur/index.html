@@ -27,7 +27,15 @@
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
 
-  .inner{text-align:center;max-width:64rem;padding-left:2rem;padding-right:2rem}
+  .inner{position:relative;text-align:center;max-width:64rem;
+         padding-left:2rem;padding-right:2rem}
+  /* halo sombre derriere le bloc de texte : les ombres portees suivent le
+     contour des lettres, ce voile-la assombrit aussi les blancs entre les
+     mots et les lignes */
+  .inner::before{content:"";position:absolute;inset:-14% -10%;z-index:-1;
+                 background:radial-gradient(58% 52% at 50% 50%,
+                   rgba(0,0,0,.92) 0%, rgba(0,0,0,.78) 42%,
+                   rgba(0,0,0,.42) 68%, rgba(0,0,0,0) 100%)}
   .txt{color:#fff;font-size:3rem;line-height:1.625;letter-spacing:.025em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;perspective:900px}
@@ -63,8 +71,11 @@
 <script>
 // Le fond etheral est clair par endroits : sans cette ombre les mots blancs
 // s'y perdent. Elle s'ajoute a celle du composant, elle ne la remplace pas.
-const NOIR = '0 0 18px rgba(0,0,0,.95), 0 6px 34px rgba(0,0,0,.92), '
-           + '0 0 70px rgba(0,0,0,.85)';
+// Cinq couches empilees : une ombre CSS ne depasse pas l'opacite 1, c'est en
+// les superposant qu'on obtient un noir vraiment dense autour des lettres.
+const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
+           + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
+           + '0 0 110px rgba(0,0,0,.9)';
 const MOTS = [{"t": "Un", "p": "normal", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "p": "normal", "d": 2.487, "r": 0.081, "b": 12, "s": 0.91}, {"t": "par", "p": "normal", "d": 2.448, "r": 0.144, "b": 13, "s": 0.919}, {"t": "an.", "p": "normal", "d": 2.386, "r": 0.236, "b": 12, "s": 0.928}, {"t": "Des", "p": "normal", "d": 2.309, "r": 0.34, "b": 15, "s": 0.936}, {"t": "attaques", "p": "normal", "d": 2.221, "r": 0.372, "b": 18, "s": 0.942}, {"t": "tous", "p": "normal", "d": 2.132, "r": 0.466, "b": 15, "s": 0.947}, {"t": "les", "p": "normal", "d": 2.049, "r": 0.524, "b": 18, "s": 0.949}, {"t": "jours.", "p": "normal", "d": 1.979, "r": 0.596, "b": 13, "s": 0.95}, {"t": "Une", "p": "normal", "d": 1.929, "r": 0.714, "b": 12, "s": 0.949}, {"t": "photo", "p": "normal", "d": 1.903, "r": 0.769, "b": 18, "s": 0.945}, {"t": "à", "p": "normal", "d": 1.904, "r": 0.815, "b": 15, "s": 0.94}, {"t": "l'instant", "p": "normal", "d": 1.931, "r": 0.888, "b": 14, "s": 0.934}, {"t": "T.", "p": "normal", "d": 1.982, "r": 0.973, "b": 14, "s": 0.926}, {"t": "Un", "p": "normal", "d": 2.053, "r": 1.058, "b": 16, "s": 0.917}, {"t": "audit", "p": "normal", "d": 2.137, "r": 1.131, "b": 14, "s": 0.907}, {"t": "fige", "p": "normal", "d": 2.226, "r": 1.18, "b": 15, "s": 0.897}, {"t": "la", "p": "normal", "d": 2.313, "r": 1.266, "b": 13, "s": 0.887}, {"t": "sécurité", "p": "normal", "d": 2.39, "r": 1.347, "b": 15, "s": 0.878}, {"t": "à", "p": "normal", "d": 2.45, "r": 1.415, "b": 18, "s": 0.869}, {"t": "une", "p": "normal", "d": 2.488, "r": 1.501, "b": 19, "s": 0.862}, {"t": "date.", "p": "normal", "d": 2.5, "r": 1.563, "b": 19, "s": 0.856}, {"t": "La", "p": "normal", "d": 2.485, "r": 1.623, "b": 15, "s": 0.852}, {"t": "cible", "p": "normal", "d": 2.445, "r": 1.716, "b": 15, "s": 0.85}, {"t": ":", "p": "normal", "d": 2.383, "r": 1.751, "b": 16, "s": 0.85}, {"t": "les", "p": "normal", "d": 2.304, "r": 1.845, "b": 17, "s": 0.852}, {"t": "sous-traitants.", "p": "normal", "d": 2.216, "r": 1.926, "b": 16, "s": 0.856}, {"t": "4×", "p": "normal", "d": 2.127, "r": 1.991, "b": 13, "s": 0.861}, {"t": "plus", "p": "normal", "d": 2.044, "r": 2.037, "b": 18, "s": 0.868}, {"t": "de", "p": "normal", "d": 1.975, "r": 2.11, "b": 17, "s": 0.877}, {"t": "victimes", "p": "normal", "d": 1.927, "r": 2.18, "b": 19, "s": 0.886}, {"t": "que", "p": "normal", "d": 1.902, "r": 2.264, "b": 13, "s": 0.896}, {"t": "les", "p": "normal", "d": 1.905, "r": 2.351, "b": 17, "s": 0.906}, {"t": "grands", "p": "normal", "d": 1.933, "r": 2.401, "b": 17, "s": 0.916}, {"t": "comptes.", "p": "normal", "d": 1.986, "r": 2.484, "b": 19, "s": 0.925}, {"t": "NIS2,", "p": "normal", "d": 2.057, "r": 2.528, "b": 13, "s": 0.933}, {"t": "DORA.", "p": "normal", "d": 2.142, "r": 2.642, "b": 19, "s": 0.94}, {"t": "Tester", "p": "normal", "d": 2.231, "r": 2.7, "b": 13, "s": 0.945}, {"t": "devient", "p": "normal", "d": 2.318, "r": 2.738, "b": 16, "s": 0.948}, {"t": "obligatoire.", "p": "normal", "d": 2.394, "r": 2.837, "b": 19, "s": 0.95}];
 const p = document.getElementById('p');
 MOTS.forEach(w => {
