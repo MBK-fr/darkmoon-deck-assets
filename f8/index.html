@@ -224,25 +224,21 @@
               transparent, donc en `overlay` il ne modulait presque rien. */
            background-image:url('../ether/grain.png'),
              conic-gradient(from 0deg at 50% 50%,
-             #05070d 0deg, #03050a 45deg, #090e18 70deg,
-             #44597a 90deg, #a8c2e4 114deg, #e2eefb 135deg,
-             #a8c2e4 156deg, #44597a 180deg, #10161f 205deg,
-             #06090f 240deg, #020408 315deg, #05070d 360deg);
-           background-size:128px, auto;
+             #04060c 0deg, #020407 40deg, #0a1019 68deg,
+             #2b3a52 84deg, #7e99bf 106deg, #cfe3fb 128deg,
+             #eef6ff 135deg, #cfe3fb 142deg, #7e99bf 164deg,
+             #2b3a52 186deg, #0e141d 208deg, #05080e 244deg,
+             #020407 312deg, #04060c 360deg);
+           background-size:110px, auto;
            background-blend-mode:overlay, normal;
-           box-shadow:inset 1px 1px 0 rgb(0 0 0 / .95),
-                      inset 2px 2px 2px rgb(0 0 0 / .6),
-                      inset -1px -1px 0 rgb(226 238 251 / .75),
-                      0 0 30px rgb(0 0 0 / .6),
-                      0 0 80px rgb(0 0 0 / .38)}
+           box-shadow:0 1px 0 rgb(0 0 0 / .9),
+                      0 0 22px rgb(0 0 0 / .5)}
   /* l'occlusion au PIED de la paroi : un halo sombre qui deborde du sol vers
      la paroi, donc la paroi s'assombrit en descendant, comme une vraie pente.
      Sans ce degrade en travers, la paroi reste un aplat et ne tourne pas. */
-  .bg-card::before{content:"";position:absolute;inset:12px;z-index:0;
-    border-radius:calc(var(--radius) - 7px);pointer-events:none;
-    box-shadow:0 0 10px 5px rgb(0 0 0 / .92),
-               0 0 22px 2px rgb(0 0 0 / .6),
-               0 0 40px rgb(0 0 0 / .35)}
+  .bg-card::before{content:"";position:absolute;inset:4px;z-index:0;
+    border-radius:calc(var(--radius) - 3px);pointer-events:none;
+    box-shadow:0 0 3px 1px rgb(0 0 0 / .95), 0 0 8px rgb(0 0 0 / .6)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
@@ -304,8 +300,8 @@
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
   /* le sol de la cavite, 11 px plus bas que la surface */
-  .fond{position:absolute;inset:12px;z-index:0;
-        border-radius:calc(var(--radius) - 7px);
+  .fond{position:absolute;inset:4px;z-index:0;
+        border-radius:calc(var(--radius) - 3px);
         overflow:hidden;background:#05070d}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
@@ -320,13 +316,13 @@
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
       rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:inset 26px 26px 46px rgb(0 0 0 / .96),
-               inset 14px 14px 26px rgb(0 0 0 / .9),
-               inset 5px 5px 10px rgb(0 0 0 / .82),
-               inset 1px 1px 2px rgb(0 0 0 / .8),
-               inset -12px -12px 28px rgb(140 168 208 / .17),
-               inset -4px -4px 8px rgb(178 202 234 / .22),
-               inset -1px -1px 1px rgb(214 232 250 / .3)}
+    box-shadow:inset 30px 30px 52px rgb(0 0 0 / .95),
+               inset 15px 15px 28px rgb(0 0 0 / .88),
+               inset 6px 6px 11px rgb(0 0 0 / .8),
+               inset 2px 2px 3px rgb(0 0 0 / .85),
+               inset -9px -9px 22px rgb(140 168 208 / .13),
+               inset -3px -3px 6px rgb(178 202 234 / .18),
+               inset -1px -1px 1px rgb(220 236 252 / .34)}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -340,9 +336,18 @@
   /* la lumiere interieure, peinte dans le fond de la carte */
   .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
     border-radius:inherit;z-index:2;
-    background:linear-gradient(135deg,rgb(0 0 0 / .5) 0%,
-      rgb(0 0 0 / .18) 34%,rgb(0 0 0 / 0) 58%,
-      rgb(140 168 206 / .05) 86%,rgb(150 178 216 / .09) 100%)}
+    background:
+      /* la trainee : le reflet d'une source lointaine sur une surface de
+         verre. Une seule, oblique, aux bords fondus. C'est ce reflet-la qui
+         dit "vitre" ; une nappe uniforme ne dit rien. */
+      linear-gradient(112deg,rgb(0 0 0 / 0) 26%,
+        rgb(214 232 252 / .028) 33%,rgb(226 240 255 / .075) 39%,
+        rgb(214 232 252 / .03) 45%,rgb(0 0 0 / 0) 52%),
+      /* le fond de cavite : eteint du cote a l'ombre, rallume du cote qui
+         recoit la lumiere rasante */
+      linear-gradient(135deg,rgb(0 0 0 / .55) 0%,
+        rgb(0 0 0 / .2) 34%,rgb(0 0 0 / 0) 60%,
+        rgb(140 168 206 / .04) 88%,rgb(150 178 216 / .075) 100%)}
   /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
      s'eteint donc le long du bord comme dans l'artwork de la reference.
      Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
