@@ -266,27 +266,29 @@
      faiblit d'une onde a l'autre en s'enfoncant, comme une ride qui meurt.
      Les formes restent rectangulaires et gardent le rayon de la carte : les
      bords se superposent au lieu de se concentrer en cercles. */
+  /* Le pen ne trace AUCUN trait : ses crans n'existent que par des ombres
+     tres floues, un decalage de 4 px pour 6 px de flou, entre deux formes du
+     MEME ton. Ma premiere transposition ajoutait des lignes de 1 px et des
+     ombres courtes et denses : ca donnait des cadres empiles, un objet
+     fabrique, pas une onde. Ici tout est en degrade, aucun trait dur, et le
+     flou vaut presque trois fois le decalage, ce qui adoucit encore les
+     angles vifs qu'un rectangle a et qu'un cercle n'a pas. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:inset 5px 5px 8px rgb(150 180 224 / .20),
-               inset 1px 1px 0 rgb(170 198 235 / .26),
-               inset -5px -5px 9px rgb(0 0 0 / .9),
-               inset -1px -1px 0 rgb(0 0 0 / .75)}
-  /* les ondes interieures : meme paire d'ombres, dedans ET dehors, comme le
-     `::before` du pen, ce qui fait le relief de chaque cran */
-  .onde{position:absolute;border-radius:calc(var(--radius) - 4px);
-        pointer-events:none;z-index:3}
+    box-shadow:inset 6px 6px 17px rgb(150 180 224 / .13),
+               inset -6px -6px 17px rgb(0 0 0 / .8)}
+  .onde{position:absolute;pointer-events:none;z-index:3}
   .onde::before{content:"";position:absolute;inset:0;border-radius:inherit}
-  .onde-1{inset:9px;
-    box-shadow:inset 4px 4px 6px rgb(150 180 224 / .13),
-               inset -4px -4px 6px rgb(0 0 0 / .75)}
-  .onde-1::before{box-shadow:4px 4px 6px rgb(150 180 224 / .10),
-                             -4px -4px 6px rgb(0 0 0 / .6)}
-  .onde-2{inset:19px;border-radius:calc(var(--radius) - 9px);
-    box-shadow:inset 3px 3px 5px rgb(150 180 224 / .08),
-               inset -3px -3px 5px rgb(0 0 0 / .6)}
-  .onde-2::before{box-shadow:3px 3px 5px rgb(150 180 224 / .06),
-                             -3px -3px 5px rgb(0 0 0 / .45)}
+  .onde-1{inset:11px;border-radius:calc(var(--radius) - 5px);
+    box-shadow:inset 5px 5px 15px rgb(150 180 224 / .09),
+               inset -5px -5px 15px rgb(0 0 0 / .62)}
+  .onde-1::before{box-shadow:5px 5px 15px rgb(150 180 224 / .07),
+                             -5px -5px 15px rgb(0 0 0 / .5)}
+  .onde-2{inset:24px;border-radius:calc(var(--radius) - 11px);
+    box-shadow:inset 4px 4px 13px rgb(150 180 224 / .06),
+               inset -4px -4px 13px rgb(0 0 0 / .45)}
+  .onde-2::before{box-shadow:4px 4px 13px rgb(150 180 224 / .05),
+                             -4px -4px 13px rgb(0 0 0 / .36)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
