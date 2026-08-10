@@ -204,16 +204,33 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  /* ── La carte est une ouverture, pas une plaque posee ──────────────────
-     Ce qui fait marcher le pen n'est pas sa formule d'ombres, c'est que ses
-     carres sont DE LA MEME MATIERE que le fond : meme `--bg_color`, aucune
-     bordure, aucune ombre portee. Rien n'est pose sur la page, la page est
-     creusee. Mes cartes etaient des rectangles noirs devant un decor colore,
-     donc des vignettes collees quelle que soit la finesse des ombres. Elles
-     n'ont plus de fond a elles : le decor etheral traverse, la vague ne fait
-     plus que le moduler, et seules les ombres creusent.
-     L'ombre portee est retiree : une cavite n'en projette pas. */
-  .bg-card{border-width:0;background:transparent;position:relative}
+  /* ── La paroi du creux ────────────────────────────────────────────────
+     Deux `box-shadow` opposees ne font pas une paroi : elles font deux taches
+     floues qui se croisent, et l'oeil ne voit aucun volume. Une vraie cavite
+     a une paroi CONTINUE dont l'eclairement tourne avec l'orientation.
+     C'est ce que fait un degrade conique : la lumiere vient du haut gauche,
+     donc la paroi qui lui fait face, en bas a droite, est la plus claire, et
+     celle du haut gauche, qui lui tourne le dos, la plus sombre. Entre les
+     deux, l'eclairement varie sans saut, y compris dans les angles.
+     La paroi est portee par la CARTE, et le fond anime est pose 11 px plus
+     loin : deux rectangles arrondis emboites, aucun masque, donc aucun
+     crenelage dans les angles. */
+  .bg-card{border-width:0;position:relative;
+           background:conic-gradient(from 0deg at 50% 50%,
+             #05070d 0deg, #04060b 45deg, #0a0f1a 70deg,
+             #3a4c69 90deg, #8ea9cf 116deg, #c6dcf5 135deg,
+             #8ea9cf 154deg, #3a4c69 180deg, #131a28 205deg,
+             #080c14 240deg, #04060b 315deg, #05070d 360deg);
+           box-shadow:inset 1px 1px 0 rgb(0 0 0 / .8),
+                      inset -1px -1px 0 rgb(198 216 240 / .5),
+                      0 0 26px rgb(0 0 0 / .5),
+                      0 0 70px rgb(0 0 0 / .3)}
+  /* l'occlusion au PIED de la paroi : un halo sombre qui deborde du sol vers
+     la paroi, donc la paroi s'assombrit en descendant, comme une vraie pente.
+     Sans ce degrade en travers, la paroi reste un aplat et ne tourne pas. */
+  .bg-card::before{content:"";position:absolute;inset:8px;z-index:0;
+    border-radius:calc(var(--radius) - 5px);pointer-events:none;
+    box-shadow:0 0 7px 3px rgb(0 0 0 / .8), 0 0 14px 1px rgb(0 0 0 / .5)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
@@ -260,22 +277,17 @@
      faiblit d'une onde a l'autre en s'enfoncant, comme une ride qui meurt.
      Les formes restent rectangulaires et gardent le rayon de la carte : les
      bords se superposent au lieu de se concentrer en cercles. */
-  /* Le carre en haut a droite du pen, `.shadow--inset`, releve tel quel :
-         box-shadow: rgba(255,255,255,.7) -10px -10px 10px inset,
-                     rgba(174,174,192,.2)  10px 10px 10px inset;
-     Le decalage POSITIF peint la paroi haut gauche, donc l'ombre, et le
-     NEGATIF la paroi basse droite, donc la lumiere. Une cavite eclairee du
-     haut gauche, exactement. La geometrie est reprise a l'identique, seules
-     les valeurs changent parce que le fond change : sur son gris clair la
-     lumiere est blanche a 70 pour cent et l'ombre grise a 20 ; ici la
-     lumiere est celle du decor, un bleu pale, et c'est l'ombre qui porte le
-     relief. Le rapport des deux est donc inverse. */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;
-    box-shadow:inset 11px 11px 15px rgb(0 0 0 / .8),
-               inset 3px 3px 6px rgb(0 0 0 / .55),
-               inset -11px -11px 15px rgb(166 199 230 / .13),
-               inset -3px -3px 6px rgb(166 199 230 / .10)}
+  /* L'occlusion au pied de la paroi : dans un creux, le sol est mange par
+     l'ombre du cote qui tourne le dos a la lumiere, et recoit un peu de
+     lumiere rasante du cote oppose. Sans ca la paroi flotte au-dessus d'un
+     sol uniformement eclaire et le volume ne prend pas. */
+  .bg-card::after{content:"";position:absolute;inset:8px;z-index:6;
+    pointer-events:none;border-radius:calc(var(--radius) - 5px);
+    box-shadow:inset 16px 16px 30px rgb(0 0 0 / .92),
+               inset 7px 7px 14px rgb(0 0 0 / .8),
+               inset 2px 2px 4px rgb(0 0 0 / .7),
+               inset -8px -8px 20px rgb(122 146 184 / .12),
+               inset -2px -2px 4px rgb(150 176 212 / .16)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
@@ -289,18 +301,19 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
-  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
-        overflow:hidden}
+  /* le sol de la cavite, 11 px plus bas que la surface */
+  .fond{position:absolute;inset:8px;z-index:0;
+        border-radius:calc(var(--radius) - 5px);
+        overflow:hidden;background:#05070d}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
      rien a lire, donc le mouvement reste visible. */
-  .fond canvas{display:block;width:100%;height:100%;opacity:.5;
-               mix-blend-mode:screen}
+  .fond canvas{display:block;width:100%;height:100%;opacity:.62}
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
-    background:linear-gradient(to bottom,rgb(6 10 20 / .30) 0%,
-      rgb(6 10 20 / .52) 42%,rgb(5 8 16 / .72) 76%,rgb(4 7 14 / .8) 100%)}
+    background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -314,8 +327,9 @@
   /* la lumiere interieure, peinte dans le fond de la carte */
   .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
     border-radius:inherit;z-index:2;
-    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
-      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
+    background:linear-gradient(135deg,rgb(0 0 0 / .5) 0%,
+      rgb(0 0 0 / .18) 34%,rgb(0 0 0 / 0) 58%,
+      rgb(140 168 206 / .05) 86%,rgb(150 178 216 / .09) 100%)}
   /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
      s'eteint donc le long du bord comme dans l'artwork de la reference.
      Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
