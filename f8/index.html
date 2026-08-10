@@ -204,40 +204,36 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  /* ── La paroi du creux ────────────────────────────────────────────────
-     Deux `box-shadow` opposees ne font pas une paroi : elles font deux taches
-     floues qui se croisent, et l'oeil ne voit aucun volume. Une vraie cavite
-     a une paroi CONTINUE dont l'eclairement tourne avec l'orientation.
-     C'est ce que fait un degrade conique : la lumiere vient du haut gauche,
-     donc la paroi qui lui fait face, en bas a droite, est la plus claire, et
-     celle du haut gauche, qui lui tourne le dos, la plus sombre. Entre les
-     deux, l'eclairement varie sans saut, y compris dans les angles.
-     La paroi est portee par la CARTE, et le fond anime est pose 11 px plus
-     loin : deux rectangles arrondis emboites, aucun masque, donc aucun
-     crenelage dans les angles. */
-  .bg-card{border-width:0;position:relative;
-           /* Le grain : un bruit gaussien opaque, moyenne 128, ecart-type 30,
-              fondu en `overlay`. Ce mode laisse les noirs intacts et ne mord
-              que sur les valeurs claires, donc le grain apparait exactement
-              la ou il y a de la lumiere, et la paroi a l'ombre reste lisse.
-              `noise.png` du decor ne pouvait pas servir : il est a fond
-              transparent, donc en `overlay` il ne modulait presque rien. */
-           background-image:url('../ether/grain.png'),
-             conic-gradient(from 0deg at 50% 50%,
-             #04060c 0deg, #020407 40deg, #0a1019 68deg,
-             #2b3a52 84deg, #7e99bf 106deg, #cfe3fb 128deg,
-             #eef6ff 135deg, #cfe3fb 142deg, #7e99bf 164deg,
-             #2b3a52 186deg, #0e141d 208deg, #05080e 244deg,
-             #020407 312deg, #04060c 360deg);
-           background-size:110px, auto;
-           background-blend-mode:overlay, normal;
-           box-shadow:0 1px 0 rgb(0 0 0 / .9),
-                      0 0 22px rgb(0 0 0 / .5)}
+  /* ── Le relief est calcule, plus dessine ───────────────────────────────
+     Une `box-shadow` ne sait pas ce qu'est une surface : elle etale une
+     couleur, et quel que soit le soin mis aux valeurs, ca reste une tache.
+     Un vrai biseau se calcule : on part d'une carte de hauteur, on en deduit
+     la normale en chaque point, et on eclaire.
+     C'est exactement ce que font `feDiffuseLighting` et `feSpecularLighting`.
+     La carte de hauteur est l'alpha de la forme, floute : le flou cree la
+     PENTE au bord, plate au centre. Le speculaire de Phong s'allume la ou la
+     normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
+     un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
+     lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
+  .bg-card{border-width:0;position:relative;background:#04060c;
+           box-shadow:0 1px 0 rgb(0 0 0 / .9), 0 0 22px rgb(0 0 0 / .5)}
+  /* Les deux passes d'eclairage, au-dessus du fond anime, sous le texte.
+     La classe est doublee dans le selecteur pour passer devant la regle
+     `.bg-card>*:not(.fond){position:relative;z-index:1}` du composant :
+     elle remettait ces calques en `position:relative`, donc `inset:0` ne
+     s'appliquait plus et ils sortaient a zero pixel de large. */
+  .bg-card>.relief.relief{position:absolute;inset:0;z-index:0;
+          border-radius:inherit;pointer-events:none;background:#fff}
+  .relief.spec{filter:url(#dm-spec);mix-blend-mode:screen}
+  /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
+     tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
+     cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
+     noir. Elle est retiree plutot que gardee pour la forme. */
   /* l'occlusion au PIED de la paroi : un halo sombre qui deborde du sol vers
      la paroi, donc la paroi s'assombrit en descendant, comme une vraie pente.
      Sans ce degrade en travers, la paroi reste un aplat et ne tourne pas. */
-  .bg-card::before{content:"";position:absolute;inset:4px;z-index:0;
-    border-radius:calc(var(--radius) - 3px);pointer-events:none;
+  .bg-card::before{content:"";position:absolute;inset:0;z-index:0;
+    border-radius:var(--radius);pointer-events:none;
     box-shadow:0 0 3px 1px rgb(0 0 0 / .95), 0 0 8px rgb(0 0 0 / .6)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
@@ -300,8 +296,8 @@
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
   /* le sol de la cavite, 11 px plus bas que la surface */
-  .fond{position:absolute;inset:4px;z-index:0;
-        border-radius:calc(var(--radius) - 3px);
+  .fond{position:absolute;inset:0;z-index:0;
+        border-radius:var(--radius);
         overflow:hidden;background:#05070d}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
@@ -415,7 +411,39 @@
   </div>
   <div class="grain"></div>
 </div>
-<div id="scene"><section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex h-24 w-56 items-center justify-center gap-4"><img class="" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:52px;width:52px"><span class="block w-fit text-5xl font-semibold">×4</span></div><h2 class="mt-6 text-center text-3xl font-semibold">de compromissions vs les grandes entreprises</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">88 % des attaques sur PME</h2><p class="text-foreground">sont des ransomwares</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">45 % des organisations : arrêt</h2><p class="text-foreground">via un tiers en 2 ans</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">58 % des PME UE touchées</h2><p class="text-foreground">subissent un impact économique</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">Régions les plus attaquées</h2><p class="text-foreground">Asie-Pacifique 34 %, Amérique du Nord 24 % des incidents mondiaux (2024). Secteur n°1 : l'industrie, 27,7 % de toutes les attaques, 5ᵉ année consécutive en tête.</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Verizon DBIR 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Gartner 2023</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Eurobarometer 2022</span></div></div></div></div></div></div></div></div></section></div>
+<div id="scene"><svg width="0" height="0" style="position:absolute"
+     aria-hidden="true"><defs>
+  <!-- La carte de hauteur : l'alpha de la forme, floute sur 2,4 px. Le flou
+       fait la PENTE ; plus il est court, plus le chanfrein est vif. -->
+  <filter id="dm-spec" x="-6%" y="-6%" width="112%" height="112%"
+          color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="2.4" result="pente"/>
+    <!-- surfaceScale NEGATIF : les normales s'inversent, la forme devient un
+         CREUX. La lumiere reste en haut a gauche, mais c'est alors la paroi
+         basse droite qui lui fait face, comme dans une cavite reelle. -->
+    <feSpecularLighting in="pente" surfaceScale="-20" specularConstant="3.0"
+                        specularExponent="30" lighting-color="#f2f8ff"
+                        result="lum">
+      <feDistantLight azimuth="225" elevation="36"/>
+    </feSpecularLighting>
+    <!-- Le plat n'est pas parfaitement noir en Phong : a l'exposant 21 il
+         rendait encore 43 sur 255, et l'ecran remontait TOUTE la carte d'un
+         gris. On monte l'exposant a 70 et on coupe le pied qui reste. -->
+    <feComponentTransfer in="lum" result="net">
+      <feFuncR type="table" tableValues="0 0 0.06 0.45 1"/>
+      <feFuncG type="table" tableValues="0 0 0.06 0.45 1"/>
+      <feFuncB type="table" tableValues="0 0 0.06 0.45 1"/>
+      <!-- L'ALPHA doit etre coupe lui aussi. `feSpecularLighting` sort une
+           opacite egale au plus fort de ses canaux : sur le plat elle valait
+           encore 9 pour cent de blanc, et l'ecran remontait toute la carte de
+           21 niveaux. Ne corriger que les couleurs ne servait a rien. -->
+      <feFuncA type="table" tableValues="0 0 0.62 1 1"/>
+    </feComponentTransfer>
+    <feComposite in="net" in2="SourceAlpha" operator="in"/>
+  </filter>
+
+</defs></svg>
+<section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex h-24 w-56 items-center justify-center gap-4"><img class="" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:52px;width:52px"><span class="block w-fit text-5xl font-semibold">×4</span></div><h2 class="mt-6 text-center text-3xl font-semibold">de compromissions vs les grandes entreprises</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">88 % des attaques sur PME</h2><p class="text-foreground">sont des ransomwares</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">45 % des organisations : arrêt</h2><p class="text-foreground">via un tiers en 2 ans</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">58 % des PME UE touchées</h2><p class="text-foreground">subissent un impact économique</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">Régions les plus attaquées</h2><p class="text-foreground">Asie-Pacifique 34 %, Amérique du Nord 24 % des incidents mondiaux (2024). Secteur n°1 : l'industrie, 27,7 % de toutes les attaques, 5ᵉ année consécutive en tête.</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Verizon DBIR 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Gartner 2023</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Eurobarometer 2022</span></div></div></div></div></div></div></div></div></section></div>
 <script>
 // La slide fait 1280 x 720 ; le composant est composé à sa largeur naturelle
 // (1024 + gouttières) puis mis à l'échelle d'un bloc. Rien n'est recomposé :
@@ -462,6 +490,9 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
+  const couche = document.createElement('div');
+  couche.className = 'relief spec';
+  carte.append(couche);
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
