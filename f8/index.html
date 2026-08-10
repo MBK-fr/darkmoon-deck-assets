@@ -204,32 +204,22 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  .bg-card{background:#000;
+  .bg-card{border-width:0;background:#000;
            position:relative;
-           /* la reference n'a aucune ombre ; on en garde une courte, qui
-              tient dans la gouttiere de 18 px et ne mord donc plus sur le
-              filet des cartes voisines */
-           box-shadow:0 16px 34px rgb(0 0 0 / .85);
+           box-shadow:none;
 }
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
-  /* Filet releve sur la carte « Made by Google » du Google Store, pixel par
-     pixel dans la capture : ce n'est pas un trait uniforme mais une lumiere
-     posee sur le coin haut gauche. Mesures de la reference :
-       . epaisseur 1 px
-       . luminance maxi 74/255 pres du coin, soit 29 % de blanc
-       . elle tombe a 43 au quart, 15 a la moitie, 0 au dela
-     Reproduit ici par un degrade a 135 degres masque en anneau d'1 px. */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;padding:1px;
-    background:linear-gradient(135deg,rgb(255 255 255 / .30) 0%,
-      rgb(255 255 255 / .17) 22%,rgb(255 255 255 / .06) 38%,
-      rgb(255 255 255 / 0) 52%);
-    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;
-    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    mask-composite:exclude}
+  /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
+     Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
+         border-radius: 28px
+         border: 0px none
+         background-color: rgb(23, 26, 17)
+         box-shadow: none
+     Ce que je prenais pour un filet dans la capture n'etait que la lisiere
+     entre son fond, un vert tres sombre, et le noir de la page. La carte se
+     detache par un aplat un peu plus clair que son fond, rien d'autre. */
 
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
