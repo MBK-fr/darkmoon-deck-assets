@@ -157,7 +157,7 @@
     .lg\:space-y-6>*+*{margin-top:1.5rem}
   }
 </style><style>
-  :root{ --radius:28px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
+  :root{ --radius:18px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
   /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
      sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
      plus clair que la carte) en les passant en blanc a faible alpha. */
@@ -280,7 +280,11 @@
   #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
           opacity:0}
 
-  
+  /* Fond noir demande : le ciel du site est retire, la slide repose sur du
+     noir plein. Le module `ciel` reste dans le depot, il suffit de remettre
+     ses deux jetons pour le revoir. */
+  #ciel{display:none}
+
   #ciel{position:fixed;inset:0;z-index:0;overflow:hidden;background-color:#04060e}
   #ciel .voute{position:absolute;inset:-6%;
     background-color:#04060e;
