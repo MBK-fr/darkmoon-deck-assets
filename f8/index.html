@@ -194,7 +194,8 @@
   /* le composant pose la classe `border` sur ses cartes : sans ce zero,
      il reste un trait d'un pixel sous la lueur, exactement celui que
      Mehdi voyait encore */
-  .bg-card{border-width:0;background:#000;position:relative;
+  .bg-card{border:2px solid rgb(220 234 244 / .8);background:#000;
+           position:relative;
            box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
                       0 0 28px 6px rgb(0 0 0 / .85);
@@ -203,32 +204,9 @@
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
 
-  /* ── Reperes d'angle, d'apres @designali-in/dot-pattern-1 (demo quote) ─
-     Motif repris a l'identique, geometrie comprise :
-       . un filet,
-       . quatre carres pleins de 12 px centres sur les angles, decalage -6 px
-         (`-left-1.5 -top-1.5 h-3 w-3` chez elle),
-       . le semis de points de son <pattern> SVG : une pastille de 1 px de
-         diametre tous les 5 px, posee a (1 ; 0,5) dans chaque cellule.
-     Seule la couleur change, tout passe en Alice `rgb(220 234 244 / .8)`,
-     et le filet est a 2 px comme demande.
-     La carte doit deborder : ses carres d'angle sortent de la boite, et
-     `overflow:hidden` les couperait en quatre. Le canevas du fond reste
-     rogne par `.fond`, qui a son propre `overflow`. */
-  .bg-card{overflow:visible}
-  .bg-card::before{content:"";position:absolute;inset:0;z-index:2;
-    pointer-events:none;border:2px solid rgb(220 234 244 / .8);
-    background-image:radial-gradient(rgb(220 234 244 / .5) .5px,
-                                     transparent .5px);
-    background-size:5px 5px;background-position:.5px 0}
-  .bg-card::after{content:"";position:absolute;inset:-6px;z-index:3;
-    pointer-events:none;
-    background-image:linear-gradient(rgb(220 234 244 / .8),rgb(220 234 244 / .8)),
-                     linear-gradient(rgb(220 234 244 / .8),rgb(220 234 244 / .8)),
-                     linear-gradient(rgb(220 234 244 / .8),rgb(220 234 244 / .8)),
-                     linear-gradient(rgb(220 234 244 / .8),rgb(220 234 244 / .8));
-    background-repeat:no-repeat;background-size:12px 12px;
-    background-position:left top,right top,left bottom,right bottom}
+  /* Filet simple, sans rien autour : les reperes d'angle, le semis de
+     points, la lisiere neon, la bordure floue et les equerres sont tous
+     retires. Voir la memoire du projet pour leurs valeurs. */
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
