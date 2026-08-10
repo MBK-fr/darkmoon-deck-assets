@@ -185,7 +185,15 @@
      retenue apres le blanc pur juge trop eclatant. Luminance mesuree du
      trait : 167/255 contre 255 pour le blanc pur.
      L'ombre noire ci-dessous, elle, est conservee. */
-  .bg-card{border-width:0;background:#000;
+  /* Retenu apres essais : un filet d'un pixel dont la clarte decroit du haut
+     gauche vers le bas droit. Il separe la carte du fond anime sans poser un
+     cadre ferme, et il suit le sens de la lumiere du fond etheral. Mesure du
+     saut de luminance au bord : 27 contre 19 sans rien et 121 avec l'ancien
+     filet de 2 px, soit une separation nette pour un quart de l'eclat. */
+  .bg-card{border:1px solid transparent;
+           border-image:linear-gradient(160deg,rgb(220 234 244 / .55),
+             rgb(220 234 244 / .10) 55%,rgb(220 234 244 / .02)) 1;
+           background:#000;
            position:relative;
            box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
