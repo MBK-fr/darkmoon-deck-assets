@@ -225,14 +225,16 @@
      l'ordre du document. C'est ce qui l'assombrissait par le bas et la droite.
      Vraie bordure arrondie, lissee par le navigateur, eteinte par un masque
      en degrade : l'anneau decoupe au `mask-composite` crenelait les coins. */
+  /* ESSAI : plus aucun trait, l'arete est faite d'ombre des deux cotes.
+     A l'interieur, des ombres `inset` qui creusent le bord ; a l'exterieur,
+     l'ombre portee de la carte. Le bord se lit comme un creux, pas comme un
+     cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+    pointer-events:none;border-radius:inherit;
+    box-shadow:inset 0 0 0 1px rgb(0 0 0 / .9),
+               inset 0 2px 6px rgb(0 0 0 / .85),
+               inset 0 0 22px 4px rgb(0 0 0 / .7),
+               inset 0 0 46px 10px rgb(0 0 0 / .45)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
