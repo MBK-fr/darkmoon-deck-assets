@@ -204,7 +204,11 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  .bg-card{border-width:0;background:#000;
+  /* Aplat sombre quasi neutre, comme la carte de reference : la sienne est
+     un #171A11 olive (couleur de leur evenement), ici l'equivalent Darkmoon a
+     la meme clarte. Mesure de l'ecart avant correction : saturation moyenne
+     11,6 chez nous contre 5,7 chez eux, a cause du fond anime colore. */
+  .bg-card{border-width:0;background:#14171c;
            position:relative;
            box-shadow:none;
 }
@@ -226,7 +230,10 @@
      retires. Voir la memoire du projet pour leurs valeurs. */
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
-  .fond canvas{display:block;width:100%;height:100%}
+  /* Le fond anime est mis de cote : la carte de reference est un aplat, pas
+     une texture. Le shader reste monte, il suffit de rendre cette ligne a
+     `display:block` pour le revoir. */
+  .fond canvas{display:none;width:100%;height:100%}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
