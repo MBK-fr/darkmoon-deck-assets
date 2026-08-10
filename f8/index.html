@@ -215,13 +215,9 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  /* La lumiere vient du haut gauche, donc l'ombre PORTEE part vers le bas
-     droite. C'est le premier indice de volume que donne la reference, et
-     c'est celui que j'avais retire. */
-  .bg-card{border-width:0;position:relative;background:#0a0d12;
-           box-shadow:14px 16px 30px rgb(0 0 0 / .55),
-                      28px 32px 64px rgb(0 0 0 / .4),
-                      3px 4px 8px rgb(0 0 0 / .5)}
+  /* Une cavite ne projette pas d'ombre et son sol n'est pas eclaire : le
+     fond de carte et son contenu ne sont pas touches, seul le bord l'est. */
+  .bg-card{border-width:0;position:relative;background:#000}
   /* Le biseau est peint par le script, pixel par pixel : voir le montage.
      Aucun filtre SVG, aucune ombre : une carte de hauteur et un eclairage. */
   .bg-card>.biseau.biseau{position:absolute;inset:0;z-index:0;
@@ -445,16 +441,29 @@ window.addEventListener('resize', caler);
 // s'eclaire, en dessous elle s'assombrit. Les QUATRE cotes existent donc,
 // deux dans la lumiere, deux dans l'ombre, ce qu'aucune de mes versions
 // precedentes ne faisait.
-// Releve sur la reference (dribbble 25895544) : ce qui fait la piece, ce
-// n'est pas le bord, c'est que TOUTE la face est modelee. Le galet y est
-// clair du cote de la lampe et s'eteint doucement de l'autre, sur toute sa
-// largeur ; le bord ne porte qu'un mince filet et une ombre. Mes versions
-// n'eclairaient que le bord : d'ou le crochet chrome pose sur un aplat noir.
-const BISEAU = { largeur: 14, rayon: 18, pente: 0.85, grain: 0.10,
-                 bombe: 0.11,            // courbure de la face, discrete
+// Bord releve AU PIXEL sur la reference (dribbble 25895544, image de poster
+// 2000 x 1500), trois coupes perpendiculaires a la piste creusee :
+//   haut   : plat 30  ->  paroi 9        ->  sol 3     (paroi a l'ombre)
+//   bas    : plat 22  ->  paroi 57 a 61  ->  sol 15    (paroi eclairee)
+//   gauche : plat 23  ->  paroi 58 a 47  ->  sol 5     (paroi eclairee)
+// Trois choses en sortent, et ce sont elles qui manquaient :
+//   1. la paroi est un PLAN, pas une courbe : 58, 56, 54, 51, 49, 47 puis
+//      chute nette. Un profil en cosinus, comme le mien, culmine au milieu
+//      et s'eteint aux deux bouts, ce qui donne un filet, pas une joue.
+//   2. AUCUN reflet speculaire. La paroi eclairee est du diffus pur, sans
+//      point brillant nulle part. Mon chrome n'avait rien a faire la.
+//   3. la paroi eclairee vaut environ 2,6 fois le plat, la paroi a l'ombre
+//      environ 0,3 fois. C'est un ecart de 1 a 7 entre les deux cotes.
+// La largeur vaut 28 px pour une piste de 340 de haut, soit 8 %, ce qui fait
+// 20 px sur nos cartes.
+const BISEAU = { largeur: 20, rayon: 18, pente: 1.0, grain: 0.09,
+                 bombe: 0,               // le sol n'est pas eclaire
                  lumiere: [-0.5, -0.5, 0.707], exposant: 34,
-                 teinte: [214, 230, 250], gainDiffus: 0.5, gainSpec: 0.6,
-                 gainOmbre: 1.35 };
+                 teinte: [216, 218, 224], gainDiffus: 1.35, gainSpec: 0,
+                 gainOmbre: 0.8 };
+// gainOmbre a 1,6 ecrasait la paroi a l'ombre a zero : mesure, la reference
+// la laisse a 0,3 fois le plat (9 contre 30), pas a zero. Elle garde donc
+// un peu de matiere du cote sombre, c'est ce qui evite l'effet decoupe.
 
 function biseauter(carte) {
   const toile = document.createElement('canvas');
@@ -499,12 +508,13 @@ function biseauter(carte) {
         gx *= px < 0 ? -1 : 1; gy *= py < 0 ? -1 : 1;
         // la pente, plus le grain : c'est la SURFACE qui est grenue, donc le
         // reflet l'est aussi, au lieu d'un bruit colle par-dessus
-        // 1. la pente du chanfrein, forte a l'arete, nulle au fond
-        const pente = Math.cos(t * Math.PI / 2) * BISEAU.pente
+        // La paroi est un PLAN incline : pente CONSTANTE sur toute la
+        // largeur, juste adoucie sur deux pixels a chaque extremite pour ne
+        // pas creneler l'arete et le pied.
+        const lisse = Math.min(1, t / 0.1) * Math.min(1, (1 - t) / 0.1);
+        const pente = BISEAU.pente * lisse
                       * (1 + (Math.random() - 0.5) * BISEAU.grain);
         let tx = -gx * pente, ty = -gy * pente;
-        // 2. le bombe de la face : la normale s'ecarte doucement du centre,
-        //    donc la face entiere prend la lumiere au lieu de rester plate
         tx += (px / hw) * BISEAU.bombe;
         ty += (py / hh) * BISEAU.bombe;
         const inv = 1 / Math.hypot(tx, ty, 1);
