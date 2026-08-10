@@ -178,9 +178,14 @@
      noire ne se voit pas, autant ne rien peindre */
   /* filet blanc de 2 px, et une ombre noire large et franche pour detacher
      les cartes du fond etheral, qui est clair par endroits */
-  /* blanc pur trop eclatant : on passe a l'Alice de la charte, celle des
-     pictogrammes, a 80 % — le filet reste clair sans taper */
-  .bg-card{border:2px solid rgb(220 234 244 / .8);background:#000;
+  /* ── Filet des cartes : RETIRE pour essai le 10/08/2026 ────────────────
+     Etat precedent, a remettre tel quel si besoin :
+         border: 2px solid rgb(220 234 244 / .8);
+     soit l'Alice de la charte (#DCEAF4, celle des pictogrammes) a 80 %,
+     retenue apres le blanc pur juge trop eclatant. Luminance mesuree du
+     trait : 167/255 contre 255 pour le blanc pur.
+     L'ombre noire ci-dessous, elle, est conservee. */
+  .bg-card{border-width:0;background:#000;
            position:relative;
            box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
