@@ -215,13 +215,23 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  /* Une cavite ne projette pas d'ombre et son sol n'est pas eclaire : le
-     fond de carte et son contenu ne sont pas touches, seul le bord l'est. */
-  .bg-card{border-width:0;position:relative;background:#000}
-  /* Le biseau est peint par le script, pixel par pixel : voir le montage.
-     Aucun filtre SVG, aucune ombre : une carte de hauteur et un eclairage. */
-  .bg-card>.biseau.biseau{position:absolute;inset:0;z-index:0;
-          pointer-events:none;border-radius:inherit}
+  .bg-card{border-width:0;background:#000;position:relative;
+           box-shadow:0 130px 260px rgb(0 0 0 / 1),
+                      0 80px 170px rgb(0 0 0 / 1),
+                      0 44px 100px rgb(0 0 0 / 1),
+                      0 20px 52px rgb(0 0 0 / .98),
+                      0 6px 20px rgb(0 0 0 / .95),
+                      0 0 60px rgb(0 0 0 / .9);}
+  /* le filet blanc, eteint par un masque en degrade : etat de reference du
+     10/08/2026, garde en memoire du projet */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -292,30 +302,17 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
-  /* le sol de la cavite, 11 px plus bas que la surface */
-  .fond{position:absolute;inset:0;z-index:0;
-        border-radius:var(--radius);
-        overflow:hidden;background:#05070d}
+  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
+        overflow:hidden}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
      rien a lire, donc le mouvement reste visible. */
   .fond canvas{display:block;width:100%;height:100%;opacity:.62}
-  /* Le voile porte AUSSI l'ombrage de la cavite. Il vit dans `.fond`, donc
-     sous le texte : porte par `.bg-card::after`, qui est en z-index 6, la
-     meme ombre passait PAR-DESSUS les mots et grisait leurs premieres
-     lettres, au bord ou l'ombre est la plus dense. */
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:inset 30px 30px 52px rgb(0 0 0 / .95),
-               inset 15px 15px 28px rgb(0 0 0 / .88),
-               inset 6px 6px 11px rgb(0 0 0 / .8),
-               inset 2px 2px 3px rgb(0 0 0 / .85),
-               inset -9px -9px 22px rgb(140 168 208 / .13),
-               inset -3px -3px 6px rgb(178 202 234 / .18),
-               inset -1px -1px 1px rgb(220 236 252 / .34)}
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -329,18 +326,8 @@
   /* la lumiere interieure, peinte dans le fond de la carte */
   .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
     border-radius:inherit;z-index:2;
-    background:
-      /* la trainee : le reflet d'une source lointaine sur une surface de
-         verre. Une seule, oblique, aux bords fondus. C'est ce reflet-la qui
-         dit "vitre" ; une nappe uniforme ne dit rien. */
-      linear-gradient(112deg,rgb(0 0 0 / 0) 26%,
-        rgb(214 232 252 / .028) 33%,rgb(226 240 255 / .075) 39%,
-        rgb(214 232 252 / .03) 45%,rgb(0 0 0 / 0) 52%),
-      /* le fond de cavite : eteint du cote a l'ombre, rallume du cote qui
-         recoit la lumiere rasante */
-      linear-gradient(135deg,rgb(0 0 0 / .55) 0%,
-        rgb(0 0 0 / .2) 34%,rgb(0 0 0 / 0) 60%,
-        rgb(140 168 206 / .04) 88%,rgb(150 178 216 / .075) 100%)}
+    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
+      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
   /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
      s'eteint donc le long du bord comme dans l'artwork de la reference.
      Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
@@ -429,119 +416,6 @@ caler();
 window.addEventListener('resize', caler);
 </script>
 <script>
-// ── Le biseau, calcule pixel par pixel ────────────────────────────────────
-// Ni box-shadow ni filtre SVG : les deux ne savent poser qu'une tache le long
-// d'un bord, et sur un rectangle ca donne un trait, jamais un volume. Ici on
-// fabrique vraiment la piece :
-//   1. distance signee au rectangle arrondi, donc on sait ou on est dans le
-//      chanfrein et dans quelle direction regarde le bord ;
-//   2. profil de hauteur en cosinus : pente forte a l'arete, nulle au fond ;
-//   3. normale, puis Lambert et Phong avec UNE lumiere en haut a gauche.
-// Le plat rend exactement l'ambiance, qu'on soustrait : au-dessus la paroi
-// s'eclaire, en dessous elle s'assombrit. Les QUATRE cotes existent donc,
-// deux dans la lumiere, deux dans l'ombre, ce qu'aucune de mes versions
-// precedentes ne faisait.
-// Bord releve AU PIXEL sur la reference (dribbble 25895544, image de poster
-// 2000 x 1500), trois coupes perpendiculaires a la piste creusee :
-//   haut   : plat 30  ->  paroi 9        ->  sol 3     (paroi a l'ombre)
-//   bas    : plat 22  ->  paroi 57 a 61  ->  sol 15    (paroi eclairee)
-//   gauche : plat 23  ->  paroi 58 a 47  ->  sol 5     (paroi eclairee)
-// Trois choses en sortent, et ce sont elles qui manquaient :
-//   1. la paroi est un PLAN, pas une courbe : 58, 56, 54, 51, 49, 47 puis
-//      chute nette. Un profil en cosinus, comme le mien, culmine au milieu
-//      et s'eteint aux deux bouts, ce qui donne un filet, pas une joue.
-//   2. AUCUN reflet speculaire. La paroi eclairee est du diffus pur, sans
-//      point brillant nulle part. Mon chrome n'avait rien a faire la.
-//   3. la paroi eclairee vaut environ 2,6 fois le plat, la paroi a l'ombre
-//      environ 0,3 fois. C'est un ecart de 1 a 7 entre les deux cotes.
-// La largeur vaut 28 px pour une piste de 340 de haut, soit 8 %, ce qui fait
-// 20 px sur nos cartes.
-const BISEAU = { largeur: 20, rayon: 18, pente: 1.0, grain: 0.09,
-                 bombe: 0,               // le sol n'est pas eclaire
-                 lumiere: [-0.5, -0.5, 0.707], exposant: 34,
-                 teinte: [216, 218, 224], gainDiffus: 1.35, gainSpec: 0,
-                 gainOmbre: 0.8 };
-// gainOmbre a 1,6 ecrasait la paroi a l'ombre a zero : mesure, la reference
-// la laisse a 0,3 fois le plat (9 contre 30), pas a zero. Elle garde donc
-// un peu de matiere du cote sombre, c'est ce qui evite l'effet decoupe.
-
-function biseauter(carte) {
-  const toile = document.createElement('canvas');
-  toile.className = 'biseau';
-  carte.append(toile);
-  const peindre = () => {
-    // La scene entiere est mise a l'echelle par un `transform`, donc
-    // `getBoundingClientRect` rend des pixels ECRAN et pas les pixels de mise
-    // en page : s'en servir dessinait le biseau a 75 pour cent, en retrait
-    // du bord. On prend la taille de mise en page, et on ne garde l'echelle
-    // que pour la finesse du rendu.
-    const r = {width: carte.offsetWidth, height: carte.offsetHeight};
-    if (r.width < 8) return;
-    const ecran = carte.getBoundingClientRect();
-    const echelle = ecran.width / r.width || 1;
-    const dpr = Math.min(3, (window.devicePixelRatio || 1) * echelle);
-    const L = BISEAU.lumiere, W = BISEAU.largeur, R = BISEAU.rayon;
-    const cw = Math.round(r.width * dpr), ch = Math.round(r.height * dpr);
-    toile.width = cw; toile.height = ch;
-    toile.style.width = r.width + 'px'; toile.style.height = r.height + 'px';
-    const ctx = toile.getContext('2d');
-    const img = ctx.createImageData(cw, ch), D = img.data;
-    const hw = r.width / 2, hh = r.height / 2;
-    // demi-vecteur de Phong, pour le reflet
-    const Hx = L[0], Hy = L[1], Hz = L[2] + 1;
-    const hn = Math.hypot(Hx, Hy, Hz);
-    const ambiance = L[2];              // ce que rend une surface plate
-    for (let y = 0; y < ch; y++) {
-      for (let x = 0; x < cw; x++) {
-        const px = x / dpr - hw, py = y / dpr - hh;
-        const qx = Math.abs(px) - (hw - R), qy = Math.abs(py) - (hh - R);
-        const d = Math.hypot(Math.max(qx, 0), Math.max(qy, 0))
-                  + Math.min(Math.max(qx, qy), 0) - R;
-        const i = (y * cw + x) * 4;
-        if (d > 0) { D[i + 3] = 0; continue; }
-        const t = Math.min(1, -d / W);
-        // direction du bord, vers l'exterieur
-        let gx, gy;
-        if (qx > 0 && qy > 0) {
-          const l = Math.hypot(qx, qy) || 1; gx = qx / l; gy = qy / l;
-        } else if (qx > qy) { gx = 1; gy = 0; } else { gx = 0; gy = 1; }
-        gx *= px < 0 ? -1 : 1; gy *= py < 0 ? -1 : 1;
-        // la pente, plus le grain : c'est la SURFACE qui est grenue, donc le
-        // reflet l'est aussi, au lieu d'un bruit colle par-dessus
-        // La paroi est un PLAN incline : pente CONSTANTE sur toute la
-        // largeur, juste adoucie sur deux pixels a chaque extremite pour ne
-        // pas creneler l'arete et le pied.
-        const lisse = Math.min(1, t / 0.1) * Math.min(1, (1 - t) / 0.1);
-        const pente = BISEAU.pente * lisse
-                      * (1 + (Math.random() - 0.5) * BISEAU.grain);
-        let tx = -gx * pente, ty = -gy * pente;
-        tx += (px / hw) * BISEAU.bombe;
-        ty += (py / hh) * BISEAU.bombe;
-        const inv = 1 / Math.hypot(tx, ty, 1);
-        const nx = tx * inv, ny = ty * inv, nz = inv;
-        const diffus = nx * L[0] + ny * L[1] + nz * L[2];
-        const v = (diffus - ambiance) * BISEAU.gainDiffus;
-        const spec = Math.pow(Math.max(0, (nx * Hx + ny * Hy + nz * Hz) / hn),
-                              BISEAU.exposant) * BISEAU.gainSpec;
-        let cr, cg, cb, a;
-        if (v >= 0) { cr = BISEAU.teinte[0]; cg = BISEAU.teinte[1];
-                      cb = BISEAU.teinte[2]; a = v; }
-        else { cr = 0; cg = 0; cb = 0; a = -v * BISEAU.gainOmbre; }
-        // le reflet se pose par-dessus, en blanc
-        const as = Math.min(1, spec);
-        const at = Math.min(1, a + as);
-        if (at <= 0.002) { D[i + 3] = 0; continue; }
-        D[i]     = Math.round((cr * a + 255 * as) / at);
-        D[i + 1] = Math.round((cg * a + 255 * as) / at);
-        D[i + 2] = Math.round((cb * a + 255 * as) / at);
-        D[i + 3] = Math.round(at * 255);
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-  };
-  peindre();
-  new ResizeObserver(peindre).observe(carte);
-}
 
 // ── tables de 1024 valeurs et acces `& 1023`, comme le composant
 const SIN = new Float32Array(1024), COS = new Float32Array(1024);
@@ -569,7 +443,6 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
-  biseauter(carte);
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
