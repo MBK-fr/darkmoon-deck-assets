@@ -32,10 +32,10 @@
   /* halo sombre derriere le bloc de texte : les ombres portees suivent le
      contour des lettres, ce voile-la assombrit aussi les blancs entre les
      mots et les lignes */
-  .inner::before{content:"";position:absolute;inset:-14% -10%;z-index:-1;
-                 background:radial-gradient(58% 52% at 50% 50%,
-                   rgba(0,0,0,.92) 0%, rgba(0,0,0,.78) 42%,
-                   rgba(0,0,0,.42) 68%, rgba(0,0,0,0) 100%)}
+  .inner::before{content:"";position:absolute;inset:-12% -8%;z-index:-1;
+                 background:radial-gradient(52% 46% at 50% 50%,
+                   rgba(0,0,0,.74) 0%, rgba(0,0,0,.52) 44%,
+                   rgba(0,0,0,.22) 70%, rgba(0,0,0,0) 100%)}
   .txt{color:#fff;font-size:3rem;line-height:1.625;letter-spacing:.025em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;perspective:900px}
@@ -44,6 +44,11 @@
      transition-timing-function:cubic-bezier(.25,.46,.45,.94);
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
+  /* Fin de cycle : plus de `will-change`, plus de 3D, plus de filtre. Un
+     `blur(0px)` ou un `will-change` maintient le mot dans un calque
+     composite, rasterise a sa taille puis remis a l'echelle par le lecteur :
+     c'est ce qui ramollissait le texte. */
+  .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
 </style></head><body>
 <div id="ether">
   <div class="fluide">
@@ -89,6 +94,7 @@ MOTS.forEach(w => {
 const spans = [...p.children];
 function repos() {
   spans.forEach((e, i) => {
+    e.classList.remove('pose');
     const w = MOTS[i];
     e.style.opacity = 0;
     e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
@@ -107,6 +113,12 @@ function jouer() {
     });
   }, 200));
   const fin = Math.max(...MOTS.map(w => w.r + w.d));
+  // le mot revient dans le flux normal une fois pose
+  setTimeout(() => spans.forEach(e => {
+    e.style.filter = '';
+    e.style.transform = '';
+    e.classList.add('pose');
+  }), (fin + 0.3) * 1000);
   setTimeout(jouer, (fin + 1) * 1000 + 4000);      // animationDelay = 4000
 }
 jouer();
