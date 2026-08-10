@@ -222,32 +222,16 @@
                       0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
                       0 0 60px rgb(0 0 0 / .9);}
-  /* ── Recette du pen prof2k/ZEGBrvX, reprise telle quelle ──────────────
-     Sa piste de curseur ne porte NI bordure NI fond : elle est creusee par
-     deux ombres interieures opposees, et rien d'autre. Valeurs relevees dans
-     sa feuille calculee, sur `::-webkit-slider-runnable-track` :
-         background: transparent;
-         border-radius: 2em;
-         box-shadow: rgba(0,0,0,.15)        0.6em  1em 10px inset,
-                     rgba(255,255,255,.416) -0.6em -1em 10px inset;
-     Sa police fait 16 px, donc 0.6em = 9,6 px, 1em = 16 px, flou 10 px,
-     aucune propagation. Le decalage POSITIF peint le haut gauche, en sombre,
-     le NEGATIF le bas droite, en clair : une cuvette eclairee du haut
-     gauche, le meme sens que le reste de la slide.
-     Les ombres sont posees dans `.fond`, donc SOUS le texte : portees par
-     `.bg-card::after`, qui est en z-index 6, elles passaient par-dessus les
-     mots et grisaient leurs premieres lettres.
-     Etat precedent, le filet blanc masque, a remettre tel quel si besoin :
-         10/08/2026, garde en memoire du projet */
-         .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-         pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
-         -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-         mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
-     ------------------------------------------------------------------- */
+  /* le filet blanc, eteint par un masque en degrade : etat de reference du
+     10/08/2026, garde en memoire du projet */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -327,20 +311,8 @@
   .fond canvas{display:block;width:100%;height:100%;opacity:.62}
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
-    background:linear-gradient(to bottom,rgb(3 6 16 / .10) 0%,
-      rgb(3 6 16 / .30) 42%,rgb(2 5 14 / .55) 76%,rgb(2 4 12 / .66) 100%);
-    /* Les couleurs du pen sont un blanc pur et un noir pur, justes chez lui
-       parce que sa scene est neutre. Ici elles ne le sont pas : mesure du
-       decor sur la slide, les zones eclairees valent rgb(40,67,95), teinte
-       211 degres, et la charte donne l'alice #dceaf4 a 203. Une lumiere
-       blanche dans un decor bleu ne peut pas etre naturelle.
-       La clarte prend donc l'alice de la charte, et l'ombre un indigo tres
-       sombre plutot qu'un noir neutre. Geometrie et alphas du pen inchanges. */
-    box-shadow:var(--dm-sombre,rgba(6,10,28,.15))
-                 var(--dm-dx,9.6px) var(--dm-dy,16px) var(--dm-flou,10px) inset,
-               var(--dm-clair,rgba(220,234,244,.416))
-                 calc(-1 * var(--dm-dx,9.6px)) calc(-1 * var(--dm-dy,16px))
-                 var(--dm-flou,10px) inset}
+    background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -471,72 +443,6 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
-  // ── L'ECHELLE du relief ───────────────────────────────────────────────
-  // Le pen donne 9,6 px, 16 px et 10 px de flou, mais sur une piste de 4em,
-  // soit 64 px de haut : ses ombres couvrent donc 15, 25 et 16 pour cent de
-  // la piece. Recopier ces pixels sur une carte de 245 px les ramene a 4 ou
-  // 6 pour cent de la surface, autant dire rien, et c'est pour ca que la
-  // derniere version ne changeait rien a l'oeil. On garde les RAPPORTS du
-  // pen, pas ses pixels.
-  const echelonner = () => {
-    const h = carte.offsetHeight || 64;
-    carte.style.setProperty('--dm-dx', (h * 9.6 / 64).toFixed(1) + 'px');
-    carte.style.setProperty('--dm-dy', (h * 16 / 64).toFixed(1) + 'px');
-    carte.style.setProperty('--dm-flou', (h * 10 / 64).toFixed(1) + 'px');
-  };
-  echelonner();
-  new ResizeObserver(echelonner).observe(carte);
-  // ── La couleur du relief vient du motif de LA carte ──────────────────
-  // Chaque carte a sa propre vague, avec ses teintes : celle du haut gauche
-  // tire sur le rouge sombre, celles du bas sur le turquoise. Poser la meme
-  // lumiere partout, prise dans le decor ou dans la charte, donne un
-  // eclairage qui ne vient pas de la matiere qu'il eclaire. On echantillonne
-  // donc le canvas de la carte, on en tire la teinte dominante, et on en
-  // fabrique le couple clair / sombre du biseau.
-  const teinter = () => {
-    const c = fond.querySelector('canvas');
-    if (!c || !c.width) return;
-    let px;
-    try { px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; }
-    catch (e) { return; }
-    // Histogramme de teintes, PAS une moyenne : la vague melange un accent
-    // chaud et un fond froid, et la moyenne circulaire de 0 et 240 degres
-    // tombe a 300, soit un magenta que la charte interdit et qui n'existe
-    // nulle part dans l'image. On prend donc le sommet de l'histogramme.
-    const bacs = new Float32Array(36);
-    let poids = 0, n = 0;
-    const pas = Math.max(4, Math.round(c.width / 60)) * 4;
-    for (let i = 0; i < px.length; i += pas * 4) {
-      const r = px[i] / 255, g = px[i + 1] / 255, b = px[i + 2] / 255;
-      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
-      const l = (mx + mn) / 2;
-      if (mx - mn < 0.02 || l < 0.02) continue;
-      const d = mx - mn;
-      let h;
-      if (mx === r) h = ((g - b) / d + (g < b ? 6 : 0));
-      else if (mx === g) h = (b - r) / d + 2;
-      else h = (r - g) / d + 4;
-      h *= Math.PI / 3;
-      const deg = (h * 180 / Math.PI + 360) % 360;
-      bacs[Math.floor(deg / 10) % 36] += d;   // les pixels satures pesent plus
-      poids += d; n++;
-    }
-    if (!poids || !n) return;
-    let meilleur = 0;
-    for (let k = 1; k < 36; k++) if (bacs[k] > bacs[meilleur]) meilleur = k;
-    // barycentre du sommet et de ses deux voisins, pour ne pas quantifier
-    const g0 = bacs[(meilleur + 35) % 36], g1 = bacs[meilleur],
-          g2 = bacs[(meilleur + 1) % 36];
-    const dec = (g2 - g0) / (g0 + g1 + g2) * 10;
-    const teinte = (meilleur * 10 + 5 + dec + 360) % 360;
-    const sat = Math.min(0.5, (poids / n) * 3.2);
-    carte.style.setProperty('--dm-clair',
-      `hsla(${teinte.toFixed(0)}, ${(sat * 100).toFixed(0)}%, 86%, .416)`);
-    carte.style.setProperty('--dm-sombre',
-      `hsla(${teinte.toFixed(0)}, ${(Math.min(0.65, sat * 1.6) * 100).toFixed(0)}%, 7%, .15)`);
-  };
-  setTimeout(teinter, 1400);
-  setInterval(teinter, 5000);
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
