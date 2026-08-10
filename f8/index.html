@@ -209,15 +209,30 @@
            /* L'ombre est large mais SANS propagation : avec un `spread`, elle
               debordait sur les cartes voisines et mangeait leur lisiere. La
               gouttiere fait 18 px, on reste dedans. */
-           box-shadow:0 60px 130px rgb(0 0 0 / 1),
-                      0 34px 80px rgb(0 0 0 / 1),
-                      0 16px 44px rgb(0 0 0 / .98),
+           box-shadow:0 130px 260px rgb(0 0 0 / 1),
+                      0 80px 170px rgb(0 0 0 / 1),
+                      0 44px 100px rgb(0 0 0 / 1),
+                      0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
-                      0 0 10px rgb(0 0 0 / .9);
+                      0 0 60px rgb(0 0 0 / .9);
 }
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
+  /* Le lisere est porte par la CARTE, pas par son fond, et avec un z-index
+     positif : `.fond` est un contexte d'empilement, un lisere pose dedans
+     serait repeint par l'ombre de la carte voisine, qui passe apres dans
+     l'ordre du document. C'est ce qui l'assombrissait par le bas et la droite.
+     Vraie bordure arrondie, lissee par le navigateur, eteinte par un masque
+     en degrade : l'anneau decoupe au `mask-composite` crenelait les coins. */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
@@ -252,18 +267,7 @@
      Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
      c'etait la l'erreur : mesure a 70 sur toute la longueur au lieu de
      74 puis 43 puis 15 puis 0. */
-  /* Vraie bordure arrondie, que le navigateur lisse correctement, puis un
-     masque en degrade pour l'eteindre le long du parcours. L'anneau decoupe
-     au `mask-composite` employe avant crenelait les coins : le masque etait
-     rasterise sans anti-crenelage, d'ou l'escalier que Mehdi a vu. */
-  .fond::after{content:"";position:absolute;inset:0;pointer-events:none;
-    border-radius:inherit;z-index:1;border:1.5px solid #fff;
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+
 
   /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
      Rien n'est fait en transitions CSS. L'etat AU REPOS est l'etat final
@@ -280,7 +284,10 @@
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
                  filter:url(#ether-filtre) blur(4px)}
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+  /* Le gris du composant est monte de 128 a 168 : sur un fond noir, une
+   ombre noire n'a rien a assombrir. En eclaircissant le decor, l'ombre
+   portee des cartes devient enfin visible sur tout leur pourtour. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(168,168,168,1);
                  -webkit-mask-image:url('../ether/mask.png');
                  mask-image:url('../ether/mask.png');
                  -webkit-mask-size:cover;mask-size:cover;
@@ -347,7 +354,11 @@ for (let i = 0; i < 1024; i++) {
 const fastSin = x => SIN[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 1023];
 const fastCos = x => COS[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 1023];
 
-const SCALE = 2;              // le sous-echantillonnage du composant
+// Le composant calcule a demi-resolution puis agrandit : meme lisse, cet
+// agrandissement laisse des paliers. On calcule a la resolution reelle du
+// canevas et on n'agrandit plus du tout ; le cout par image est identique
+// puisque le canevas est en meme temps ramene au ratio 1.
+const SCALE = 1;
 const LENTEUR = 0.35;         // ralentissement demande plus tot
 const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
 const boucles = [];
@@ -364,7 +375,7 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
 
   // clientWidth, pas getBoundingClientRect : la scene porte un `scale`, le
   // rect renvoie la taille a l'ecran et le canevas serait trop petit.
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = 1;
   boucles.push(secondes => {
     const cw = Math.max(2, Math.round(fond.clientWidth * dpr));
     const ch = Math.max(2, Math.round(fond.clientHeight * dpr));
