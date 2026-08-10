@@ -10,8 +10,23 @@
      On se cale sur le palier md (48 px) : au palier lg le texte, plus long que
      celui de la démo, sortirait du cadre 1280×720.                          */
   html,body{margin:0;height:100%;overflow:hidden}
-  .wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;
-        background:#000}
+  /* le noir du composant laisse place au fond etheral, pose derriere */
+  .wrap{position:relative;z-index:1;display:flex;align-items:center;
+        justify-content:center;min-height:100vh;background:transparent}
+  
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+
   .inner{text-align:center;max-width:64rem;padding-left:2rem;padding-right:2rem}
   .txt{color:#fff;font-size:3rem;line-height:1.625;letter-spacing:.025em;
        font-weight:300;margin:0;
@@ -22,8 +37,34 @@
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
 </style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
 <div class="wrap"><div class="inner"><p class="txt" id="p"></p></div></div>
 <script>
+// Le fond etheral est clair par endroits : sans cette ombre les mots blancs
+// s'y perdent. Elle s'ajoute a celle du composant, elle ne la remplace pas.
+const NOIR = '0 0 18px rgba(0,0,0,.95), 0 6px 34px rgba(0,0,0,.92), '
+           + '0 0 70px rgba(0,0,0,.85)';
 const MOTS = [{"t": "Un", "p": "normal", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "p": "normal", "d": 2.487, "r": 0.081, "b": 12, "s": 0.91}, {"t": "par", "p": "normal", "d": 2.448, "r": 0.144, "b": 13, "s": 0.919}, {"t": "an.", "p": "normal", "d": 2.386, "r": 0.236, "b": 12, "s": 0.928}, {"t": "Des", "p": "normal", "d": 2.309, "r": 0.34, "b": 15, "s": 0.936}, {"t": "attaques", "p": "normal", "d": 2.221, "r": 0.372, "b": 18, "s": 0.942}, {"t": "tous", "p": "normal", "d": 2.132, "r": 0.466, "b": 15, "s": 0.947}, {"t": "les", "p": "normal", "d": 2.049, "r": 0.524, "b": 18, "s": 0.949}, {"t": "jours.", "p": "normal", "d": 1.979, "r": 0.596, "b": 13, "s": 0.95}, {"t": "Une", "p": "normal", "d": 1.929, "r": 0.714, "b": 12, "s": 0.949}, {"t": "photo", "p": "normal", "d": 1.903, "r": 0.769, "b": 18, "s": 0.945}, {"t": "à", "p": "normal", "d": 1.904, "r": 0.815, "b": 15, "s": 0.94}, {"t": "l'instant", "p": "normal", "d": 1.931, "r": 0.888, "b": 14, "s": 0.934}, {"t": "T.", "p": "normal", "d": 1.982, "r": 0.973, "b": 14, "s": 0.926}, {"t": "Un", "p": "normal", "d": 2.053, "r": 1.058, "b": 16, "s": 0.917}, {"t": "audit", "p": "normal", "d": 2.137, "r": 1.131, "b": 14, "s": 0.907}, {"t": "fige", "p": "normal", "d": 2.226, "r": 1.18, "b": 15, "s": 0.897}, {"t": "la", "p": "normal", "d": 2.313, "r": 1.266, "b": 13, "s": 0.887}, {"t": "sécurité", "p": "normal", "d": 2.39, "r": 1.347, "b": 15, "s": 0.878}, {"t": "à", "p": "normal", "d": 2.45, "r": 1.415, "b": 18, "s": 0.869}, {"t": "une", "p": "normal", "d": 2.488, "r": 1.501, "b": 19, "s": 0.862}, {"t": "date.", "p": "normal", "d": 2.5, "r": 1.563, "b": 19, "s": 0.856}, {"t": "La", "p": "normal", "d": 2.485, "r": 1.623, "b": 15, "s": 0.852}, {"t": "cible", "p": "normal", "d": 2.445, "r": 1.716, "b": 15, "s": 0.85}, {"t": ":", "p": "normal", "d": 2.383, "r": 1.751, "b": 16, "s": 0.85}, {"t": "les", "p": "normal", "d": 2.304, "r": 1.845, "b": 17, "s": 0.852}, {"t": "sous-traitants.", "p": "normal", "d": 2.216, "r": 1.926, "b": 16, "s": 0.856}, {"t": "4×", "p": "normal", "d": 2.127, "r": 1.991, "b": 13, "s": 0.861}, {"t": "plus", "p": "normal", "d": 2.044, "r": 2.037, "b": 18, "s": 0.868}, {"t": "de", "p": "normal", "d": 1.975, "r": 2.11, "b": 17, "s": 0.877}, {"t": "victimes", "p": "normal", "d": 1.927, "r": 2.18, "b": 19, "s": 0.886}, {"t": "que", "p": "normal", "d": 1.902, "r": 2.264, "b": 13, "s": 0.896}, {"t": "les", "p": "normal", "d": 1.905, "r": 2.351, "b": 17, "s": 0.906}, {"t": "grands", "p": "normal", "d": 1.933, "r": 2.401, "b": 17, "s": 0.916}, {"t": "comptes.", "p": "normal", "d": 1.986, "r": 2.484, "b": 19, "s": 0.925}, {"t": "NIS2,", "p": "normal", "d": 2.057, "r": 2.528, "b": 13, "s": 0.933}, {"t": "DORA.", "p": "normal", "d": 2.142, "r": 2.642, "b": 19, "s": 0.94}, {"t": "Tester", "p": "normal", "d": 2.231, "r": 2.7, "b": 13, "s": 0.945}, {"t": "devient", "p": "normal", "d": 2.318, "r": 2.738, "b": 16, "s": 0.948}, {"t": "obligatoire.", "p": "normal", "d": 2.394, "r": 2.837, "b": 19, "s": 0.95}];
 const p = document.getElementById('p');
 MOTS.forEach(w => {
@@ -41,7 +82,7 @@ function repos() {
     e.style.opacity = 0;
     e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
     e.style.transform = 'translateY(20px) scale(' + w.s + ') rotateX(-15deg)';
-    e.style.textShadow = '0 0 40px rgba(255,255,255,.4)';
+    e.style.textShadow = '0 0 40px rgba(255,255,255,.4), ' + NOIR;
   });
 }
 function jouer() {
@@ -51,7 +92,7 @@ function jouer() {
       e.style.opacity = 1;
       e.style.filter = 'blur(0px) brightness(1)';
       e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
-      e.style.textShadow = '0 2px 8px rgba(255,255,255,.1)';
+      e.style.textShadow = '0 2px 8px rgba(255,255,255,.1), ' + NOIR;
     });
   }, 200));
   const fin = Math.max(...MOTS.map(w => w.r + w.d));

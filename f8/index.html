@@ -192,46 +192,20 @@
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
 
-  /* @jatin-yadav05/etheral-shadow, en fond de slide.
-     Structure et valeurs reprises du composant : le calque deborde de N,
-     porte `url(#filtre) blur(4px)`, et contient un aplat de couleur masque
-     par l'image du composant. Le grain est un second calque au-dessus. */
-  /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
-     Un rideau noir couvre tout, puis se leve ; les cartes montent derriere
-     lui, decalees les unes des autres. */
-  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
-          opacity:1;transition:opacity 2.4s cubic-bezier(.22,.61,.36,1)}
-  #rideau.leve{opacity:0}
-  /* rideau retire du composite une fois leve : un calque plein ecran, meme
-     totalement transparent, reste un calque */
-  #rideau.range{display:none}
-  /* le fond se fait aussi la mise au point, sinon seules les cartes piquent
-     et le decor reste plat */
-  #ether{filter:blur(12px);transition:filter 2.6s cubic-bezier(.22,.61,.36,1)}
-  #ether.net{filter:none}
-  .bg-card{opacity:0;transform:translateY(26px) scale(.985);filter:blur(16px);
-           transition:opacity 1.9s cubic-bezier(.22,.61,.36,1),
-                      transform 1.9s cubic-bezier(.22,.61,.36,1),
-                      filter 1.9s cubic-bezier(.22,.61,.36,1)}
-  .bg-card.entree{opacity:1;transform:none;filter:blur(0)}
-  /* Une fois l'ouverture finie on retire le filtre : `blur(0)` maintient la
-     carte dans un calque composite, rasterise a part puis remis a l'echelle
-     0,78 de la scene, ce qui ramollit texte et filets. `none` la fait
-     repeindre dans le flux normal, au piqué de l'ecran. */
-  .bg-card.fini{filter:none;transition:none}
-
+  
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
                  filter:url(#ether-filtre) blur(4px)}
   #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 -webkit-mask-image:url('ether-mask.png');
-                 mask-image:url('ether-mask.png');
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
                  -webkit-mask-size:cover;mask-size:cover;
                  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
                  -webkit-mask-position:center;mask-position:center}
   #ether .grain{position:absolute;inset:0;
-                background-image:url('ether-noise.png');
+                background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
+
   #scene{z-index:1}
   /* Pas de voile sur ce fond-la : mesure faite, le texte blanc y tient a
      12,6:1 sans aide. La carte montre le composant, rien d'autre. */
@@ -244,8 +218,6 @@
         <feTurbulence result="undulation" numOctaves="2"
                       baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
         <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <!-- le composant anime `values` de 0 a 360 ; duree = B/25 avec
-               B = mapRange(speed 90, 1, 100, 1000, 50) = 146 ms, soit 5,84 s -->
           <animate attributeName="values" from="0" to="360" dur="5.84s"
                    repeatCount="indefinite"/>
         </feColorMatrix>
