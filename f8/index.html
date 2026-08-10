@@ -196,7 +196,15 @@
   /* blanc pur demande, et angles tres arrondis. `--radius` pilote a la fois
      la carte (`rounded-lg`) et le cadre du fond anime : les deux restent
      alignes, sinon le canevas deborderait en carre derriere les coins. */
-  .bg-card{border:2px solid #fff;background:#000;
+  /* ── Le filet est dessine par un pseudo-element, pas par `border` ──────
+     Les cartes sont soeurs dans la grille et leurs ombres noires debordent
+     largement (90 px de flou, 40 de propagation, pour 18 px de gouttiere).
+     Chaque carte peignait donc son ombre PAR-DESSUS le filet de ses voisines
+     de gauche et du dessus : le blanc tombait de 255 a 148 vers le bas et la
+     droite, ce qui se lisait comme un degrade de bordure.
+     Pose en pseudo-element avec un `z-index` positif, le filet passe apres
+     toutes les ombres des soeurs et reste uniforme. */
+  .bg-card{background:#000;
            position:relative;
            box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
@@ -205,6 +213,8 @@
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border:2px solid #fff;border-radius:inherit}
 
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
