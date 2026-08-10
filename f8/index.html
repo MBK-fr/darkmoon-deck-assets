@@ -204,7 +204,14 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  .bg-card{border-width:0;background:#000;
+  /* La carte n'est plus un aplat : c'est la plaque metallique dans laquelle
+     le verre est encastre. Le degrade court en diagonale depuis la source de
+     lumiere en haut a gauche, passe par l'ombre du bas droit et remonte sur
+     un rebond, comme un profil usine. */
+  .bg-card{border-width:0;
+           background:linear-gradient(146deg,#e6eef7 0%,#93a4ba 9%,#4b5666 22%,
+                                      #232a35 44%,#1a1f27 62%,#3c4655 80%,
+                                      #8fa0b4 94%,#cfdceb 100%);
            position:relative;
            /* L'ombre est large mais SANS propagation : avec un `spread`, elle
               debordait sur les cartes voisines et mangeait leur lisiere. La
@@ -233,23 +240,32 @@
      A l'interieur, des ombres `inset` qui creusent le bord ; a l'exterieur,
      l'ombre portee de la carte. Le bord se lit comme un creux, pas comme un
      cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
-  /* Le filet est un `ridge` de 2 px, la largeur minimale ou le navigateur
-     peut encore poser ses deux nuances : 1 px clair a l'exterieur en haut a
-     gauche, 1 px sombre a l'interieur, et l'inverse en bas a droite. La
-     couleur reste OPAQUE, sinon les deux nuances se composent sur le meme
-     noir et le biseau se lit comme un double trait gris (mesure : 166 contre
-     120 en alpha .82, 201 contre 144 en opaque).
-     Le masque en degrade de l'etat de reference est conserve : le relief est
-     franc au coin haut gauche et s'eteint le long du bord, comme avant. */
+  /* ── Le cadre, en objet et non en trait ────────────────────────────────
+     Un `ridge` CSS ne connait que deux nuances, posees a plat : ca donne un
+     biseau de boite de dialogue, pas une matiere. Le cadre est donc monte en
+     couches, avec UNE source de lumiere en haut a gauche, comme le lavis qui
+     eclaire deja l'interieur de la carte :
+       1. l'arete du dessus accroche la lumiere, franche et fine ;
+       2. les flancs la recoivent de biais, donc plus faible a droite ;
+       3. la sous-face ne recoit qu'un rebond, plus doux et plus large ;
+       4. une couture sombre separe le cadre du verre ;
+       5. le verre est EN RETRAIT : son ombre portee tombe a l'interieur,
+          plus dense sous l'arete haute que partout ailleurs.
+     Les `inset` suivent le rayon avec anticrenelage, contrairement a un
+     anneau decoupe au `mask-composite` qui sortait en escalier dans les
+     angles. Le degrade de l'etat de reference reste en masque : la matiere
+     est franche au coin haut gauche et s'eteint le long du bord. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    border:2px ridge #dceaf4;
+    box-shadow:inset 0 1px 0 rgb(255 255 255 / .55),
+               inset 0 0 0 1px rgb(0 0 0 / .35),
+               inset 0 -1px 0 rgb(255 255 255 / .12);
     -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+      rgb(0 0 0 / .8) 24%,rgb(0 0 0 / .45) 52%,rgb(0 0 0 / .16) 80%,
+      rgb(0 0 0 / .05) 100%);
     mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+      rgb(0 0 0 / .8) 24%,rgb(0 0 0 / .45) 52%,rgb(0 0 0 / .16) 80%,
+      rgb(0 0 0 / .05) 100%)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
@@ -263,8 +279,15 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
-  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
-        overflow:hidden}
+  /* Le verre est ENCASTRE : il recule de 3 px, la plaque affleure tout
+     autour, et l'ombre du cadre tombe sur lui, plus dense sous l'arete
+     haute que sur les autres bords. */
+  .fond{position:absolute;inset:3px;z-index:0;
+        border-radius:calc(var(--radius) - 3px);
+        overflow:hidden;background:#000;
+        box-shadow:inset 0 3px 7px -1px rgb(0 0 0 / .95),
+                   inset 0 0 0 1px rgb(0 0 0 / .8),
+                   inset 0 -2px 6px rgb(0 0 0 / .6)}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
@@ -287,8 +310,15 @@
   /* la lumiere interieure, peinte dans le fond de la carte */
   .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
     border-radius:inherit;z-index:2;
-    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
-      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
+    background:
+      /* le reflet du verre : une bande claire juste sous l'arete haute, qui
+         se coupe net, comme une vitre qui renvoie le plafond */
+      linear-gradient(to bottom,rgb(255 255 255 / .11) 0%,
+        rgb(255 255 255 / .045) 4%,rgb(255 255 255 / .012) 11%,
+        rgb(255 255 255 / 0) 20%),
+      /* le lavis diagonal de l'etat de reference */
+      linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
+        rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
   /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
      s'eteint donc le long du bord comme dans l'artwork de la reference.
      Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
