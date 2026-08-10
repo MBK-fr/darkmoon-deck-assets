@@ -284,7 +284,15 @@
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
                  filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
   #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
                  -webkit-mask-image:url('../ether/mask.png');
                  mask-image:url('../ether/mask.png');
                  -webkit-mask-size:cover;mask-size:cover;
