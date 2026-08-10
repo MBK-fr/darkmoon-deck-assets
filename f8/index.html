@@ -222,44 +222,16 @@
                       0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
                       0 0 60px rgb(0 0 0 / .9);}
-  /* ── Bordure du composant @pate1kiran, skeuomorphism in the dark ──────
-     Valeurs relevees dans le bundle du demonstrateur,
-     cdn.21st.dev/larsen66/code-pen-home-skeuomorphism-in-the-dark-button/
-     default/bundle.1753800213111.html, regles `.frame` et `.button.hover
-     .frame` :
-         box-shadow: 0 0 0 3px #ffffff80,       anneau clair exterieur
-                     inset 0 0 0 2px #0009,     anneau sombre interieur
-                     inset 0 0 16px #a0a0a01a;  lueur grise interne
-     Chez lui l'anneau clair suit la souris : il s'allume du cote ou elle
-     passe, c'est une torche. Ici il est FIXE au haut gauche, la ou la slide
-     a deja sa source de lumiere, par le masque en degrade a 135 degres.
-     Chez lui l'anneau clair est peint DEHORS (`0 0 0 3px`). Impossible ici :
-     la carte du composant features-8 porte `overflow: hidden`, verifie dans
-     son style calcule, donc tout ce qui deborde est coupe. Mon premier essai
-     debordait de 3 px et l'anneau disparaissait entierement, il ne restait
-     que l'anneau sombre, invisible sur du noir. Les trois couches sont donc
-     empilees vers l'INTERIEUR, dans le meme ordre et aux memes epaisseurs.
-     Etat precedent, le filet blanc masque, a remettre tel quel si besoin :
-         .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-         pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
-         -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-         mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
-     ------------------------------------------------------------------- */
+  /* le filet blanc, eteint par un masque en degrade : etat de reference du
+     10/08/2026, garde en memoire du projet */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;
-    box-shadow:inset 0 0 0 3px rgb(255 255 255 / .5),
-               inset 0 0 0 5px rgb(0 0 0 / .6),
-               inset 0 0 16px rgb(160 160 160 / .1);
+    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
     -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .52) 44%,rgb(0 0 0 / .26) 68%,
-      rgb(0 0 0 / .1) 88%,rgb(0 0 0 / .05) 100%);
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
     mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .52) 44%,rgb(0 0 0 / .26) 68%,
-      rgb(0 0 0 / .1) 88%,rgb(0 0 0 / .05) 100%)}
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
