@@ -233,14 +233,27 @@
      A l'interieur, des ombres `inset` qui creusent le bord ; a l'exterieur,
      l'ombre portee de la carte. Le bord se lit comme un creux, pas comme un
      cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
+  /* ── Essai du 10/08/2026 : filet en `ridge` ────────────────────────────
+     `ridge` fait deriver au navigateur deux nuances de la couleur donnee,
+     la claire en haut a gauche et la sombre en bas a droite : le biseau
+     sort tout seul. Il lui faut au moins 2 px pour exister, et surtout
+     PAS de masque en degrade, sinon les deux nuances s'eteignent ensemble
+     et le relief disparait. La couleur doit etre OPAQUE : en rgb(... / .82)
+     les deux nuances se composaient sur le meme noir et l'ecart tombait a
+     166 contre 120, le biseau se lisait comme un double trait gris.
+     Etat precedent (filet blanc masque), a remettre tel quel si besoin :
+         .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+         pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
+         -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+         mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+     ------------------------------------------------------------------- */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+    pointer-events:none;border-radius:inherit;
+    border:3px ridge #dceaf4}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
