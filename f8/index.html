@@ -209,12 +209,16 @@
            /* L'ombre est large mais SANS propagation : avec un `spread`, elle
               debordait sur les cartes voisines et mangeait leur lisiere. La
               gouttiere fait 18 px, on reste dedans. */
-           box-shadow:0 130px 260px rgb(0 0 0 / 1),
-                      0 80px 170px rgb(0 0 0 / 1),
-                      0 44px 100px rgb(0 0 0 / 1),
-                      0 20px 52px rgb(0 0 0 / .98),
-                      0 6px 20px rgb(0 0 0 / .95),
-                      0 0 60px rgb(0 0 0 / .9);
+           /* Fondu et non porte : des halos centres, de plus en plus larges,
+              pour que la carte se dissolve dans le decor au lieu de projeter
+              une ombre vers le bas. Toujours sans propagation, la gouttiere
+              ne fait que 18 px. */
+           box-shadow:0 0 30px rgb(0 0 0 / .92),
+                      0 0 70px rgb(0 0 0 / .85),
+                      0 0 130px rgb(0 0 0 / .72),
+                      0 0 220px rgb(0 0 0 / .55),
+                      0 40px 120px rgb(0 0 0 / .8),
+                      0 100px 220px rgb(0 0 0 / .6);
 }
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
@@ -231,10 +235,10 @@
      cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:inset 0 0 0 1px rgb(0 0 0 / .9),
-               inset 0 2px 6px rgb(0 0 0 / .85),
-               inset 0 0 22px 4px rgb(0 0 0 / .7),
-               inset 0 0 46px 10px rgb(0 0 0 / .45)}
+    box-shadow:inset 0 0 14px rgb(0 0 0 / .85),
+               inset 0 0 40px 6px rgb(0 0 0 / .72),
+               inset 0 0 80px 16px rgb(0 0 0 / .55),
+               inset 0 0 140px 30px rgb(0 0 0 / .38)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
