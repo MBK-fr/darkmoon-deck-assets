@@ -222,16 +222,32 @@
                       0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
                       0 0 60px rgb(0 0 0 / .9);}
-  /* le filet blanc, eteint par un masque en degrade : etat de reference du
-     10/08/2026, garde en memoire du projet */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+  /* ── Recette du pen prof2k/ZEGBrvX, reprise telle quelle ──────────────
+     Sa piste de curseur ne porte NI bordure NI fond : elle est creusee par
+     deux ombres interieures opposees, et rien d'autre. Valeurs relevees dans
+     sa feuille calculee, sur `::-webkit-slider-runnable-track` :
+         background: transparent;
+         border-radius: 2em;
+         box-shadow: rgba(0,0,0,.15)        0.6em  1em 10px inset,
+                     rgba(255,255,255,.416) -0.6em -1em 10px inset;
+     Sa police fait 16 px, donc 0.6em = 9,6 px, 1em = 16 px, flou 10 px,
+     aucune propagation. Le decalage POSITIF peint le haut gauche, en sombre,
+     le NEGATIF le bas droite, en clair : une cuvette eclairee du haut
+     gauche, le meme sens que le reste de la slide.
+     Les ombres sont posees dans `.fond`, donc SOUS le texte : portees par
+     `.bg-card::after`, qui est en z-index 6, elles passaient par-dessus les
+     mots et grisaient leurs premieres lettres.
+     Etat precedent, le filet blanc masque, a remettre tel quel si besoin :
+         10/08/2026, garde en memoire du projet */
+         .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+         pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
+         -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+         mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+         rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+         rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+     ------------------------------------------------------------------- */
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -312,7 +328,9 @@
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
+    box-shadow:rgba(0,0,0,.15) 9.6px 16px 10px inset,
+               rgba(255,255,255,.416) -9.6px -16px 10px inset}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
