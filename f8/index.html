@@ -206,7 +206,12 @@
      toutes les ombres des soeurs et reste uniforme. */
   .bg-card{border-width:0;background:#000;
            position:relative;
-           box-shadow:none;
+           /* L'ombre est large mais SANS propagation : avec un `spread`, elle
+              debordait sur les cartes voisines et mangeait leur lisiere. La
+              gouttiere fait 18 px, on reste dedans. */
+           box-shadow:0 26px 60px rgb(0 0 0 / .95),
+                      0 10px 26px rgb(0 0 0 / .9),
+                      0 0 16px rgb(0 0 0 / .8);
 }
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
