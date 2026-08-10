@@ -227,6 +227,33 @@
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
+  /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
+     pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
+     ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
+     donc peint dans l'artwork.
+     On fait pareil : la lumiere est posee dans le fond de la carte, pas sur
+     son contour. Un lisere d'un pixel au plus pres du bord, plus une nappe
+     diagonale qui l'eteint, aux valeurs relevees dans la capture :
+     74/255 au coin haut gauche, 43 au quart, 15 a la moitie, 0 ensuite. */
+  /* la nappe : l'interieur de la carte s'eclaire au coin haut gauche */
+  .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
+    border-radius:inherit;z-index:1;
+    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
+      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
+  /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
+     s'eteint donc le long du bord comme dans l'artwork de la reference.
+     Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
+     c'etait la l'erreur : mesure a 70 sur toute la longueur au lieu de
+     74 puis 43 puis 15 puis 0. */
+  .fond::after{content:"";position:absolute;inset:0;pointer-events:none;
+    border-radius:inherit;z-index:1;padding:1px;
+    background:linear-gradient(135deg,rgb(255 255 255 / .22) 0%,
+      rgb(255 255 255 / .12) 14%,rgb(255 255 255 / .04) 28%,
+      rgb(255 255 255 / 0) 42%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude}
 
   /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
      Rien n'est fait en transitions CSS. L'etat AU REPOS est l'etat final
