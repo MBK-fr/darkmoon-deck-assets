@@ -15,17 +15,15 @@
         justify-content:center;min-height:100vh;background:transparent}
   
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le gris du composant est monte de 128 a 168 : sur un fond noir, une
-   ombre noire n'a rien a assombrir. En eclaircissant le decor, l'ombre
-   portee des cartes devient enfin visible sur tout leur pourtour. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(168,168,168,1);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
+  #ether .fluide{position:absolute;top:-14%;left:-14%;
+                 width:128%;height:128%;
+                 background-image:url('../ether/silk.jpg');
+                 background-size:cover;background-position:center;
+                 will-change:transform;
+                 animation:etherDerive 54s ease-in-out infinite alternate}
+  @keyframes etherDerive{
+    from{transform:translate3d(-1.5%,-1%,0) scale(1.02)}
+    to{transform:translate3d(2%,1.5%,0) scale(1.09)}}
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
@@ -54,25 +52,7 @@
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
 </style></head><body>
 <div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
+  <div class="fluide"></div>
   <div class="grain"></div>
 </div>
 <div class="wrap"><div class="inner"><p class="txt" id="p"></p></div></div>
