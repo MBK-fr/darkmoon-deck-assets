@@ -327,10 +327,17 @@
   .fond canvas{display:block;width:100%;height:100%;opacity:.62}
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
-    background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:rgba(0,0,0,.15) 9.6px 16px 10px inset,
-               rgba(255,255,255,.416) -9.6px -16px 10px inset}
+    background:linear-gradient(to bottom,rgb(3 6 16 / .10) 0%,
+      rgb(3 6 16 / .30) 42%,rgb(2 5 14 / .55) 76%,rgb(2 4 12 / .66) 100%);
+    /* Les couleurs du pen sont un blanc pur et un noir pur, justes chez lui
+       parce que sa scene est neutre. Ici elles ne le sont pas : mesure du
+       decor sur la slide, les zones eclairees valent rgb(40,67,95), teinte
+       211 degres, et la charte donne l'alice #dceaf4 a 203. Une lumiere
+       blanche dans un decor bleu ne peut pas etre naturelle.
+       La clarte prend donc l'alice de la charte, et l'ombre un indigo tres
+       sombre plutot qu'un noir neutre. Geometrie et alphas du pen inchanges. */
+    box-shadow:rgba(6,10,28,.15) 9.6px 16px 10px inset,
+               rgba(220,234,244,.416) -9.6px -16px 10px inset}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
