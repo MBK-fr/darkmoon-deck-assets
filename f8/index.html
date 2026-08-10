@@ -248,38 +248,45 @@
      anneau decoupe au `mask-composite` qui sortait en escalier dans les
      angles. Le degrade de l'etat de reference reste en masque : la matiere
      est franche au coin haut gauche et s'eteint le long du bord. */
-  /* ── Le creux, transpose du pen flo__/vYLObxK ──────────────────────────
-     La carte de droite du pen n'a AUCUNE ombre portee : elle n'est faite que
-     de deux ombres interieures opposees, et c'est leur opposition qui creuse
-     la surface. Releve dans sa feuille de style :
-         box-shadow: rgba(255,255,255,.7)  -10px -10px 10px inset,
-                     rgba(174,174,192,.2)   10px 10px 10px inset;
-     Le decalage positif peint la paroi HAUT GAUCHE, le negatif la paroi BAS
-     DROITE. Le pen est sur un fond clair #F0F0F3 : le blanc y est la lumiere
-     et le gris-bleu l'ombre. Dans l'obscurite le rapport s'inverse, mais la
-     geometrie ne bouge pas :
-       . la lumiere de la slide vient du haut gauche, comme le lavis pose
-         dans les cartes et comme le decor etheral, le plus clair de ce
-         cote-la ;
-       . une cavite eclairee du haut gauche a donc sa paroi haut gauche DANS
-         L'OMBRE et sa paroi basse droite EN PLEINE LUMIERE. C'est exactement
-         le sens des deux ombres du pen, on les garde tel quel ;
-       . la lumiere n'est pas blanche mais alice #dceaf4, la teinte relevee
-         dans l'animation des cartes et dans la charte, sinon le reflet est
-         un corps etranger.
-     Le filet blanc est retire, comme demande. */
+  /* ── Les ondes, transposees du groupe de gauche du pen flo__/vYLObxK ───
+     Ce n'est pas le meme dessin que la carte creusee : le pen y empile trois
+     formes concentriques qui portent CHACUNE la meme paire d'ombres, une
+     fois a l'interieur et une fois a l'exterieur. Releve dans sa feuille :
+         .shadow--wave        { rgb(255,255,255)        4px  4px 6px inset,
+                                rgba(174,174,192,.2)  -4px -4px 6px inset }
+         .shadow--wave::before{ rgb(255,255,255)        4px  4px 6px,
+                                rgba(174,174,192,.2)  -4px -4px 6px }
+     La clarte est en +4 +4, donc en HAUT A GAUCHE, et l'ombre en bas a
+     droite. C'est l'inverse de la carte creusee essayee avant, et c'est ce
+     sens-la qui va avec la slide : la lumiere y vient du haut gauche, comme
+     le lavis des cartes et comme le decor, plus clair de ce cote. Un reflet
+     pose en bas a droite se lisait comme un eclairage qui n'existe pas.
+     Le blanc pur est abandonne : sur ce fond noir il claquait. La clarte est
+     une lumiere BLEUE ET BASSE, prise dans l'animation des cartes, et elle
+     faiblit d'une onde a l'autre en s'enfoncant, comme une ride qui meurt.
+     Les formes restent rectangulaires et gardent le rayon de la carte : les
+     bords se superposent au lieu de se concentrer en cercles. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:
-      /* la paroi a l'ombre, en haut a gauche */
-      inset 12px 12px 16px rgb(0 0 0 / .95),
-      inset 4px 4px 4px rgb(0 0 0 / .85),
-      /* la couture du bord, qui donne l'arete du creux */
-      inset 0 0 0 1px rgb(0 0 0 / .55),
-      /* la paroi eclairee, en bas a droite */
-      inset -12px -12px 18px rgb(220 234 244 / .30),
-      inset -3px -3px 4px rgb(220 234 244 / .38),
-      inset -1px -1px 0 rgb(220 234 244 / .5)}
+    box-shadow:inset 5px 5px 8px rgb(150 180 224 / .20),
+               inset 1px 1px 0 rgb(170 198 235 / .26),
+               inset -5px -5px 9px rgb(0 0 0 / .9),
+               inset -1px -1px 0 rgb(0 0 0 / .75)}
+  /* les ondes interieures : meme paire d'ombres, dedans ET dehors, comme le
+     `::before` du pen, ce qui fait le relief de chaque cran */
+  .onde{position:absolute;border-radius:calc(var(--radius) - 4px);
+        pointer-events:none;z-index:3}
+  .onde::before{content:"";position:absolute;inset:0;border-radius:inherit}
+  .onde-1{inset:9px;
+    box-shadow:inset 4px 4px 6px rgb(150 180 224 / .13),
+               inset -4px -4px 6px rgb(0 0 0 / .75)}
+  .onde-1::before{box-shadow:4px 4px 6px rgb(150 180 224 / .10),
+                             -4px -4px 6px rgb(0 0 0 / .6)}
+  .onde-2{inset:19px;border-radius:calc(var(--radius) - 9px);
+    box-shadow:inset 3px 3px 5px rgb(150 180 224 / .08),
+               inset -3px -3px 5px rgb(0 0 0 / .6)}
+  .onde-2::before{box-shadow:3px 3px 5px rgb(150 180 224 / .06),
+                             -3px -3px 5px rgb(0 0 0 / .45)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
@@ -432,6 +439,11 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   fond.className = 'fond';
   const toile = document.createElement('canvas');
   fond.append(toile);
+  for (const n of [1, 2]) {
+    const onde = document.createElement('div');
+    onde.className = 'onde onde-' + n;
+    fond.append(onde);
+  }
   carte.prepend(fond);
 
   const ctx = toile.getContext('2d');
