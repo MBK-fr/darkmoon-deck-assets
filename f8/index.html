@@ -204,22 +204,16 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  .bg-card{border-width:0;background:#000;
-           position:relative;
-           /* L'ombre est large mais SANS propagation : avec un `spread`, elle
-              debordait sur les cartes voisines et mangeait leur lisiere. La
-              gouttiere fait 18 px, on reste dedans. */
-           /* Fondu et non porte : des halos centres, de plus en plus larges,
-              pour que la carte se dissolve dans le decor au lieu de projeter
-              une ombre vers le bas. Toujours sans propagation, la gouttiere
-              ne fait que 18 px. */
-           box-shadow:0 130px 260px rgb(0 0 0 / 1),
-                      0 80px 170px rgb(0 0 0 / 1),
-                      0 44px 100px rgb(0 0 0 / 1),
-                      0 20px 52px rgb(0 0 0 / .98),
-                      0 6px 20px rgb(0 0 0 / .95),
-                      0 0 60px rgb(0 0 0 / .9);
-}
+  /* ── La carte est une ouverture, pas une plaque posee ──────────────────
+     Ce qui fait marcher le pen n'est pas sa formule d'ombres, c'est que ses
+     carres sont DE LA MEME MATIERE que le fond : meme `--bg_color`, aucune
+     bordure, aucune ombre portee. Rien n'est pose sur la page, la page est
+     creusee. Mes cartes etaient des rectangles noirs devant un decor colore,
+     donc des vignettes collees quelle que soit la finesse des ombres. Elles
+     n'ont plus de fond a elles : le decor etheral traverse, la vague ne fait
+     plus que le moduler, et seules les ombres creusent.
+     L'ombre portee est retiree : une cavite n'en projette pas. */
+  .bg-card{border-width:0;background:transparent;position:relative}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
@@ -266,29 +260,22 @@
      faiblit d'une onde a l'autre en s'enfoncant, comme une ride qui meurt.
      Les formes restent rectangulaires et gardent le rayon de la carte : les
      bords se superposent au lieu de se concentrer en cercles. */
-  /* Le pen ne trace AUCUN trait : ses crans n'existent que par des ombres
-     tres floues, un decalage de 4 px pour 6 px de flou, entre deux formes du
-     MEME ton. Ma premiere transposition ajoutait des lignes de 1 px et des
-     ombres courtes et denses : ca donnait des cadres empiles, un objet
-     fabrique, pas une onde. Ici tout est en degrade, aucun trait dur, et le
-     flou vaut presque trois fois le decalage, ce qui adoucit encore les
-     angles vifs qu'un rectangle a et qu'un cercle n'a pas. */
+  /* Le carre en haut a droite du pen, `.shadow--inset`, releve tel quel :
+         box-shadow: rgba(255,255,255,.7) -10px -10px 10px inset,
+                     rgba(174,174,192,.2)  10px 10px 10px inset;
+     Le decalage POSITIF peint la paroi haut gauche, donc l'ombre, et le
+     NEGATIF la paroi basse droite, donc la lumiere. Une cavite eclairee du
+     haut gauche, exactement. La geometrie est reprise a l'identique, seules
+     les valeurs changent parce que le fond change : sur son gris clair la
+     lumiere est blanche a 70 pour cent et l'ombre grise a 20 ; ici la
+     lumiere est celle du decor, un bleu pale, et c'est l'ombre qui porte le
+     relief. Le rapport des deux est donc inverse. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:inset 6px 6px 17px rgb(150 180 224 / .13),
-               inset -6px -6px 17px rgb(0 0 0 / .8)}
-  .onde{position:absolute;pointer-events:none;z-index:3}
-  .onde::before{content:"";position:absolute;inset:0;border-radius:inherit}
-  .onde-1{inset:11px;border-radius:calc(var(--radius) - 5px);
-    box-shadow:inset 5px 5px 15px rgb(150 180 224 / .09),
-               inset -5px -5px 15px rgb(0 0 0 / .62)}
-  .onde-1::before{box-shadow:5px 5px 15px rgb(150 180 224 / .07),
-                             -5px -5px 15px rgb(0 0 0 / .5)}
-  .onde-2{inset:24px;border-radius:calc(var(--radius) - 11px);
-    box-shadow:inset 4px 4px 13px rgb(150 180 224 / .06),
-               inset -4px -4px 13px rgb(0 0 0 / .45)}
-  .onde-2::before{box-shadow:4px 4px 13px rgb(150 180 224 / .05),
-                             -4px -4px 13px rgb(0 0 0 / .36)}
+    box-shadow:inset 11px 11px 15px rgb(0 0 0 / .8),
+               inset 3px 3px 6px rgb(0 0 0 / .55),
+               inset -11px -11px 15px rgb(166 199 230 / .13),
+               inset -3px -3px 6px rgb(166 199 230 / .10)}
   /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
      Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
          border-radius: 28px
@@ -308,11 +295,12 @@
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
      rien a lire, donc le mouvement reste visible. */
-  .fond canvas{display:block;width:100%;height:100%;opacity:.62}
+  .fond canvas{display:block;width:100%;height:100%;opacity:.5;
+               mix-blend-mode:screen}
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
-    background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
+    background:linear-gradient(to bottom,rgb(6 10 20 / .30) 0%,
+      rgb(6 10 20 / .52) 42%,rgb(5 8 16 / .72) 76%,rgb(4 7 14 / .8) 100%)}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -441,11 +429,6 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   fond.className = 'fond';
   const toile = document.createElement('canvas');
   fond.append(toile);
-  for (const n of [1, 2]) {
-    const onde = document.createElement('div');
-    onde.className = 'onde onde-' + n;
-    fond.append(onde);
-  }
   carte.prepend(fond);
 
   const ctx = toile.getContext('2d');
