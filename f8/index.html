@@ -204,14 +204,20 @@
      droite, ce qui se lisait comme un degrade de bordure.
      Pose en pseudo-element avec un `z-index` positif, le filet passe apres
      toutes les ombres des soeurs et reste uniforme. */
-  /* La carte n'est plus un aplat : c'est la plaque metallique dans laquelle
-     le verre est encastre. Le degrade court en diagonale depuis la source de
-     lumiere en haut a gauche, passe par l'ombre du bas droit et remonte sur
-     un rebond, comme un profil usine. */
+  /* La carte est la plaque dans laquelle le verre est encastre. Les teintes
+     ne sont pas un gris acier : elles sortent de la charte et de ce qui bouge
+     dans les cartes. Releve fait sur six images de l'animation : 190 a 240
+     degres pour 60 pour cent des pixels colores ; le degrade de la charte va
+     de l'indigo #757fe0 (234) au royal #5693fe (217) et l'alice #dceaf4 est
+     a 203. Le cadre reste donc entre 205 et 235 degres, du plus clair au plus
+     sombre, sans jamais passer par un neutre.
+     Les paliers sont FRANCS : un metal usine montre des facettes nettes, un
+     fondu long donne le plastique mou reproche a la version precedente. */
   .bg-card{border-width:0;
-           background:linear-gradient(146deg,#e6eef7 0%,#93a4ba 9%,#4b5666 22%,
-                                      #232a35 44%,#1a1f27 62%,#3c4655 80%,
-                                      #8fa0b4 94%,#cfdceb 100%);
+           background:linear-gradient(146deg,#dceaf4 0%,#dceaf4 2%,
+                                      #9fb6e2 7%,#5c72c4 17%,#2b3468 34%,
+                                      #171c33 52%,#232a52 66%,#4b58ae 82%,
+                                      #7f8fe0 93%,#b9cbee 100%);
            position:relative;
            /* L'ombre est large mais SANS propagation : avec un `spread`, elle
               debordait sur les cartes voisines et mangeait leur lisiere. La
@@ -255,11 +261,13 @@
      anneau decoupe au `mask-composite` qui sortait en escalier dans les
      angles. Le degrade de l'etat de reference reste en masque : la matiere
      est franche au coin haut gauche et s'eteint le long du bord. */
+  /* Le spéculaire du bord : un pixel d'alice en haut, un rebond indigo en
+     bas, rien entre les deux. Eteint par le degrade 135 degres de l'etat de
+     reference. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:inset 0 1px 0 rgb(255 255 255 / .55),
-               inset 0 0 0 1px rgb(0 0 0 / .35),
-               inset 0 -1px 0 rgb(255 255 255 / .12);
+    box-shadow:inset 0 1px 0 rgb(220 234 244 / .75),
+               inset 0 -1px 0 rgb(127 143 224 / .45);
     -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
       rgb(0 0 0 / .8) 24%,rgb(0 0 0 / .45) 52%,rgb(0 0 0 / .16) 80%,
       rgb(0 0 0 / .05) 100%);
@@ -279,15 +287,14 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
-  /* Le verre est ENCASTRE : il recule de 3 px, la plaque affleure tout
-     autour, et l'ombre du cadre tombe sur lui, plus dense sous l'arete
-     haute que sur les autres bords. */
-  .fond{position:absolute;inset:3px;z-index:0;
-        border-radius:calc(var(--radius) - 3px);
+  /* Le verre est ENCASTRE, de 2 px seulement : le cadre doit se lire comme
+     une arete anodisee, pas comme un cadre de fenetre. La couture et l'ombre
+     du logement sont COURTES, sinon le bord se brouille. */
+  .fond{position:absolute;inset:2px;z-index:0;
+        border-radius:calc(var(--radius) - 2px);
         overflow:hidden;background:#000;
-        box-shadow:inset 0 3px 7px -1px rgb(0 0 0 / .95),
-                   inset 0 0 0 1px rgb(0 0 0 / .8),
-                   inset 0 -2px 6px rgb(0 0 0 / .6)}
+        box-shadow:inset 0 0 0 1px rgb(10 13 30 / .95),
+                   inset 0 2px 3px rgb(6 8 20 / .9)}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
@@ -313,9 +320,8 @@
     background:
       /* le reflet du verre : une bande claire juste sous l'arete haute, qui
          se coupe net, comme une vitre qui renvoie le plafond */
-      linear-gradient(to bottom,rgb(255 255 255 / .11) 0%,
-        rgb(255 255 255 / .045) 4%,rgb(255 255 255 / .012) 11%,
-        rgb(255 255 255 / 0) 20%),
+      linear-gradient(to bottom,rgb(220 234 244 / .10) 0%,
+        rgb(220 234 244 / .035) 3%,rgb(220 234 244 / 0) 8%),
       /* le lavis diagonal de l'etat de reference */
       linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
         rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
