@@ -157,7 +157,8 @@
     .lg\:space-y-6>*+*{margin-top:1.5rem}
   }
 </style><style>
-  :root{ --radius:0px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
+  :root{ --eq:rgb(220 234 244 / .85);
+         --radius:0px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
   /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
      sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
      plus clair que la carte) en les passant en blanc a faible alpha. */
@@ -185,22 +186,45 @@
      retenue apres le blanc pur juge trop eclatant. Luminance mesuree du
      trait : 167/255 contre 255 pour le blanc pur.
      L'ombre noire ci-dessous, elle, est conservee. */
-  /* Retenu apres essais : un filet d'un pixel dont la clarte decroit du haut
-     gauche vers le bas droit. Il separe la carte du fond anime sans poser un
-     cadre ferme, et il suit le sens de la lumiere du fond etheral. Mesure du
-     saut de luminance au bord : 27 contre 19 sans rien et 121 avec l'ancien
-     filet de 2 px, soit une separation nette pour un quart de l'eclat. */
-  .bg-card{border:1px solid transparent;
-           border-image:linear-gradient(160deg,rgb(220 234 244 / .55),
-             rgb(220 234 244 / .10) 55%,rgb(220 234 244 / .02)) 1;
-           background:#000;
-           position:relative;
+  /* ── Habillage de bord : equerres + balayage ──────────────────────────
+     Pas de cadre ferme. Quatre equerres d'angle, dans la grammaire carree de
+     la charte — c'est la meme forme que les pictogrammes — et un filet d'un
+     pixel sur lequel une lumiere fait le tour de la carte en sept secondes.
+     La carte se detache par ses angles, pas par un trait continu. */
+  .bg-card{background:#000;position:relative;
            box-shadow:0 40px 120px 20px rgb(0 0 0 / .98),
                       0 0 90px 40px rgb(0 0 0 / .92),
                       0 0 28px 6px rgb(0 0 0 / .85)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
   .grid.gap-3{gap:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
+
+  /* les quatre equerres : huit aplats de 26 px, poses aux angles */
+  .bg-card::before{content:"";position:absolute;inset:0;z-index:2;
+    pointer-events:none;
+    background-image:
+      linear-gradient(var(--eq),var(--eq)),linear-gradient(var(--eq),var(--eq)),
+      linear-gradient(var(--eq),var(--eq)),linear-gradient(var(--eq),var(--eq)),
+      linear-gradient(var(--eq),var(--eq)),linear-gradient(var(--eq),var(--eq)),
+      linear-gradient(var(--eq),var(--eq)),linear-gradient(var(--eq),var(--eq));
+    background-repeat:no-repeat;
+    background-size:26px 1px,1px 26px,26px 1px,1px 26px,
+                    26px 1px,1px 26px,26px 1px,1px 26px;
+    background-position:left top,left top,right top,right top,
+                        left bottom,left bottom,right bottom,right bottom}
+  /* la lumiere qui fait le tour : un degrade conique masque en anneau d'1 px */
+  @property --tour{syntax:'<angle>';initial-value:0deg;inherits:false}
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:2;
+    pointer-events:none;padding:1px;
+    background:conic-gradient(from var(--tour),transparent 0 60%,
+      rgb(220 234 244 / .04) 68%,rgb(220 234 244 / .80) 76%,
+      rgb(220 234 244 / .04) 84%,transparent 92% 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;
+    animation:tourne 7s linear infinite}
+  @keyframes tourne{to{--tour:360deg}}
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
   .fond canvas{display:block;width:100%;height:100%}
