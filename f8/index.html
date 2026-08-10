@@ -336,8 +336,11 @@
        blanche dans un decor bleu ne peut pas etre naturelle.
        La clarte prend donc l'alice de la charte, et l'ombre un indigo tres
        sombre plutot qu'un noir neutre. Geometrie et alphas du pen inchanges. */
-    box-shadow:var(--dm-sombre,rgba(6,10,28,.15)) 9.6px 16px 10px inset,
-               var(--dm-clair,rgba(220,234,244,.416)) -9.6px -16px 10px inset}
+    box-shadow:var(--dm-sombre,rgba(6,10,28,.15))
+                 var(--dm-dx,9.6px) var(--dm-dy,16px) var(--dm-flou,10px) inset,
+               var(--dm-clair,rgba(220,234,244,.416))
+                 calc(-1 * var(--dm-dx,9.6px)) calc(-1 * var(--dm-dy,16px))
+                 var(--dm-flou,10px) inset}
 
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
@@ -468,6 +471,21 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
+  // ── L'ECHELLE du relief ───────────────────────────────────────────────
+  // Le pen donne 9,6 px, 16 px et 10 px de flou, mais sur une piste de 4em,
+  // soit 64 px de haut : ses ombres couvrent donc 15, 25 et 16 pour cent de
+  // la piece. Recopier ces pixels sur une carte de 245 px les ramene a 4 ou
+  // 6 pour cent de la surface, autant dire rien, et c'est pour ca que la
+  // derniere version ne changeait rien a l'oeil. On garde les RAPPORTS du
+  // pen, pas ses pixels.
+  const echelonner = () => {
+    const h = carte.offsetHeight || 64;
+    carte.style.setProperty('--dm-dx', (h * 9.6 / 64).toFixed(1) + 'px');
+    carte.style.setProperty('--dm-dy', (h * 16 / 64).toFixed(1) + 'px');
+    carte.style.setProperty('--dm-flou', (h * 10 / 64).toFixed(1) + 'px');
+  };
+  echelonner();
+  new ResizeObserver(echelonner).observe(carte);
   // ── La couleur du relief vient du motif de LA carte ──────────────────
   // Chaque carte a sa propre vague, avec ses teintes : celle du haut gauche
   // tire sur le rouge sombre, celles du bas sur le turquoise. Poser la meme
