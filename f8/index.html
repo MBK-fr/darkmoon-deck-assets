@@ -222,16 +222,16 @@
                       0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
                       0 0 60px rgb(0 0 0 / .9);}
-  /* la gorge de metal liquide, peinte par le script */
-  .bg-card>.metal.metal{position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit}
-  /* Filet retire pour essai. A remettre tel quel :
-         .bg-card::after{ content:""; position:absolute; inset:0; z-index:6;
-           pointer-events:none; border-radius:inherit;
-           border:1px solid rgb(255 255 255 / .78);
-           mask-image:linear-gradient(135deg, rgb(0 0 0 / 1) 0%,
-             rgb(0 0 0 / .78) 18%, rgb(0 0 0 / .5) 38%, rgb(0 0 0 / .26) 60%,
-             rgb(0 0 0 / .08) 85%, rgb(0 0 0 / 0) 100%); } */
+  /* le filet blanc fin, eteint par un masque en degrade */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;
+    border:1px solid rgb(255 255 255 / .78);
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
      vient de la MATIERE deja presente. Une bande de verre court le long du
@@ -440,101 +440,6 @@ caler();
 window.addEventListener('resize', caler);
 </script>
 <script>
-// ── La gorge de metal liquide ────────────────────────────────────────────
-// Un metal ne montre pas sa couleur, il montre le REFLET de ce qui l'entoure.
-// Pour chaque pixel du bord on calcule sa position dans la gorge, l'angle du
-// rayon reflechi par la paroi, et ce que ce rayon rencontre dans un petit
-// ciel a une dimension : deux bandes claires, une sombre, un fil brillant.
-//
-// La GEOMETRIE ne bouge jamais : elle est calculee une fois par taille de
-// carte et rangee dans deux tableaux, l'angle et l'attenuation. Chaque image
-// ne fait plus qu'une lecture de table par pixel, sans trigonometrie. C'est
-// le CIEL qui glisse, et ce glissement suffit a faire le metal liquide.
-// Mesure : 11 images par seconde avec la geometrie recalculee, contre 23
-// sans la gorge du tout.
-const GORGE = { largeur: 8, rayon: 14, creux: 1.8, vitesse: 0.14,
-                teinte: [0.86, 0.93, 1.0] };
-
-// le ciel, echantillonne une fois pour toutes sur 2048 entrees
-const CIEL = new Float32Array(2048);
-for (let i = 0; i < 2048; i++) {
-  const a = (i / 2048) * Math.PI * 2 - Math.PI;
-  const b1 = Math.exp(-Math.pow((a - 0.62) * 5.2, 2)) * 0.72;
-  const b2 = Math.exp(-Math.pow((a + 0.95) * 3.4, 2)) * 0.30;
-  const fil = Math.exp(-Math.pow((a - 0.18) * 22.0, 2)) * 0.95;
-  CIEL[i] = Math.min(1, 0.03 + 0.04 * Math.cos(a * 1.7) + b1 + b2 + fil);
-}
-
-function metalliser(carte, boucles, k) {
-  const toile = document.createElement('canvas');
-  toile.className = 'metal';
-  carte.append(toile);
-  const ctx = toile.getContext('2d');
-  let image = null, L = 0, H = 0;
-  let cases = null, angles = null, attenu = null;   // la geometrie, figee
-
-  const graver = (l, h, d) => {
-    const cl = Math.round(l * d), ch = Math.round(h * d);
-    toile.width = cl; toile.height = ch;
-    toile.style.width = l + 'px'; toile.style.height = h + 'px';
-    image = ctx.createImageData(cl, ch); L = cl; H = ch;
-    const D = image.data;
-    const W = GORGE.largeur, R = GORGE.rayon, hw = l / 2, hh = h / 2;
-    const tc = GORGE.teinte;
-    const ic = [], ia = [], iat = [];
-    for (let y = 0; y < ch; y++) {
-      for (let x = 0; x < cl; x++) {
-        const px = x / d - hw, py = y / d - hh;
-        const qx = Math.abs(px) - (hw - R), qy = Math.abs(py) - (hh - R);
-        const dist = Math.hypot(Math.max(qx, 0), Math.max(qy, 0))
-                     + Math.min(Math.max(qx, qy), 0) - R;
-        const t = -dist / W;
-        if (dist > 0 || t >= 1) continue;
-        let gx, gy;
-        if (qx > 0 && qy > 0) { const n = Math.hypot(qx, qy) || 1; gx = qx / n; gy = qy / n; }
-        else if (qx > qy) { gx = 1; gy = 0; } else { gx = 0; gy = 1; }
-        gx *= px < 0 ? -1 : 1; gy *= py < 0 ? -1 : 1;
-        const pente = Math.cos(t * Math.PI) * GORGE.creux;
-        const j = (y * cl + x) * 4;
-        D[j] = Math.round(255 * tc[0]);
-        D[j + 1] = Math.round(255 * tc[1]);
-        D[j + 2] = Math.round(255 * tc[2]);
-        ic.push(j + 3);
-        ia.push(Math.atan2(-gy * pente, -gx * pente)
-                + 0.35 * Math.sin(t * 4.2 + (px + py) * 0.012));
-        iat.push(0.25 + 0.75 * Math.abs(Math.cos(t * Math.PI)));
-      }
-    }
-    cases = Int32Array.from(ic);
-    angles = Float32Array.from(ia);
-    attenu = Float32Array.from(iat);
-  };
-
-  let prochain = 0;
-  boucles.push(secondes => {
-    // Le ciel glisse lentement : douze images par seconde suffisent, et le
-    // `putImageData` d'un canevas plein est ce qui coute, pas le calcul.
-    if (secondes < prochain) return;
-    prochain = secondes + 0.083;
-    const l = carte.offsetWidth, h = carte.offsetHeight;
-    if (l < 8) return;
-    const ecran = carte.getBoundingClientRect();
-    const d = Math.min(2, (window.devicePixelRatio || 1) * (ecran.width / l || 1));
-    if (!image || toile.width !== Math.round(l * d)) graver(l, h, d);
-    const D = image.data;
-    const derive = secondes * GORGE.vitesse + k * 0.7;
-    // une seule lecture de table par pixel : pas de trigonometrie ici
-    const pas = 2048 / (Math.PI * 2);
-    for (let i = 0; i < cases.length; i++) {
-      let a = angles[i] + derive;
-      let idx = Math.floor((a + Math.PI) * pas) % 2048;
-      if (idx < 0) idx += 2048;
-      const v = CIEL[idx] * attenu[i];
-      D[cases[i]] = v > 0.004 ? Math.min(255, Math.round(v * 1.25 * 190)) : 0;
-    }
-    ctx.putImageData(image, 0, 0);
-  });
-}
 
 
 // ── tables de 1024 valeurs et acces `& 1023`, comme le composant
@@ -563,7 +468,6 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
-  metalliser(carte, boucles, k);
 
 
   const ctx = toile.getContext('2d');
