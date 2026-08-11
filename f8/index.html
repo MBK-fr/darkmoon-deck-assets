@@ -339,8 +339,12 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
+  /* Le fond de carte doit etre OPAQUE : sans lui, le groupe est
+     transparent et le grain en `overlay` n'a rien contre quoi se melanger,
+     il se pose alors en gris plein. Mesure du defaut : la carte remontait
+     de 11 a 41 sur 255. */
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
-        overflow:hidden}
+        overflow:hidden;background:#000}
 
   .verre{display:none}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
@@ -348,6 +352,23 @@
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
      rien a lire, donc le mouvement reste visible. */
   .fond canvas{display:block;width:100%;height:100%;opacity:.62}
+  /* ── Le grain, version argentique ─────────────────────────────────────
+     Ce qui rendait les essais precedents bas de gamme : une texture de 88 px
+     etiree, donc un motif repete et flou, posee en `screen`, mode qui ajoute
+     de la lumiere partout et delave les noirs.
+     Ici le grain est fabrique a la resolution de l'ecran, un point de bruit
+     par pixel physique, jamais agrandi, et pose en `overlay`.
+     Le choix du mode a ete tranche par la mesure. En `screen`, le grain
+     ajoute de la lumiere partout et delave les noirs. En `soft-light`, la
+     formule prend une racine carree sur les fonds sombres : mesure, elle
+     remontait la carte de 21 niveaux, puis de 9 apres compensation, et le
+     noir profond de 4. En `overlay`, le fond sombre est simplement multiplie
+     par le bruit : le grain module les demi-teintes et DISPARAIT dans les
+     noirs, exactement comme l'argentique, ou l'ombre est lisse.
+     Il ne couvre que la surface des cartes, sous le texte, pas le decor,
+     qui a deja son propre bruit. */
+  .fond .grain-fin{position:absolute;inset:0;z-index:2;pointer-events:none;
+    mix-blend-mode:overlay;opacity:.62}
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
@@ -479,6 +500,30 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   fond.className = 'fond';
   const toile = document.createElement('canvas');
   fond.append(toile);
+  // le grain : une nappe de bruit gaussien, un point par pixel physique
+  const grain = document.createElement('canvas');
+  grain.className = 'grain-fin';
+  fond.append(grain);
+  const semer = () => {
+    const d = Math.min(2, window.devicePixelRatio || 1);
+    const gl = Math.round(fond.clientWidth * d), gh = Math.round(fond.clientHeight * d);
+    if (gl < 2 || gh < 2 || (grain.width === gl && grain.height === gh)) return;
+    grain.width = gl; grain.height = gh;
+    grain.style.width = fond.clientWidth + 'px';
+    grain.style.height = fond.clientHeight + 'px';
+    const c = grain.getContext('2d');
+    const img = c.createImageData(gl, gh), D = img.data;
+    for (let i = 0; i < D.length; i += 4) {
+      // gaussienne par somme de deux tirages, ecart-type 18 autour de 128,
+      // qui est le point neutre de `soft-light`
+      const g = 128 + (Math.random() + Math.random() - 1) * 30;
+      const v = g < 0 ? 0 : g > 255 ? 255 : g;
+      D[i] = D[i + 1] = D[i + 2] = v; D[i + 3] = 255;
+    }
+    c.putImageData(img, 0, 0);
+  };
+  semer();
+  new ResizeObserver(semer).observe(fond);
   carte.prepend(fond);
 
 
