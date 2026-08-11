@@ -157,7 +157,7 @@
     .lg\:space-y-6>*+*{margin-top:1.5rem}
   }
 </style><style>
-  :root{ --radius:10px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
+  :root{ --radius:14px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
   /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
      sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
      plus clair que la carte) en les passant en blanc a faible alpha. */
@@ -215,29 +215,45 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  /* ── Cellule `input[type=password]` du pen reanukeaves/mdjVwKo ────────
-     Code recopie VERBATIM, sans transposition cette fois :
-         border: none;
-         border-radius: 10px;
-         box-shadow:  4px  4px 6px 0 rgba(255,255,255,.5),
-                     -4px -4px 6px 0 rgba(116,125,136,.2),
-                     inset -4px -4px 6px 0 rgba(255,255,255,.5),
-                     inset  4px  4px 6px 0 rgba(116,125,136,.3);
-     Memes decalages, memes flous, memes couleurs, memes alphas, meme ordre,
-     et le rayon de 10 px de la cellule.
-     Deux ecarts, tous deux imposes par le support, pas par un choix :
-       . les deux `inset` sont portees par le voile et non par la carte : une
-         ombre interieure se peint sous les enfants, et le motif anime couvre
-         la carte entiere, elles etaient donc invisibles ;
-       . le fond reste sombre. Le sien est un `linear-gradient(145deg,
-         #f1f4fa, #cbcdd3)`, un gris clair : le poser ici transformerait les
-         cartes en pastilles blanches et la slide entiere avec. */
-  .bg-card{border-width:0;position:relative;background:#000;
-           box-shadow:4px 4px 6px 0 rgba(255,255,255,.5),
-                      -4px -4px 6px 0 rgba(116,125,136,.2);}
-  /* La cellule du pen n'a NI bordure NI filet : tout son relief tient dans
-     les quatre ombres. Le filet blanc masque est donc retire ; ses valeurs
-     restent dans la memoire du projet. */
+  .bg-card{border-width:0;background:#000;position:relative;
+           box-shadow:0 130px 260px rgb(0 0 0 / 1),
+                      0 80px 170px rgb(0 0 0 / 1),
+                      0 44px 100px rgb(0 0 0 / 1),
+                      0 20px 52px rgb(0 0 0 / .98),
+                      0 6px 20px rgb(0 0 0 / .95),
+                      0 0 60px rgb(0 0 0 / .9);}
+  /* ── Le bord en verre ─────────────────────────────────────────────────
+     Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
+     vient de la MATIERE deja presente. Une bande de verre court le long du
+     bord et refracte ce qu'il y a dessous, c'est-a-dire le motif anime de la
+     carte : `backdrop-filter` le floute, le remonte en clarte et le sature
+     un peu. Le bord prend donc les teintes du motif, sombres par nature, et
+     change avec lui. C'est le meme principe que le decor de la slide, qui
+     fabrique ses vagues en deformant une image sombre au lieu de peindre
+     des degrades clairs.
+     Le masque est fait de deux degrades doux, un vertical et un horizontal,
+     additionnes : ca decoupe un cadre sans passer par `mask-composite`, qui
+     crenele les angles arrondis. */
+  .verre{position:absolute;inset:0;z-index:5;pointer-events:none;
+    border-radius:inherit;
+    -webkit-backdrop-filter:blur(9px) brightness(1.75) saturate(1.35);
+    backdrop-filter:blur(9px) brightness(1.75) saturate(1.35);
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
+        transparent 91%,#000 100%),
+      linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%);
+    mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
+        transparent 91%,#000 100%),
+      linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%)}
+  /* le filet blanc fin, eteint par un masque en degrade */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;
+    border:1px solid rgb(255 255 255 / .78);
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -318,9 +334,7 @@
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:inset -4px -4px 6px 0 rgba(255,255,255,.5),
-               inset 4px 4px 6px 0 rgba(116,125,136,.3)}
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
@@ -450,6 +464,9 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
+  const verre = document.createElement('div');
+  verre.className = 'verre';
+  carte.append(verre);
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
