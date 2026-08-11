@@ -232,8 +232,15 @@
               parce qu'a 25 la bande s'etale et se dilue, et qu'a 4 elle est
               trop courte pour exister sur une carte de 312 px. */
            background:var(--dm-matiere,#16191f);
-           box-shadow:12px 12px 18px 0 var(--dm-clair,#2b313b),
-                      -12px -12px 18px 0 var(--dm-sombre,#04060a),
+           /* Le flou seul ne fait pas du relief, il fait du flou : ce que
+              l'oeil lit comme une arete, c'est une TRANSITION NETTE. Chaque
+              nuance est donc posee deux fois, un trait franc d'un pixel au
+              ras du bord, puis un fondu court derriere lui. Le rapport
+              flou/decalage descend de 1,5 a 1. */
+           box-shadow:1px 1px 0 0 var(--dm-clair,#2b313b),
+                      10px 10px 10px 0 var(--dm-clair,#2b313b),
+                      -1px -1px 0 0 var(--dm-sombre,#04060a),
+                      -10px -10px 10px 0 var(--dm-sombre,#04060a),
                       0 40px 90px rgb(0 0 0 / .75);}
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
@@ -257,16 +264,11 @@
     mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
         transparent 91%,#000 100%),
       linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%)}
-  /* le filet blanc fin, eteint par un masque en degrade */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;
-    border:1px solid rgb(255 255 255 / .78);
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+  /* Le filet blanc est retire. Ses valeurs exactes sont dans la memoire du
+     projet, fiche `project-darkmoon-deck-slide3-cadre` :
+         border: 1px solid rgb(255 255 255 / .78);
+         masque linear-gradient 135deg, 1 / .78 / .5 / .26 / .08 / 0
+         --radius: 14px */
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -349,8 +351,10 @@
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
       rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:inset -12px -12px 18px 0 var(--dm-clair,#2b313b),
-               inset 12px 12px 18px 0 var(--dm-sombre,#04060a)}
+    box-shadow:inset -1px -1px 0 0 var(--dm-clair,#2b313b),
+               inset -10px -10px 10px 0 var(--dm-clair,#2b313b),
+               inset 1px 1px 0 0 var(--dm-sombre,#04060a),
+               inset 10px 10px 10px 0 var(--dm-sombre,#04060a)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
