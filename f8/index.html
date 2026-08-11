@@ -216,31 +216,30 @@
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
   /* ── Champ du pen reanukeaves/mdjVwKo, cellule `input[type=password]` ──
-     Sa feuille calculee donne, pour la cellule :
-         background: linear-gradient(145deg, #f1f4fa, #cbcdd3);
-         border-radius: 10px; border: none;
-         box-shadow: var(--secondary-box-shadow);
-     et la variable vaut exactement :
+     Sa variable `--secondary-box-shadow` vaut :
           4px  4px 6px 0 rgba(255,255,255,.5),
          -4px -4px 6px 0 rgba(116,125,136,.2),
          inset -4px -4px 6px 0 rgba(255,255,255,.5),
          inset  4px  4px 6px 0 rgba(116,125,136,.3);
-     Geometrie, flous et alphas repris au chiffre pres. Seules les DEUX
-     couleurs changent, puisque la scene est inversee : chez lui la surface
-     est a 232 sur 255, sa clarte vaut surface +23 et son ombre surface -108.
-     Transposees sur une carte a 24, l'ombre tombe sous zero, donc noir, et
-     la clarte reste le blanc. Le degrade a 145 degres est garde, dans ses
-     valeurs sombres. */
+     Ce qui compte est le SENS, pas les couleurs : les deux `inset` sont
+     l'essentiel, l'ombre au coin haut gauche et la clarte au coin bas
+     droite, ce qui presse la cellule DANS la surface. Ma version precedente
+     gardait le blanc du pen et sa couche claire exterieure : sur du noir ca
+     posait un halo autour de la carte, donc l'inverse, un objet bombe.
+     Transposition en sombre :
+       . la couche claire exterieure disparait, elle n'a pas d'equivalent
+         dans une scene sombre, ou c'est l'ombre qui porte ;
+       . la clarte interieure n'est plus blanche mais une lumiere basse a
+         211 degres, la teinte relevee dans le decor ;
+       . l'ombre interieure devient franchement noire.
+     Les rapports du pen sont conserves, pas ses pixels : sa cellule fait
+     49 px de haut, donc 4 px valent 8,2 % et 6 px de flou 12,2 %. Sur une
+     carte de 312 px cela donne 25 px et 38 px. Recopier 4 px sur une carte
+     six fois plus grande ne se voit pas, on l'a deja mesure. */
   .bg-card{border-width:0;position:relative;
-           background:linear-gradient(145deg,#21252d,#0e1116);
-           /* Les deux couches EXTERIEURES restent sur la carte. Les deux
-              `inset` doivent monter d'un cran : une ombre interieure se
-              peint au-dessus du fond mais SOUS les enfants, et le motif
-              anime couvre toute la carte, donc elles etaient invisibles.
-              Elles sont reportees telles quelles sur le voile, qui vit
-              dans `.fond`, au-dessus du motif et sous le texte. */
-           box-shadow:4px 4px 6px 0 rgba(255,255,255,.5),
-                      -4px -4px 6px 0 rgba(0,0,0,.2);}
+           background:linear-gradient(145deg,#0c0f14,#1b1f27);
+           box-shadow:16px 18px 34px rgba(0,0,0,.55),
+                      36px 40px 70px rgba(0,0,0,.35);}
   /* La cellule du pen n'a NI bordure NI filet : tout son relief tient dans
      les quatre ombres. Le filet blanc masque est donc retire ; ses valeurs
      restent dans la memoire du projet. */
@@ -325,8 +324,8 @@
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
       rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:inset -4px -4px 6px 0 rgba(255,255,255,.5),
-               inset 4px 4px 6px 0 rgba(0,0,0,.3)}
+    box-shadow:inset 25px 25px 38px 0 rgba(0,0,0,.9),
+               inset -25px -25px 38px 0 rgba(150,182,224,.16)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
