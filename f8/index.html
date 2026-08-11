@@ -215,37 +215,23 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  /* ── Neumorphisme du pen, en valeurs sombres ──────────────────────────
-     Le pen travaille sur une surface a 232 sur 255 : sa clarte vaut
-     surface + 23, son ombre surface - 108, et le relief tient dans cet
-     ecart. Sur du noir absolu l'ecart ne peut exister que d'un cote. La
-     carte prend donc une matiere, #16191f, et les deux nuances sont
-     calculees a partir d'elle, jamais du blanc :
-         clarte  #2b313b   (surface eclaircie)
-         ombre   #04060a   (surface assombrie)
-     Geometrie du pen conservee, aux memes positions : clarte en bas droite,
-     ombre en haut gauche, dehors comme dedans. */
-  .bg-card{border-width:0;position:relative;
-           /* Trois echelles essayees et mesurees sur la bande claire
-              interieure, la ou l'effet se juge : 4 px donne 16 sur 255,
-              12 px donne 30, 25 px donne 23. C'est 12 px qui porte le mieux,
-              parce qu'a 25 la bande s'etale et se dilue, et qu'a 4 elle est
-              trop courte pour exister sur une carte de 312 px. */
-           background:var(--dm-matiere,#16191f);
-           /* Le flou seul ne fait pas du relief, il fait du flou : ce que
-              l'oeil lit comme une arete, c'est une TRANSITION NETTE. Chaque
-              nuance est donc posee deux fois, un trait franc d'un pixel au
-              ras du bord, puis un fondu court derriere lui. Le rapport
-              flou/decalage descend de 1,5 a 1. */
-           /* Les fondus de 10 px etaient la moitie du probleme : un bord
-              premium est NET, il n'a pas de halo. Il reste un trait franc
-              d'un pixel et un fondu tres court de 3 px, plus l'ombre portee
-              qui detache la carte du decor. */
-           box-shadow:1px 1px 0 0 var(--dm-clair,#2b313b),
-                      3px 3px 3px 0 var(--dm-clair,#2b313b),
-                      -1px -1px 0 0 var(--dm-sombre,#04060a),
-                      -3px -3px 3px 0 var(--dm-sombre,#04060a),
-                      0 26px 60px rgb(0 0 0 / .8);}
+  .bg-card{border-width:0;background:#000;position:relative;
+           box-shadow:0 130px 260px rgb(0 0 0 / 1),
+                      0 80px 170px rgb(0 0 0 / 1),
+                      0 44px 100px rgb(0 0 0 / 1),
+                      0 20px 52px rgb(0 0 0 / .98),
+                      0 6px 20px rgb(0 0 0 / .95),
+                      0 0 60px rgb(0 0 0 / .9);}
+  /* le filet blanc fin, eteint par un masque en degrade */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;
+    border:1px solid rgb(255 255 255 / .78);
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
+      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
      vient de la MATIERE deja presente. Une bande de verre court le long du
@@ -268,11 +254,7 @@
     mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
         transparent 91%,#000 100%),
       linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%)}
-  /* Le filet blanc est retire. Ses valeurs exactes sont dans la memoire du
-     projet, fiche `project-darkmoon-deck-slide3-cadre` :
-         border: 1px solid rgb(255 255 255 / .78);
-         masque linear-gradient 135deg, 1 / .78 / .5 / .26 / .08 / 0
-         --radius: 14px */
+
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -355,11 +337,7 @@
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    box-shadow:inset -1px -1px 0 0 var(--dm-clair,#2b313b),
-               inset -3px -3px 3px 0 var(--dm-clair,#2b313b),
-               inset 1px 1px 0 0 var(--dm-sombre,#04060a),
-               inset 3px 3px 3px 0 var(--dm-sombre,#04060a)}
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
@@ -393,83 +371,54 @@
           opacity:0}
 
   
-  #neo{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #neo canvas{display:block;width:100%;height:100%}
-  /* la nappe sombre, posee SOUS la trame : elle creuse le centre pour que
-     les cartes s'y detachent, et laisse les bords respirer */
-  #neo .nappe{position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 90% at 22% 8%,
-      rgba(86,147,254,.26) 0%, rgba(60,90,180,.13) 26%,
-      rgba(0,0,0,.5) 62%, rgba(0,0,0,.9) 100%)}
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
 
   #scene{z-index:1}
   /* Pas de voile sur ce fond-la : mesure faite, le texte blanc y tient a
      12,6:1 sans aide. La carte montre le composant, rien d'autre. */
 </style></head>
 <body class="bg-background text-foreground">
-<div id="neo"><canvas></canvas><div class="nappe"></div></div>
-<script>
-// ── Le fond neo : trame de carres pleins, nette par construction ─────────
-(() => {
-  const hote = document.getElementById('neo');
-  if (!hote) return;
-  const toile = hote.querySelector('canvas');
-  const ctx = toile.getContext('2d');
-  const PAS = 15, CARRE = 3;                 // trame de la charte
-  const ARRETS = [[117,127,224], [86,147,254], [220,234,244]];  // indigo, royal, alice
-  let L = 0, H = 0;
-  const taille = () => {
-    const d = Math.min(2, window.devicePixelRatio || 1);
-    L = Math.round(hote.clientWidth * d);
-    H = Math.round(hote.clientHeight * d);
-    toile.width = L; toile.height = H;
-    ctx.setTransform(d, 0, 0, d, 0, 0);
-  };
-  taille();
-  new ResizeObserver(taille).observe(hote);
-
-  const teinte = t => {
-    const u = Math.max(0, Math.min(1, t)) * (ARRETS.length - 1);
-    const i = Math.min(ARRETS.length - 2, Math.floor(u));
-    const k = u - i, a = ARRETS[i], b = ARRETS[i + 1];
-    return [0, 1, 2].map(j => Math.round(a[j] + (b[j] - a[j]) * k));
-  };
-
-  const dessiner = ms => {
-    const t = ms / 1000;
-    const l = toile.width / (window.devicePixelRatio > 1 ? 2 : 1);
-    const w = hote.clientWidth, h = hote.clientHeight;
-    ctx.clearRect(0, 0, w, h);
-    for (let y = 0; y < h; y += PAS) {
-      for (let x = 0; x < w; x += PAS) {
-        const dx = x / w, dy = y / h;
-        // la nappe de lumiere : une onde lente en diagonale, plus une
-        // seconde plus courte, ce qui evite le motif regulier
-        const onde = Math.sin((dx + dy) * 3.1 - t * .22)
-                   + .45 * Math.sin(dx * 7.3 - dy * 4.1 + t * .13);
-        const v = (onde + 1.45) / 2.9;             // ramene entre 0 et 1
-        if (v < .08) continue;                     // les creux restent noirs
-        const c = teinte(v * .9);
-        // les carres s'eteignent en s'eloignant du coin haut gauche, la ou
-        // la lumiere de la slide se trouve deja
-        const loin = 1 - Math.min(1, (dx * .7 + dy * .8));
-        const a = Math.pow(v, 1.7) * (.30 + .95 * loin);
-        if (a < .01) continue;
-        ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a.toFixed(3) + ')';
-        ctx.fillRect(x, y, CARRE, CARRE);
-      }
-    }
-  };
-
-  let dernier = 0;
-  const boucle = ms => {
-    if (ms - dernier > 55) { dessiner(ms); dernier = ms; }   // 18 images par seconde suffisent
-    requestAnimationFrame(boucle);
-  };
-  requestAnimationFrame(boucle);
-})();
-</script>
-
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
 <div id="scene"><section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex h-24 w-56 items-center justify-center gap-4"><img class="" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:52px;width:52px"><span class="block w-fit text-5xl font-semibold">×4</span></div><h2 class="mt-6 text-center text-3xl font-semibold">de compromissions vs les grandes entreprises</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">88 % des attaques sur PME</h2><p class="text-foreground">sont des ransomwares</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">45 % des organisations : arrêt</h2><p class="text-foreground">via un tiers en 2 ans</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">58 % des PME UE touchées</h2><p class="text-foreground">subissent un impact économique</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">Régions les plus attaquées</h2><p class="text-foreground">Asie-Pacifique 34 %, Amérique du Nord 24 % des incidents mondiaux (2024). Secteur n°1 : l'industrie, 27,7 % de toutes les attaques, 5ᵉ année consécutive en tête.</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Verizon DBIR 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Gartner 2023</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">Eurobarometer 2022</span></div></div></div></div></div></div></div></div></section></div>
 <script>
 // La slide fait 1280 x 720 ; le composant est composé à sa largeur naturelle
@@ -518,42 +467,6 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
-  // ── La matiere de la carte vient du DECOR, a l'endroit ou elle est ────
-  // Le gris neutre ne pouvait pas aller : le decor n'a pas une seule
-  // couleur, c'est un degrade a 135 degres qui va du turquoise a l'ocre en
-  // passant par l'indigo. Les cartes de gauche baignent donc dans un vert
-  // bleute, celles de droite dans un violet chaud, et leur relief doit
-  // suivre. On projette le centre de chaque carte sur l'axe du degrade, on
-  // interpole ses cinq arrets, et on en tire la matiere et ses deux nuances.
-  const ARRETS = [[0, 61,138,147], [.32, 63,111,155], [.58, 74,88,147],
-                  [.82, 109,74,88], [1, 138,74,68]];
-  const teindre = () => {
-    const r = carte.getBoundingClientRect();
-    const cx = (r.left + r.width / 2) / window.innerWidth;
-    const cy = (r.top + r.height / 2) / window.innerHeight;
-    const t = Math.max(0, Math.min(1, (cx + cy) / 2));   // axe a 135 degres
-    let i = 0;
-    while (i < ARRETS.length - 2 && t > ARRETS[i + 1][0]) i++;
-    const a = ARRETS[i], b = ARRETS[i + 1];
-    const k = (t - a[0]) / (b[0] - a[0] || 1);
-    const c = [1, 2, 3].map(j => a[j] + (b[j] - a[j]) * k);
-    // Aucune desaturation : la couleur du relief est celle du decor, a sa
-    // chroma reelle, ramenee dans la charte. Le turquoise du decor tire vers
-    // le royal #5693fe, l'ocre du bas droite vers l'indigo #757fe0 : chaque
-    // teinte relevee est melangee a l'arret de charte le plus proche, deux
-    // tiers un tiers, ce qui garde la variation du fond sans sortir de la
-    // palette.
-    const CHARTE = [[86,147,254], [117,127,224]];
-    const ch = (c[0] > c[2]) ? CHARTE[1] : CHARTE[0];
-    const n = c.map((v, i) => v * 0.66 + ch[i] * 0.34);
-    const pose = (nom, f) => carte.style.setProperty(nom,
-      'rgb(' + n.map(v => Math.round(Math.min(255, v * f))).join(',') + ')');
-    pose('--dm-matiere', 0.20);   // la surface, sombre mais teintee
-    pose('--dm-clair', 0.42);     // la nuance eclairee
-    pose('--dm-sombre', 0.05);    // la nuance a l'ombre
-  };
-  teindre();
-  new ResizeObserver(teindre).observe(carte);
 
 
   const ctx = toile.getContext('2d');
