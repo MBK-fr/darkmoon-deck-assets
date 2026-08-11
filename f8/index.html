@@ -350,15 +350,19 @@
      mode preserve les noirs, et notre bande est a 27 sur 255, il n'avait
      rien a moduler. Le bruit est donc passe en `screen`, avec une texture
      en DEMI-NORMALE : surtout du noir, avec une queue claire. L'ecran
-     n'ajoute alors que les grains, sans remonter le niveau general. */
+     n'ajoute alors que les grains, sans remonter le niveau general.
+     Premiere texture a 26 d'ecart-type et 55 pour cent d'opacite : mesure a
+     4,2, le niveau de sa paroi FAIBLEMENT eclairee. Pour rejoindre ses faces
+     pleinement eclairees, 15 a 20, la texture passe a 52 d'ecart-type et
+     l'opacite a 95 pour cent. */
   /* Classe doublee dans le selecteur : la regle du composant
      `.bg-card>*:not(.fond){position:relative;z-index:1}` ecrasait sinon le
      `position:absolute`, et le calque sortait a zero pixel de large. Meme
      piege que pour les calques d'eclairage, deja rencontre. */
   .bg-card>.grain-relief.grain-relief{position:absolute;inset:0;z-index:5;
     pointer-events:none;
-    border-radius:inherit;background-image:url('../ether/grain2.png');
-    background-size:110px;mix-blend-mode:screen;opacity:.55;
+    border-radius:inherit;background-image:url('../ether/grain4.png');
+    background-size:88px;mix-blend-mode:screen;opacity:.95;
     -webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 11%,
         transparent 89%,#000 100%),
       linear-gradient(to right,#000 0,transparent 8%,transparent 92%,#000 100%);
@@ -527,12 +531,15 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
     const a = ARRETS[i], b = ARRETS[i + 1];
     const k = (t - a[0]) / (b[0] - a[0] || 1);
     const c = [1, 2, 3].map(j => a[j] + (b[j] - a[j]) * k);
-    // Releve sur la reference sombre (dribbble 25895544) : sa matiere est
-    // quasi NEUTRE, 3 a 12 pour cent de saturation, pas une couleur franche.
-    // On garde donc la teinte du decor mais on la ramene vers son propre
-    // gris a 68 pour cent, sinon le relief sort en bleu peint.
-    const gris = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
-    const n = c.map(v => v * 0.32 + gris * 0.68);
+    // Aucune desaturation : la couleur du relief est celle du decor, a sa
+    // chroma reelle, ramenee dans la charte. Le turquoise du decor tire vers
+    // le royal #5693fe, l'ocre du bas droite vers l'indigo #757fe0 : chaque
+    // teinte relevee est melangee a l'arret de charte le plus proche, deux
+    // tiers un tiers, ce qui garde la variation du fond sans sortir de la
+    // palette.
+    const CHARTE = [[86,147,254], [117,127,224]];
+    const ch = (c[0] > c[2]) ? CHARTE[1] : CHARTE[0];
+    const n = c.map((v, i) => v * 0.66 + ch[i] * 0.34);
     const pose = (nom, f) => carte.style.setProperty(nom,
       'rgb(' + n.map(v => Math.round(Math.min(255, v * f))).join(',') + ')');
     pose('--dm-matiere', 0.20);   // la surface, sombre mais teintee
