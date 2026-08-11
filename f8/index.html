@@ -232,28 +232,20 @@
      de la lumiere de la slide. */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
     pointer-events:none;border-radius:inherit;
-    box-shadow:inset 0 0 22px 7px rgb(96 140 205 / .22),
-               inset 0 0 7px 1px rgb(150 190 240 / .16),
-               0 0 20px 2px rgb(74 116 186 / .20),
-               0 0 44px 6px rgb(52 84 150 / .13);
+    /* Resserree et assombrie : le flou de 22 et 44 px debordait sur toute
+       la carte et remontait son niveau, d'ou l'impression de tout flou et
+       trop clair. On garde le principe, une lueur sans trait, mais courte :
+       6 px dedans, 9 px dehors, et des opacites divisees par deux. */
+    box-shadow:inset 0 0 6px 1px rgb(78 118 178 / .13),
+               inset 0 0 2px 0 rgb(120 158 210 / .10),
+               0 0 9px 0 rgb(58 92 152 / .12),
+               0 0 18px 1px rgb(40 66 116 / .07);
     -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
       rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .55) 45%,rgb(0 0 0 / .34) 68%,
       rgb(0 0 0 / .2) 88%,rgb(0 0 0 / .14) 100%);
     mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
       rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .55) 45%,rgb(0 0 0 / .34) 68%,
       rgb(0 0 0 / .2) 88%,rgb(0 0 0 / .14) 100%)}
-  /* le grain, pose sur la seule lisiere : en `screen`, la texture en
-     demi-normale n'ajoute que ses grains sans remonter le niveau */
-  .bg-card>.grain.grain{position:absolute;inset:0;z-index:5;
-    pointer-events:none;border-radius:inherit;
-    background-image:url('../ether/grain3.png');background-size:104px;
-    mix-blend-mode:screen;opacity:.5;
-    -webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 13%,
-        transparent 87%,#000 100%),
-      linear-gradient(to right,#000 0,transparent 9%,transparent 91%,#000 100%);
-    mask-image:linear-gradient(to bottom,#000 0,transparent 13%,
-        transparent 87%,#000 100%),
-      linear-gradient(to right,#000 0,transparent 9%,transparent 91%,#000 100%)}
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
      vient de la MATIERE deja presente. Une bande de verre court le long du
@@ -488,9 +480,6 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
-  const grain = document.createElement('div');
-  grain.className = 'grain';
-  carte.append(grain);
 
 
   const ctx = toile.getContext('2d');
