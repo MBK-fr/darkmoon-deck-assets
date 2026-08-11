@@ -237,11 +237,15 @@
               nuance est donc posee deux fois, un trait franc d'un pixel au
               ras du bord, puis un fondu court derriere lui. Le rapport
               flou/decalage descend de 1,5 a 1. */
+           /* Les fondus de 10 px etaient la moitie du probleme : un bord
+              premium est NET, il n'a pas de halo. Il reste un trait franc
+              d'un pixel et un fondu tres court de 3 px, plus l'ombre portee
+              qui detache la carte du decor. */
            box-shadow:1px 1px 0 0 var(--dm-clair,#2b313b),
-                      10px 10px 10px 0 var(--dm-clair,#2b313b),
+                      3px 3px 3px 0 var(--dm-clair,#2b313b),
                       -1px -1px 0 0 var(--dm-sombre,#04060a),
-                      -10px -10px 10px 0 var(--dm-sombre,#04060a),
-                      0 40px 90px rgb(0 0 0 / .75);}
+                      -3px -3px 3px 0 var(--dm-sombre,#04060a),
+                      0 26px 60px rgb(0 0 0 / .8);}
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
      vient de la MATIERE deja presente. Une bande de verre court le long du
@@ -341,34 +345,7 @@
      retires. Voir la memoire du projet pour leurs valeurs. */
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
-  /* ── Le grain de la matiere ────────────────────────────────────────────
-     Mesure sur la reference : ecart-type de 15 a 20 niveaux sur les faces
-     eclairees, 4,8 sur la paroi qui recoit peu, 1 sur le plan lointain. Sa
-     matiere est GRENUE la ou la lumiere tombe, lisse dans l'ombre. Notre
-     relief etait parfaitement lisse partout, d'ou l'impression de plastique.
-     Premier essai en `overlay` : mesure a 1,1 d'ecart-type, invisible. Ce
-     mode preserve les noirs, et notre bande est a 27 sur 255, il n'avait
-     rien a moduler. Le bruit est donc passe en `screen`, avec une texture
-     en DEMI-NORMALE : surtout du noir, avec une queue claire. L'ecran
-     n'ajoute alors que les grains, sans remonter le niveau general.
-     Premiere texture a 26 d'ecart-type et 55 pour cent d'opacite : mesure a
-     4,2, le niveau de sa paroi FAIBLEMENT eclairee. Pour rejoindre ses faces
-     pleinement eclairees, 15 a 20, la texture passe a 52 d'ecart-type et
-     l'opacite a 95 pour cent. */
-  /* Classe doublee dans le selecteur : la regle du composant
-     `.bg-card>*:not(.fond){position:relative;z-index:1}` ecrasait sinon le
-     `position:absolute`, et le calque sortait a zero pixel de large. Meme
-     piege que pour les calques d'eclairage, deja rencontre. */
-  .bg-card>.grain-relief.grain-relief{position:absolute;inset:0;z-index:5;
-    pointer-events:none;
-    border-radius:inherit;background-image:url('../ether/grain4.png');
-    background-size:88px;mix-blend-mode:screen;opacity:.95;
-    -webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 11%,
-        transparent 89%,#000 100%),
-      linear-gradient(to right,#000 0,transparent 8%,transparent 92%,#000 100%);
-    mask-image:linear-gradient(to bottom,#000 0,transparent 11%,
-        transparent 89%,#000 100%),
-      linear-gradient(to right,#000 0,transparent 8%,transparent 92%,#000 100%)}
+
   .verre{display:none}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
@@ -380,9 +357,9 @@
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
       rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
     box-shadow:inset -1px -1px 0 0 var(--dm-clair,#2b313b),
-               inset -10px -10px 10px 0 var(--dm-clair,#2b313b),
+               inset -3px -3px 3px 0 var(--dm-clair,#2b313b),
                inset 1px 1px 0 0 var(--dm-sombre,#04060a),
-               inset 10px 10px 10px 0 var(--dm-sombre,#04060a)}
+               inset 3px 3px 3px 0 var(--dm-sombre,#04060a)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
@@ -548,9 +525,7 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   };
   teindre();
   new ResizeObserver(teindre).observe(carte);
-  const grain = document.createElement('div');
-  grain.className = 'grain-relief';
-  carte.append(grain);
+
 
   const ctx = toile.getContext('2d');
   let w = 0, h = 0, image = null, data = null;
