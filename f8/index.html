@@ -215,7 +215,17 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  .bg-card{border-width:0;background:#000;position:relative;
+  /* ── Un vrai creux : il faut de la matiere autour ──────────────────────
+     Un creux noir dans une surface noire ne peut pas exister, mesure a
+     l'appui : au bord, la carte etait deja a 9 sur 255, et l'ombre la plus
+     dense ne lui retirait qu'un niveau. Ce qui manquait n'etait pas l'ombre
+     mais la SURFACE. La carte porte donc un cadre de matiere, un gris tres
+     sombre eclaire du haut gauche, et le motif anime est encastre dedans,
+     14 px plus bas. Le fond du creux reste noir : c'est le cadre qui le rend
+     lisible, pas une lumiere posee dessus. */
+  .bg-card{border-width:0;position:relative;
+           background:linear-gradient(146deg,#262b33 0%,#1b1f26 26%,
+                                      #12161c 52%,#0d1015 74%,#171b21 100%);
            box-shadow:0 130px 260px rgb(0 0 0 / 1),
                       0 80px 170px rgb(0 0 0 / 1),
                       0 44px 100px rgb(0 0 0 / 1),
@@ -225,7 +235,7 @@
   /* le filet blanc, eteint par un masque en degrade : etat de reference du
      10/08/2026, garde en memoire du projet */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;border:1px solid rgb(255 255 255 / .78);
+    pointer-events:none;border-radius:inherit;border:1px solid rgb(255 255 255 / .5);
     -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
       rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
       rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
@@ -302,8 +312,14 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
-  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
-        overflow:hidden}
+  .fond{position:absolute;inset:14px;z-index:0;
+        border-radius:calc(var(--radius) - 6px);
+        overflow:hidden;background:#000;
+        box-shadow:0 0 0 1px rgb(0 0 0 / .95),
+                   0 1px 0 rgb(255 255 255 / .05),
+                   inset 0 14px 22px -8px rgb(0 0 0 / .95),
+                   inset 10px 0 18px -10px rgb(0 0 0 / .85),
+                   inset -6px -6px 14px -6px rgb(0 0 0 / .6)}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
@@ -312,19 +328,7 @@
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
-    /* Le creux, vu en perspective. Mesure faite, la version en noir ne
-       changeait l'image que de 0,93 niveau sur 255 : au bord, la carte est
-       deja a 9 sur 255, une ombre ne peut pas lui retirer ce qu'elle n'a
-       pas. C'est donc la LUMIERE qui dessine la cuvette : le seuil, tout
-       pres de l'oeil, accroche le plus, les flancs a peine, et la paroi du
-       fond reste noire puisqu'elle tourne le dos a la lumiere. Teinte prise
-       dans le decor, 211 degres, jamais du blanc. */
-    box-shadow:inset 0 -16px 24px -14px rgb(150 182 224 / .20),
-               inset 13px 0 22px -14px rgb(150 182 224 / .10),
-               inset -13px 0 22px -14px rgb(150 182 224 / .10),
-               inset 0 22px 30px -18px rgb(0 0 0 / .5)}
-
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
