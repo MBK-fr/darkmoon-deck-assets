@@ -215,13 +215,25 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  .bg-card{border-width:0;background:#000;position:relative;
-           box-shadow:0 130px 260px rgb(0 0 0 / 1),
-                      0 80px 170px rgb(0 0 0 / 1),
-                      0 44px 100px rgb(0 0 0 / 1),
-                      0 20px 52px rgb(0 0 0 / .98),
-                      0 6px 20px rgb(0 0 0 / .95),
-                      0 0 60px rgb(0 0 0 / .9);}
+  /* ── Neumorphisme du pen, en valeurs sombres ──────────────────────────
+     Le pen travaille sur une surface a 232 sur 255 : sa clarte vaut
+     surface + 23, son ombre surface - 108, et le relief tient dans cet
+     ecart. Sur du noir absolu l'ecart ne peut exister que d'un cote. La
+     carte prend donc une matiere, #16191f, et les deux nuances sont
+     calculees a partir d'elle, jamais du blanc :
+         clarte  #2b313b   (surface eclaircie)
+         ombre   #04060a   (surface assombrie)
+     Geometrie du pen conservee, aux memes positions : clarte en bas droite,
+     ombre en haut gauche, dehors comme dedans. */
+  .bg-card{border-width:0;background:#16191f;position:relative;
+           /* Trois echelles essayees et mesurees sur la bande claire
+              interieure, la ou l'effet se juge : 4 px donne 16 sur 255,
+              12 px donne 30, 25 px donne 23. C'est 12 px qui porte le mieux,
+              parce qu'a 25 la bande s'etale et se dilue, et qu'a 4 elle est
+              trop courte pour exister sur une carte de 312 px. */
+           box-shadow:12px 12px 18px 0 #2b313b,
+                      -12px -12px 18px 0 #04060a,
+                      0 40px 90px rgb(0 0 0 / .75);}
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
      vient de la MATIERE deja presente. Une bande de verre court le long du
@@ -326,6 +338,7 @@
      retires. Voir la memoire du projet pour leurs valeurs. */
   .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
         overflow:hidden}
+  .verre{display:none}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
@@ -334,7 +347,9 @@
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
+    box-shadow:inset -12px -12px 18px 0 #2b313b,
+               inset 12px 12px 18px 0 #04060a}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
