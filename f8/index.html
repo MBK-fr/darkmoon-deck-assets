@@ -280,7 +280,9 @@
     border-radius:var(--radius);pointer-events:none;
     box-shadow:0 0 3px 1px rgb(0 0 0 / .95), 0 0 8px rgb(0 0 0 / .6)}
   /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
-  .grid.gap-3{gap:18px}
+  /* Essai : gouttiere a zero, les cartes se touchent. L'ombre des cartes
+     est sans propagation, elle ne debordera donc pas sur la voisine. */
+  .grid.gap-3{gap:0}
   .bg-card>*:not(.fond){position:relative;z-index:1}
   /* Le lisere est porte par la CARTE, pas par son fond, et avec un z-index
      positif : `.fond` est un contexte d'empilement, un lisere pose dedans
