@@ -157,7 +157,7 @@
     .lg\:space-y-6>*+*{margin-top:1.5rem}
   }
 </style><style>
-  :root{ --radius:18px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
+  :root{ --radius:14px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
   /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
      sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
      plus clair que la carte) en les passant en blanc a faible alpha. */
@@ -225,7 +225,7 @@
   /* le filet blanc, eteint par un masque en degrade : etat de reference du
      10/08/2026, garde en memoire du projet */
   .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;border:1.5px solid #fff;
+    pointer-events:none;border-radius:inherit;border:1px solid #fff;
     -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
       rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
       rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
