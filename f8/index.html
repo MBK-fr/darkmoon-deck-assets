@@ -222,16 +222,13 @@
                       0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
                       0 0 60px rgb(0 0 0 / .9);}
-  /* le filet blanc fin, eteint par un masque en degrade */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;
-    border:1px solid rgb(255 255 255 / .78);
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+  /* Filet retire pour essai. A remettre tel quel :
+         .bg-card::after{ content:""; position:absolute; inset:0; z-index:6;
+           pointer-events:none; border-radius:inherit;
+           border:1px solid rgb(255 255 255 / .78);
+           mask-image:linear-gradient(135deg, rgb(0 0 0 / 1) 0%,
+             rgb(0 0 0 / .78) 18%, rgb(0 0 0 / .5) 38%, rgb(0 0 0 / .26) 60%,
+             rgb(0 0 0 / .08) 85%, rgb(0 0 0 / 0) 100%); } */
   /* ── Le bord en verre ─────────────────────────────────────────────────
      Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
      vient de la MATIERE deja presente. Une bande de verre court le long du
