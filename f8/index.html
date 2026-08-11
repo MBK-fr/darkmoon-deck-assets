@@ -215,33 +215,35 @@
      normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
      un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
      lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  /* ── Un vrai creux : il faut de la matiere autour ──────────────────────
-     Un creux noir dans une surface noire ne peut pas exister, mesure a
-     l'appui : au bord, la carte etait deja a 9 sur 255, et l'ombre la plus
-     dense ne lui retirait qu'un niveau. Ce qui manquait n'etait pas l'ombre
-     mais la SURFACE. La carte porte donc un cadre de matiere, un gris tres
-     sombre eclaire du haut gauche, et le motif anime est encastre dedans,
-     14 px plus bas. Le fond du creux reste noir : c'est le cadre qui le rend
-     lisible, pas une lumiere posee dessus. */
+  /* ── Champ du pen reanukeaves/mdjVwKo, cellule `input[type=password]` ──
+     Sa feuille calculee donne, pour la cellule :
+         background: linear-gradient(145deg, #f1f4fa, #cbcdd3);
+         border-radius: 10px; border: none;
+         box-shadow: var(--secondary-box-shadow);
+     et la variable vaut exactement :
+          4px  4px 6px 0 rgba(255,255,255,.5),
+         -4px -4px 6px 0 rgba(116,125,136,.2),
+         inset -4px -4px 6px 0 rgba(255,255,255,.5),
+         inset  4px  4px 6px 0 rgba(116,125,136,.3);
+     Geometrie, flous et alphas repris au chiffre pres. Seules les DEUX
+     couleurs changent, puisque la scene est inversee : chez lui la surface
+     est a 232 sur 255, sa clarte vaut surface +23 et son ombre surface -108.
+     Transposees sur une carte a 24, l'ombre tombe sous zero, donc noir, et
+     la clarte reste le blanc. Le degrade a 145 degres est garde, dans ses
+     valeurs sombres. */
   .bg-card{border-width:0;position:relative;
-           background:linear-gradient(146deg,#262b33 0%,#1b1f26 26%,
-                                      #12161c 52%,#0d1015 74%,#171b21 100%);
-           box-shadow:0 130px 260px rgb(0 0 0 / 1),
-                      0 80px 170px rgb(0 0 0 / 1),
-                      0 44px 100px rgb(0 0 0 / 1),
-                      0 20px 52px rgb(0 0 0 / .98),
-                      0 6px 20px rgb(0 0 0 / .95),
-                      0 0 60px rgb(0 0 0 / .9);}
-  /* le filet blanc, eteint par un masque en degrade : etat de reference du
-     10/08/2026, garde en memoire du projet */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;border:1px solid rgb(255 255 255 / .5);
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .78) 18%,rgb(0 0 0 / .5) 38%,rgb(0 0 0 / .26) 60%,
-      rgb(0 0 0 / .08) 85%,rgb(0 0 0 / 0) 100%)}
+           background:linear-gradient(145deg,#21252d,#0e1116);
+           /* Les deux couches EXTERIEURES restent sur la carte. Les deux
+              `inset` doivent monter d'un cran : une ombre interieure se
+              peint au-dessus du fond mais SOUS les enfants, et le motif
+              anime couvre toute la carte, donc elles etaient invisibles.
+              Elles sont reportees telles quelles sur le voile, qui vit
+              dans `.fond`, au-dessus du motif et sous le texte. */
+           box-shadow:4px 4px 6px 0 rgba(255,255,255,.5),
+                      -4px -4px 6px 0 rgba(0,0,0,.2);}
+  /* La cellule du pen n'a NI bordure NI filet : tout son relief tient dans
+     les quatre ombres. Le filet blanc masque est donc retire ; ses valeurs
+     restent dans la memoire du projet. */
   /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
      tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
      cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
@@ -312,14 +314,8 @@
   /* Filet simple, sans rien autour : les reperes d'angle, le semis de
      points, la lisiere neon, la bordure floue et les equerres sont tous
      retires. Voir la memoire du projet pour leurs valeurs. */
-  .fond{position:absolute;inset:14px;z-index:0;
-        border-radius:calc(var(--radius) - 6px);
-        overflow:hidden;background:#000;
-        box-shadow:0 0 0 1px rgb(0 0 0 / .95),
-                   0 1px 0 rgb(255 255 255 / .05),
-                   inset 0 14px 22px -8px rgb(0 0 0 / .95),
-                   inset 10px 0 18px -10px rgb(0 0 0 / .85),
-                   inset -6px -6px 14px -6px rgb(0 0 0 / .6)}
+  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
+        overflow:hidden}
   /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
      son niveau general, et un voile l'eteint la ou la typographie se pose,
      en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
@@ -328,7 +324,9 @@
   .fond::after{content:"";position:absolute;inset:0;z-index:1;
     pointer-events:none;border-radius:inherit;
     background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%);
+    box-shadow:inset -4px -4px 6px 0 rgba(255,255,255,.5),
+               inset 4px 4px 6px 0 rgba(0,0,0,.3)}
   /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
      pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
      ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
