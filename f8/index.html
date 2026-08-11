@@ -283,6 +283,22 @@
   /* Essai : gouttiere a zero, les cartes se touchent. L'ombre des cartes
      est sans propagation, elle ne debordera donc pas sur la voisine. */
   .grid.gap-3{gap:0}
+  /* ── Le bloc n'a d'angles arrondis qu'a l'EXTERIEUR ────────────────────
+     Les cartes sont collees : arrondir chacune redonnerait cinq objets. On
+     n'arrondit donc que les quatre coins du bloc, un par carte :
+       carte 1, « x4 »          → coin haut gauche
+       carte 3, « 45 % »        → coin haut droit
+       carte 4, « 58 % »        → coin bas gauche
+       carte 5, « Regions »     → coin bas droit
+     `.fond`, la lisiere et le grain heritent du rayon de la carte, donc les
+     quatre coins suivent sans autre reglage. */
+  .bg-card{border-radius:0}
+  /* les cartes SONT les enfants directs de la grille, pas des enveloppes */
+  .grid.gap-3>.bg-card:nth-child(1){border-top-left-radius:var(--rayon-bloc)}
+  .grid.gap-3>.bg-card:nth-child(3){border-top-right-radius:var(--rayon-bloc)}
+  .grid.gap-3>.bg-card:nth-child(4){border-bottom-left-radius:var(--rayon-bloc)}
+  .grid.gap-3>.bg-card:nth-child(5){border-bottom-right-radius:var(--rayon-bloc)}
+  :root{--rayon-bloc:18px}
   .bg-card>*:not(.fond){position:relative;z-index:1}
   /* Le lisere est porte par la CARTE, pas par son fond, et avec un z-index
      positif : `.fond` est un contexte d'empilement, un lisere pose dedans
@@ -345,7 +361,7 @@
      transparent et le grain en `overlay` n'a rien contre quoi se melanger,
      il se pose alors en gris plein. Mesure du defaut : la carte remontait
      de 11 a 41 sur 255. */
-  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
+  .fond{position:absolute;inset:0;z-index:0;border-radius:inherit;
         overflow:hidden;background:#000}
 
   .verre{display:none}
