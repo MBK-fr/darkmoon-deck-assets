@@ -222,6 +222,9 @@
                       0 20px 52px rgb(0 0 0 / .98),
                       0 6px 20px rgb(0 0 0 / .95),
                       0 0 60px rgb(0 0 0 / .9);}
+  /* la gorge de metal liquide, peinte par le script */
+  .bg-card>.metal.metal{position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit}
   /* Filet retire pour essai. A remettre tel quel :
          .bg-card::after{ content:""; position:absolute; inset:0; z-index:6;
            pointer-events:none; border-radius:inherit;
@@ -437,6 +440,85 @@ caler();
 window.addEventListener('resize', caler);
 </script>
 <script>
+// ── La gorge de metal liquide ────────────────────────────────────────────
+// Une gorge creusee dans du chrome noir ne se peint pas avec des ombres :
+// un metal ne montre pas sa couleur, il montre le REFLET de ce qui
+// l'entoure. On calcule donc, pour chaque pixel du bord :
+//   1. sa distance a l'arete, qui donne sa position dans la gorge ;
+//   2. l'inclinaison de la paroi a cet endroit, en cosinus, negative au
+//      depart puis positive : c'est le profil d'un creux, pas d'un bourrelet ;
+//   3. la direction ou part le rayon reflechi, et ce qu'il rencontre dans un
+//      petit ciel a une dimension, fait de bandes claires et sombres.
+// Le ciel tourne lentement : c'est ce glissement des bandes sur la gorge qui
+// donne le metal LIQUIDE. Tout reste noir, les bandes montent au plus a 170
+// sur 255 et seulement sur une ligne, comme un chrome sombre.
+const GORGE = { largeur: 13, rayon: 14, creux: 1.55, vitesse: 0.16,
+                teinte: [0.86, 0.93, 1.0] };   // le chrome tire legerement au bleu
+
+function ciel(a) {
+  // un petit environnement : deux bandes claires, une sombre, et un fil
+  // brillant. C'est ce qu'un chrome poli renvoie d'une piece sombre.
+  const b1 = Math.exp(-Math.pow((a - 0.62) * 3.4, 2)) * 0.66;
+  const b2 = Math.exp(-Math.pow((a + 0.95) * 2.2, 2)) * 0.28;
+  const fil = Math.exp(-Math.pow((a - 0.18) * 12.0, 2)) * 0.85;
+  const fond = 0.05 + 0.05 * Math.cos(a * 1.7);
+  return Math.min(1, fond + b1 + b2 + fil);
+}
+
+function metalliser(carte, boucles, k) {
+  const toile = document.createElement('canvas');
+  toile.className = 'metal';
+  carte.append(toile);
+  const ctx = toile.getContext('2d');
+  let L = 0, H = 0, image = null, dpr = 1;
+  boucles.push(secondes => {
+    const l = carte.offsetWidth, h = carte.offsetHeight;
+    if (l < 8) return;
+    const ecran = carte.getBoundingClientRect();
+    const d = Math.min(2, (window.devicePixelRatio || 1) * (ecran.width / l || 1));
+    const cl = Math.round(l * d), ch = Math.round(h * d);
+    if (toile.width !== cl || toile.height !== ch) {
+      toile.width = cl; toile.height = ch;
+      toile.style.width = l + 'px'; toile.style.height = h + 'px';
+      image = ctx.createImageData(cl, ch); dpr = d; L = cl; H = ch;
+    }
+    const D = image.data, W = GORGE.largeur, R = GORGE.rayon;
+    const hw = l / 2, hh = h / 2;
+    const derive = secondes * GORGE.vitesse + k * 0.7;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < L; x++) {
+        const px = x / dpr - hw, py = y / dpr - hh;
+        const qx = Math.abs(px) - (hw - R), qy = Math.abs(py) - (hh - R);
+        const dist = Math.hypot(Math.max(qx, 0), Math.max(qy, 0))
+                     + Math.min(Math.max(qx, qy), 0) - R;
+        const i = (y * L + x) * 4;
+        const t = -dist / W;
+        if (dist > 0 || t >= 1) { D[i + 3] = 0; continue; }
+        let gx, gy;
+        if (qx > 0 && qy > 0) { const n = Math.hypot(qx, qy) || 1; gx = qx / n; gy = qy / n; }
+        else if (qx > qy) { gx = 1; gy = 0; } else { gx = 0; gy = 1; }
+        gx *= px < 0 ? -1 : 1; gy *= py < 0 ? -1 : 1;
+        // profil du creux : la paroi bascule d'un cote puis de l'autre
+        const pente = Math.cos(t * Math.PI) * GORGE.creux;
+        const nx = -gx * pente, ny = -gy * pente;
+        // l'angle du rayon reflechi, plus une ondulation lente : le liquide
+        const a = Math.atan2(ny, nx) + derive
+                  + 0.35 * Math.sin(t * 4.2 + derive * 2.3 + (px + py) * 0.012);
+        let v = ciel(Math.atan2(Math.sin(a), Math.cos(a)));
+        // le fond de la gorge reste noir, l'arete accroche
+        v *= 0.25 + 0.75 * Math.abs(Math.cos(t * Math.PI));
+        const al = Math.min(1, v * 1.25);
+        if (al < 0.004) { D[i + 3] = 0; continue; }
+        D[i]     = Math.round(255 * GORGE.teinte[0]);
+        D[i + 1] = Math.round(255 * GORGE.teinte[1]);
+        D[i + 2] = Math.round(255 * GORGE.teinte[2]);
+        D[i + 3] = Math.round(al * 190);
+      }
+    }
+    ctx.putImageData(image, 0, 0);
+  });
+}
+
 
 // ── tables de 1024 valeurs et acces `& 1023`, comme le composant
 const SIN = new Float32Array(1024), COS = new Float32Array(1024);
@@ -464,6 +546,7 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
   const toile = document.createElement('canvas');
   fond.append(toile);
   carte.prepend(fond);
+  metalliser(carte, boucles, k);
 
 
   const ctx = toile.getContext('2d');
