@@ -20,30 +20,43 @@
     from{transform:rotate(var(--counter-offset,0deg))}
     to{transform:rotate(calc(var(--counter-offset,0deg) + 360deg))}}
 
-  /* ── Le texte, en registre cinematique, comme la slide 2 ─────────────
-     Centre, pose en haut, et non plus en colonne a gauche : la planete
-     prend la place. */
+  /* ── Le texte : la slide 2, telle quelle ─────────────────────────────
+     Meme composant (`@xubohuah/blur-text-animation`), memes classes
+     resolues, meme police et memes reglages : Avenir Next en graisse 300,
+     interligne 1,625, interlettrage .025em, halo sombre radial derriere le
+     bloc, et l'apparition mot a mot depuis le flou. Seule la taille descend
+     de 3rem a 2.05rem : le texte de cette slide est plus long, et la moitie
+     basse revient a la planete. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         flex-direction:column;align-items:center;padding:46px 76px 0;
+         justify-content:center;align-items:flex-start;padding-top:54px;
          pointer-events:none}
+  .inner{position:relative;text-align:center;max-width:64rem;
+         padding-left:2rem;padding-right:2rem}
+  .inner::before{content:"";position:absolute;inset:-16% -8%;z-index:-1;
+                 background:radial-gradient(52% 46% at 50% 50%,
+                   rgba(0,0,0,.74) 0%, rgba(0,0,0,.52) 44%,
+                   rgba(0,0,0,.22) 70%, rgba(0,0,0,0) 100%)}
+  .txt{color:#fff;font-size:2.05rem;line-height:1.625;letter-spacing:.025em;
+       font-weight:300;margin:0;
+       font-family:'Avenir Next','Avenir',system-ui,sans-serif;
+       perspective:900px}
+  .m{display:inline-block;margin-right:.35em;
+     transition-property:opacity,filter,transform,text-shadow;
+     transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+     will-change:filter,transform,opacity;transform-style:preserve-3d;
+     backface-visibility:hidden}
+  .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
   .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;
-           color:rgb(220 234 244 / .62)}
-  h1{font-size:46px;font-weight:300;letter-spacing:.002em;margin:14px 0 0;
-     text-align:center;
-     text-shadow:0 2px 20px rgb(0 0 0 / .95), 0 0 60px rgb(0 0 0 / .9)}
-  .chapo{font-size:17px;line-height:1.5;color:rgb(255 255 255 / .84);
-         margin-top:12px;text-align:center;max-width:62ch;
-         text-shadow:0 2px 16px rgb(0 0 0 / .9)}
+           color:rgb(220 234 244 / .62);margin-bottom:16px}
+  /* Les huit perimetres nommes par le PPTX : hors du paragraphe anime, pour
+     que celui-ci garde la respiration de la slide 2, mais bien presents. */
   .scopes{margin-top:18px;display:flex;flex-wrap:wrap;justify-content:center;
-          gap:8px 20px;max-width:74ch}
-  .scopes span{font-size:13px;letter-spacing:.03em;
-               color:rgb(255 255 255 / .72);display:flex;align-items:center;
-               gap:8px;text-shadow:0 2px 14px rgb(0 0 0 / .9)}
+          gap:7px 18px}
+  .scopes span{font-size:12.5px;letter-spacing:.06em;
+               color:rgb(255 255 255 / .62);display:flex;align-items:center;
+               gap:8px;text-shadow:0 0 14px rgb(0 0 0 / .95)}
   .scopes span::before{content:"";width:4px;height:4px;flex:none;
-    background:rgb(220 234 244 / .9);box-shadow:0 0 8px rgb(120 170 255 / .9)}
-  .titre-orbites{margin-top:20px;font-size:12.5px;letter-spacing:.22em;
-                 text-transform:uppercase;color:rgb(220 234 244 / .8);
-                 text-shadow:0 0 18px rgb(90 150 255 / .55)}
+    background:rgb(220 234 244 / .85);box-shadow:0 0 8px rgb(120 170 255 / .85)}
   .pied{position:absolute;left:76px;right:76px;bottom:26px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
@@ -52,10 +65,13 @@
      Le composant ancre ses anneaux au bas de son cadre : seule la moitie
      haute se voit, comme un horizon. On garde ce parti pris, agrandi pour
      que la planete tienne la slide. */
-  #orbites{position:absolute;left:50%;bottom:-118px;width:1120px;
-           height:640px;z-index:2;
-           transform:translateX(-50%) scale(0.86);
-           transform-origin:bottom center;pointer-events:none}
+  /* Aucune mise a l'echelle : les anneaux gardent les tailles du composant,
+     720, 880 et 1060 px, et les pastilles leur diametre naturel. Mettre le
+     bloc entier a l'echelle grossissait tout ensemble et deformait la
+     lecture ; ici il n'est que POSITIONNE. */
+  #orbites{position:absolute;left:50%;bottom:-104px;width:1120px;
+           height:640px;z-index:2;transform:translateX(-50%);
+           pointer-events:none}
   /* Neon : le trait de l'anneau est fin et sature, et sa lumiere deborde de
      part et d'autre. Un `border` clair ne brille pas ; c'est l'ombre portee
      sans decalage qui fait le halo. */
@@ -68,7 +84,7 @@
   .bras{position:absolute;top:0;left:50%;height:50%;margin-left:-32px;
         transform-origin:bottom center;display:flex;flex-direction:column;
         align-items:center;justify-content:flex-start}
-  .pastille{margin-top:-38px;padding:15px;border-radius:9999px;
+  .pastille{margin-top:-36px;padding:16px;border-radius:9999px;
             border:1px solid rgb(160 200 255 / .7);background:#05070c;
             position:relative;z-index:10;display:flex;
             box-shadow:0 0 14px rgb(90 150 255 / .5),
@@ -77,11 +93,11 @@
                        0 8px 22px rgb(0 0 0 / .85)}
   /* Les icones etaient ternes : blanc pur, et un halo qui les detache du
      fond au lieu de les y fondre. */
-  .pastille img{width:34px;height:34px;display:block;
+  .pastille img{width:32px;height:32px;display:block;
                 filter:drop-shadow(0 0 6px rgb(120 175 255 / .75))
                        drop-shadow(0 0 14px rgb(70 120 240 / .4))}
   #sphere{position:absolute;bottom:0;left:50%;
-          transform:translate(-50%,50%);width:700px;aspect-ratio:1;
+          transform:translate(-50%,50%);width:575px;aspect-ratio:1;
           z-index:9;pointer-events:none}
   #sphere canvas{width:100%;height:auto;border-radius:9999px;display:block}
   /* ── L'ouverture : rideau noir, flou qui se leve ─────────────────────── */
@@ -141,17 +157,64 @@
   <div id="sphere"><canvas></canvas></div>
 </div>
 <div id="scene">
-  <div id="texte">
+  <div class="inner">
     <div class="eyebrow">LE PROBLÈME · 2/2</div>
-    <h1>La surface d'attaque explose.</h1>
-    <p class="chapo">Les outils « IA » du marché s'arrêtent au web. Le reste = angle mort.</p>
+    <p class="txt" id="p"></p>
     <div class="scopes"><span>Applications web</span><span>API</span><span>Active Directory</span><span>Kubernetes</span><span>Cloud</span><span>Réseaux internes</span><span>Systèmes legacy</span><span>CMS / e-commerce</span></div>
-    <div class="titre-orbites">Tous les scopes couverts par Darkmoon</div>
   </div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>05 / 14</span></div>
 
 <script>
+// ── Le texte, moteur de la slide 2, repris tel quel ──────────────────────
+// Meme formule que `blur_slide.py` : duree, retard et flou par mot, graine
+// fixe pour un rendu reproductible, cinq couches d'ombre noire parce qu'une
+// ombre CSS ne depasse pas l'opacite 1, et le retour au flux normal une fois
+// le mot pose, pour ne pas le laisser dans un calque composite.
+const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
+           + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
+           + '0 0 110px rgba(0,0,0,.9)';
+const MOTS = [{"t": "La", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 2.487, "r": 0.093, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 2.448, "r": 0.165, "b": 13, "s": 0.919}, {"t": "explose.", "d": 2.386, "r": 0.265, "b": 12, "s": 0.928}, {"t": "Les", "d": 2.309, "r": 0.376, "b": 15, "s": 0.936}, {"t": "outils", "d": 2.221, "r": 0.415, "b": 18, "s": 0.942}, {"t": "«", "d": 2.132, "r": 0.516, "b": 15, "s": 0.947}, {"t": "IA", "d": 2.049, "r": 0.58, "b": 18, "s": 0.949}, {"t": "»", "d": 1.979, "r": 0.659, "b": 13, "s": 0.95}, {"t": "du", "d": 1.929, "r": 0.783, "b": 12, "s": 0.949}, {"t": "marché", "d": 1.903, "r": 0.844, "b": 18, "s": 0.945}, {"t": "s'arrêtent", "d": 1.904, "r": 0.897, "b": 15, "s": 0.94}, {"t": "au", "d": 1.931, "r": 0.975, "b": 14, "s": 0.934}, {"t": "web.", "d": 1.982, "r": 1.066, "b": 14, "s": 0.926}, {"t": "Le", "d": 2.053, "r": 1.156, "b": 16, "s": 0.917}, {"t": "reste", "d": 2.137, "r": 1.235, "b": 14, "s": 0.907}, {"t": "=", "d": 2.226, "r": 1.29, "b": 15, "s": 0.897}, {"t": "angle", "d": 2.313, "r": 1.381, "b": 13, "s": 0.887}, {"t": "mort.", "d": 2.39, "r": 1.468, "b": 15, "s": 0.878}, {"t": "Tous", "d": 2.45, "r": 1.541, "b": 18, "s": 0.869}, {"t": "les", "d": 2.488, "r": 1.632, "b": 19, "s": 0.862}, {"t": "scopes", "d": 2.5, "r": 1.699, "b": 19, "s": 0.856}, {"t": "couverts", "d": 2.485, "r": 1.764, "b": 15, "s": 0.852}, {"t": "par", "d": 2.445, "r": 1.862, "b": 15, "s": 0.85}, {"t": "Darkmoon.", "d": 2.383, "r": 1.903, "b": 16, "s": 0.85}];
+const pTexte = document.getElementById('p');
+MOTS.forEach(w => {
+  const e = document.createElement('span');
+  e.className = 'm';
+  e.textContent = w.t;
+  e.style.transitionDuration = w.d + 's';
+  e.style.transitionDelay = w.r + 's';
+  pTexte.appendChild(e);
+});
+const spans = [...pTexte.children];
+function repos() {
+  spans.forEach((e, i) => {
+    e.classList.remove('pose');
+    const w = MOTS[i];
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
+    e.style.transform = 'translateY(20px) scale(' + w.s + ') rotateX(-15deg)';
+    e.style.textShadow = '0 0 40px rgba(255,255,255,.4), ' + NOIR;
+  });
+}
+function jouerTexte() {
+  repos();
+  requestAnimationFrame(() => setTimeout(() => {
+    spans.forEach(e => {
+      e.style.opacity = 1;
+      e.style.filter = 'blur(0px) brightness(1)';
+      e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+      e.style.textShadow = '0 2px 8px rgba(255,255,255,.1), ' + NOIR;
+    });
+  }, 200));
+  const fin = Math.max(...MOTS.map(w => w.r + w.d));
+  setTimeout(() => spans.forEach(e => {
+    e.style.filter = '';
+    e.style.transform = '';
+    e.classList.add('pose');
+  }), (fin + 0.3) * 1000);
+  setTimeout(jouerTexte, (fin + 1) * 1000 + 4000);
+}
+jouerTexte();
+
 // ── La sphere de particules, reprise du composant ────────────────────────
 // 9000 points, rayon 275, la meme palette, la meme rotation de 0,003 radian
 // par image, le meme tri par profondeur et les memes formules d'opacite et
@@ -231,9 +294,9 @@ function ouvrir() {
       { duration: 2600, easing: COURBE, fill: 'backwards' }),
     bloc.animate([
       { opacity: 0, filter: 'blur(26px)',
-        transform: 'translateX(-50%) scale(.86)' },
+        transform: 'translateX(-50%) scale(.92)' },
       { opacity: 1, filter: 'blur(0px)',
-        transform: 'translateX(-50%) scale(0.92)' }],
+        transform: 'translateX(-50%) scale(1)' }],
       { duration: 2300, delay: 260, easing: COURBE, fill: 'backwards' }),
     ...texte.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(18px)', filter: 'blur(14px)' },
