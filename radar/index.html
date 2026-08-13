@@ -58,18 +58,22 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── Le composant, en pleine largeur et sans carte ───────────────────
-     Le demonstrateur enferme la scene dans une carte de 350 px, `rounded-md
-     border border-neutral-800 bg-black`. Cette carte disparait : plus de
-     fond, plus de bordure, plus de rayon, la scene se fond dans le decor de
-     la slide. Sa geometrie, elle, est conservee et mise a l'echelle : les
-     memes quatre arcs aux memes largeurs relatives, le meme balayage, les
-     memes neuf points, le meme disque au pied. */
-  #radar{position:absolute;left:0;right:0;top:0;height:560px;z-index:2;
-         pointer-events:none;overflow:hidden}
-  #radar .haut{position:absolute;inset:0}
-  /* le balayage : meme degrade, meme sequence, meme duree, agrandi */
-  .faisceau{position:absolute;bottom:0;left:50%;width:620px;height:620px;
+  /* ── Le composant, a ses proportions ──────────────────────────────────
+     Sa carte fait 350 x 480 px, un format portrait. La remplir en largeur
+     sur une slide 1280 x 720 reviendrait a l'etirer, donc a changer ses
+     arcs, ses pointilles et son balayage. On garde ses dimensions et on met
+     le tout a l'echelle 1,5, ce qui remplit exactement la hauteur : les
+     proportions, le motif des pointilles et les valeurs sont ceux du
+     demonstrateur. Seuls le fond et la bordure de la carte disparaissent,
+     pour se fondre dans la slide. */
+  #radar{position:absolute;right:64px;top:50%;width:350px;height:480px;
+         z-index:2;overflow:hidden;pointer-events:none;
+         transform:translateY(-50%) scale(1.5);transform-origin:right center}
+  #radar .champ{position:absolute;left:50%;height:100%;min-width:300px;
+                max-width:300px;transform:translateX(-50%)}
+  #radar .haut{position:relative;height:80%;width:100%}
+  /* le balayage : memes valeurs que le composant */
+  .faisceau{position:absolute;bottom:20px;left:148px;width:250px;height:250px;
     transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       rgba(255,255,255,.3) 5%, transparent 60%);
@@ -85,52 +89,36 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  /* Les arcs sont traces en SVG, en cercles VRAIS : des div en `rounded-full`
-     etirees a la largeur de la slide donnaient des ellipses, c'est ce qu'on
-     voyait. Un cercle SVG de rayon fixe reste rond quelle que soit la boite.
-     Les quatre rayons gardent les rapports du composant, 130, 110, 96 et 76
-     pour cent les uns des autres. */
-  /* La boite est a taille fixe, 1280 par 560, donc une unite SVG vaut un
-     pixel et les cercles restent ronds. `preserveAspectRatio` par defaut,
-     surtout pas `none`, qui les etirerait a nouveau. */
-  #trace{position:absolute;left:50%;bottom:0;width:1280px;height:560px;
-         transform:translateX(-50%);overflow:visible}
-  #trace circle{fill:none;stroke:rgb(64 64 64 / .8);stroke-width:1;
-                stroke-dasharray:5 7}
-  #trace circle.socle{stroke:#262626;stroke-dasharray:none}
+  /* les quatre arcs, aux valeurs exactes du composant */
+  .arc{position:absolute;left:50%;transform:translateX(-50%);height:100%;
+       border-top:1px dashed rgb(64 64 64 / .8);border-radius:9999px}
+  .arc.a1{top:48px;width:130%}
+  .arc.a2{top:100px;width:110%}
+  .arc.a3{top:152px;width:100%}
+  .arc.a4{top:204px;width:80%}
+  .socle{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+         width:7rem;height:7rem;border-radius:9999px;border:1px solid #262626;
+         background:#000}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
-  /* Les petits carres du composant sont en `#404040`, un gris qui se perd
-     sur du noir. Ils passent en neon bleu : le trace reste petit, c'est le
-     halo en `drop-shadow`, en deux portees, qui les fait exister. Le bleu
-     est celui de la charte, et il laisse le rouge a la cible qui bouge. */
-  .grille rect{fill:#7ab6ff;
-    filter:drop-shadow(0 0 4px rgba(122,182,255,.95))
-           drop-shadow(0 0 11px rgba(59,130,246,.5))}
+  .grille rect{fill:#404040}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
   /* Neon : le point reste petit et sature, et c'est le halo qui porte, en
      trois portees. Deux teintes alternent, le rouge du composant et un
      orange plus chaud, pour qu'on distingue les cibles entre elles. */
-  .cible{position:absolute;width:8px;height:8px;border-radius:1px;
-    background:#ff3b30;border-top:1px solid #ff8a7a;
-    box-shadow:0 0 6px 2px rgba(255,59,48,1),
-               0 0 18px 6px rgba(255,59,48,.55),
-               0 0 40px 12px rgba(255,90,43,.28);
+  /* la cible, aux valeurs du composant */
+  .cible{position:absolute;width:6.5px;height:6.5px;border-radius:1px;
+    background:#ef4444;border-top:1px solid #f87171;
+    transform:translate(-.5px,-.5px);
+    box-shadow:0 0 10px 4px rgba(239,68,68,.9);
     transition:top .9s cubic-bezier(.22,1.2,.36,1),
                left .9s cubic-bezier(.22,1.2,.36,1)}
-  .cible.orange{background:#ff8a1f;border-top-color:#ffc48a;
-    box-shadow:0 0 6px 2px rgba(255,138,31,1),
-               0 0 18px 6px rgba(255,138,31,.5),
-               0 0 40px 12px rgba(255,170,80,.24)}
-  .cible .onde,.cible .battement{position:absolute;left:-8px;top:-8px;
-    width:300%;height:300%;border-radius:9999px;
-    border:1px solid rgba(255,59,48,.9)}
-  .cible.orange .onde,.cible.orange .battement{
-    border-color:rgba(255,138,31,.9)}
+  .cible .onde,.cible .battement{position:absolute;left:-6px;top:-6px;
+    width:270%;height:300%;border-radius:9999px;border:1px solid #ef4444}
   .cible .onde{animation:onde 1.2s ease-out 1.3s both}
   .cible .battement{transform:scale(1.3);
-    box-shadow:0 0 24px 5px rgba(239,68,68,.6);
+    box-shadow:0 0 20px 4px rgba(239,68,68,.6);
     animation:battement 1s ease-in-out 1.3s both}
   @keyframes onde{from{transform:scale(1);opacity:.7}
                   50%{opacity:1}
@@ -142,28 +130,22 @@
      que son contour, le fond passe au travers. */
   /* Fond noir, comme demande. Une vignette a peine marquee evite l'aplat
      parfaitement plat, qui sonne creux sur un ecran de projection. */
+  /* Noir plein, sans vignette : le composant est sur `bg-black`, rien de
+     plus, et la moindre nappe se voyait a la projection. */
   #voile{position:absolute;inset:0;z-index:0;background:#000}
-  #voile::after{content:"";position:absolute;inset:0;
-    background:radial-gradient(120% 90% at 50% 108%,
-      rgb(18 24 38 / .55) 0%, rgb(8 11 18 / .35) 42%, rgb(0 0 0 / 0) 72%)}
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
 </style></head><body>
 <div id="voile"></div>
 <div id="radar">
-  <div class="haut">
+  <div class="champ"><div class="haut">
     <div class="faisceau"></div>
-    <svg id="trace" width="1280" height="560" viewBox="0 0 1280 560">
-      <g transform="translate(640,560)">
-        <circle r="620"/><circle r="560"/><circle r="500"/>
-        <circle r="440"/><circle r="382"/><circle r="324"/>
-        <circle r="268"/><circle r="212"/><circle r="160"/>
-        <circle class="socle" r="104"/>
-      </g>
-    </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1"/><rect x="12%" y="22%" width="6" height="6" rx="1" ry="1"/><rect x="8%" y="44%" width="6" height="6" rx="1" ry="1"/><rect x="18%" y="68%" width="6" height="6" rx="1" ry="1"/><rect x="44%" y="86%" width="6" height="6" rx="1" ry="1"/><rect x="66%" y="78%" width="6" height="6" rx="1" ry="1"/><rect x="52%" y="50%" width="6" height="6" rx="1" ry="1"/><rect x="58%" y="33%" width="6" height="6" rx="1" ry="1"/><rect x="38%" y="14%" width="6" height="6" rx="1" ry="1"/><rect x="54%" y="8%" width="6" height="6" rx="1" ry="1"/><rect x="40%" y="64%" width="6" height="6" rx="1" ry="1"/><rect x="12%" y="90%" width="6" height="6" rx="1" ry="1"/><rect x="74%" y="26%" width="6" height="6" rx="1" ry="1"/><rect x="86%" y="48%" width="6" height="6" rx="1" ry="1"/><rect x="88%" y="74%" width="6" height="6" rx="1" ry="1"/><rect x="70%" y="92%" width="6" height="6" rx="1" ry="1"/></svg>
+    <div class="arc a1"></div><div class="arc a2"></div>
+    <div class="arc a3"></div><div class="arc a4"></div>
+    <svg class="grille" width="100%" height="100%"><rect x="34" y="80" width="5" height="5" rx="1" ry="1"/><rect x="90" y="161" width="5" height="5" rx="1" ry="1"/><rect x="230" y="120" width="5" height="5" rx="1" ry="1"/><rect x="165" y="203" width="5" height="5" rx="1" ry="1"/><rect x="120" y="100" width="5" height="5" rx="1" ry="1"/><rect x="15" y="164" width="5" height="5" rx="1" ry="1"/><rect x="61" y="238" width="5" height="5" rx="1" ry="1"/><rect x="237" y="180" width="5" height="5" rx="1" ry="1"/><rect x="204" y="53" width="5" height="5" rx="1" ry="1"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
-  </div>
+    <div class="socle"></div>
+  </div></div>
 </div>
 <div id="scene">
   <div class="inner">
@@ -222,7 +204,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[28, 22], [56, 34], [42, 68], [70, 55], [35, 40], [57, 12], [82, 26], [62, 78], [18, 66], [22, 12], [44, 8], [68, 18], [86, 44], [78, 66], [50, 52], [33, 58], [14, 38], [8, 54], [64, 40], [90, 12], [26, 74], [48, 86], [74, 88], [92, 70]];
+const POINTS = [[80, 34], [161, 90], [120, 230], [203, 165], [100, 120], [164, 15], [238, 61], [180, 237], [53, 204]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
@@ -233,8 +215,8 @@ cibles.forEach((cible, n) => {
   let k = 0;
   const viser = () => {
     const [top, left] = POINTS[k];
-    cible.style.top = top + '%';
-    cible.style.left = left + '%';
+    cible.style.top = top + 'px';
+    cible.style.left = left + 'px';
     // les anneaux sont rejoues a chaque saut, comme la cle React du
     // composant qui change avec l'index
     cible.querySelectorAll('.onde,.battement').forEach(e => {
