@@ -6,18 +6,24 @@
             -webkit-font-smoothing:antialiased}
   *{box-sizing:border-box}
 
-  /* ── Le texte : structure et police de la slide 2 ────────────────────── */
+  /* ── Le texte va DANS les emplacements du composant ───────────────────
+     Le demonstrateur pose un `h3` puis un `p` en bas a gauche de sa carte,
+     `absolute bottom-5 left-0 w-full px-3`. C'est la que le texte de la
+     slide 6 prend place : le titre du PPTX dans le `h3`, sa phrase dans le
+     `p`. Meme emplacement, meme ordre ; seules la taille et la police
+     changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:center;padding:0 76px;pointer-events:none}
-  .inner{position:relative;width:41rem;max-width:41rem;text-align:left;
+         align-items:flex-end;padding:0 76px 92px;pointer-events:none}
+  .inner{position:relative;width:56rem;max-width:56rem;text-align:left;
          pointer-events:auto}
-  .inner::before{content:"";position:absolute;inset:-22% -12%;z-index:-1;
-                 background:radial-gradient(58% 54% at 32% 48%,
-                   rgba(0,0,0,.78) 0%, rgba(0,0,0,.56) 44%,
-                   rgba(0,0,0,.24) 70%, rgba(0,0,0,0) 100%)}
-  .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;
-           color:rgb(220 234 244 / .6);margin-bottom:18px}
-  .txt{color:#fff;font-size:1.78rem;line-height:1.625;letter-spacing:.025em;
+  .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
+                 z-index:-1;
+                 background:radial-gradient(64% 60% at 30% 60%,
+                   rgba(0,0,0,.86) 0%, rgba(0,0,0,.64) 42%,
+                   rgba(0,0,0,.28) 70%, rgba(0,0,0,0) 100%)}
+  .eyebrow{font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+           color:rgb(220 234 244 / .55);margin-bottom:22px}
+  .txt{color:#fff;font-size:1.95rem;line-height:1.5;letter-spacing:.012em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
@@ -27,28 +33,35 @@
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
-  /* Les trois piliers du PPTX, poses sous la phrase, en colonne reglee. */
-  .piliers{margin-top:34px;display:flex;gap:34px}
-  .pilier{max-width:16ch}
-  .pilier .n{font-size:11px;letter-spacing:.2em;color:rgb(220 234 244 / .5)}
-  .pilier .t{margin-top:8px;font-size:14.5px;color:#fff;font-weight:400}
-  .pilier .d{margin-top:5px;font-size:13px;line-height:1.5;
-             color:rgb(255 255 255 / .62)}
+  /* Les trois piliers du PPTX, en colonnes separees par un filet, comme une
+     table editoriale : le chiffre en exposant, le titre, la ligne. */
+  .sous{margin:16px 0 0;font-size:16.5px;line-height:1.6;font-weight:300;
+        color:rgb(255 255 255 / .74);max-width:56ch}
+  .piliers{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);
+           gap:0;max-width:44rem}
+  .pilier{padding:0 30px;border-left:1px solid rgb(220 234 244 / .14)}
+  .pilier:first-child{padding-left:0;border-left:0}
+  .pilier .n{font-size:10.5px;letter-spacing:.24em;color:rgb(220 234 244 / .45)}
+  .pilier .t{margin-top:10px;font-size:15px;color:#fff;font-weight:400;
+             letter-spacing:.01em}
+  .pilier .d{margin-top:7px;font-size:13.5px;line-height:1.62;
+             color:rgb(255 255 255 / .6)}
   .pied{position:absolute;left:76px;right:76px;bottom:26px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── Le composant, a droite, aux valeurs du demonstrateur ────────────── */
-  #radar{position:absolute;right:78px;top:50%;z-index:2;
-         width:350px;height:30rem;border-radius:.375rem;
-         border:1px solid #262626;background:#000;overflow:hidden;
-         transform:translateY(-50%) scale(1.12);
-         transform-origin:right center;pointer-events:none}
-  #radar .champ{position:absolute;left:50%;height:100%;min-width:300px;
-                max-width:300px;transform:translateX(-50%)}
-  #radar .haut{position:relative;height:80%;width:100%}
-  /* le balayage : meme degre, meme sequence, meme duree */
-  .faisceau{position:absolute;bottom:20px;left:148px;width:250px;height:250px;
+  /* ── Le composant, en pleine largeur et sans carte ───────────────────
+     Le demonstrateur enferme la scene dans une carte de 350 px, `rounded-md
+     border border-neutral-800 bg-black`. Cette carte disparait : plus de
+     fond, plus de bordure, plus de rayon, la scene se fond dans le decor de
+     la slide. Sa geometrie, elle, est conservee et mise a l'echelle : les
+     memes quatre arcs aux memes largeurs relatives, le meme balayage, les
+     memes neuf points, le meme disque au pied. */
+  #radar{position:absolute;left:0;right:0;top:-6%;height:74%;z-index:2;
+         pointer-events:none;overflow:hidden}
+  #radar .haut{position:absolute;inset:0}
+  /* le balayage : meme degrade, meme sequence, meme duree, agrandi */
+  .faisceau{position:absolute;bottom:0;left:50%;width:760px;height:760px;
     transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       rgba(255,255,255,.3) 5%, transparent 60%);
@@ -64,40 +77,39 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  /* les quatre arcs en pointilles */
-  .arc{position:absolute;left:50%;transform:translateX(-50%);height:100%;
+  /* les quatre arcs, aux memes largeurs relatives que le composant */
+  .arc{position:absolute;left:50%;transform:translateX(-50%);height:200%;
        border-top:1px dashed rgb(64 64 64 / .8);border-radius:9999px}
-  .arc.a1{top:48px;width:130%}
-  .arc.a2{top:100px;width:110%}
-  .arc.a3{top:152px;width:100%}
-  .arc.a4{top:204px;width:80%}
+  .arc.a1{top:9%;width:130%}
+  .arc.a2{top:22%;width:110%}
+  .arc.a3{top:35%;width:96%}
+  .arc.a4{top:48%;width:76%}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
-          pointer-events:none;animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+          pointer-events:none;
+          animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  /* le point rouge et ses deux anneaux */
-  .cible{position:absolute;width:6.5px;height:6.5px;border-radius:1px;
+  .cible{position:absolute;width:9px;height:9px;border-radius:1px;
     background:#ef4444;border-top:1px solid #f87171;
-    transform:translate(-.5px,-.5px);
-    box-shadow:0 0 10px 4px rgba(239,68,68,.9);
+    box-shadow:0 0 14px 5px rgba(239,68,68,.9);
     transition:top .9s cubic-bezier(.22,1.2,.36,1),
                left .9s cubic-bezier(.22,1.2,.36,1)}
-  .cible .onde,.cible .battement{position:absolute;left:-6px;top:-6px;
-    width:270%;height:300%;border-radius:9999px;border:1px solid #ef4444}
+  .cible .onde,.cible .battement{position:absolute;left:-9px;top:-9px;
+    width:300%;height:300%;border-radius:9999px;border:1px solid #ef4444}
   .cible .onde{animation:onde 1.2s ease-out 1.3s both}
   .cible .battement{transform:scale(1.3);
-    box-shadow:0 0 20px 4px rgba(239,68,68,.6);
+    box-shadow:0 0 24px 5px rgba(239,68,68,.6);
     animation:battement 1s ease-in-out 1.3s both}
   @keyframes onde{from{transform:scale(1);opacity:.7}
                   50%{opacity:1}
                   to{transform:scale(1.7);opacity:0}}
   @keyframes battement{0%,100%{transform:scale(1.3)}
                        50%{transform:scale(1.56)}}
-  .socle{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
-         width:7rem;height:7rem;border-radius:9999px;border:1px solid #262626;
-         background:#000}
-  .legende{position:absolute;bottom:20px;left:0;width:100%;padding:0 12px}
-  .legende h3{margin:0;font-size:14px;font-weight:600;color:#f5f5f5}
-  .legende p{margin:8px 0 0;font-size:12px;line-height:1.5;color:#a3a3a3}
+  /* Le disque du composant est `bg-black` : opaque, il faisait une tache
+     sombre au milieu du decor maintenant que la carte a disparu. Il ne garde
+     que son contour, le fond passe au travers. */
+  .socle{position:absolute;bottom:-7rem;left:50%;transform:translateX(-50%);
+         width:15rem;height:15rem;border-radius:9999px;
+         border:1px solid #262626;background:transparent}
   /* le decor est clair par endroits : un voile calme le cote texte */
   #voile{position:absolute;inset:0;z-index:0;
          background:linear-gradient(100deg,rgb(0 0 0 / .9) 0%,
@@ -150,20 +162,20 @@
 </div>
 <div id="voile"></div>
 <div id="radar">
-  <div class="champ"><div class="haut">
+  <div class="haut">
     <div class="faisceau"></div>
     <div class="arc a1"></div><div class="arc a2"></div>
     <div class="arc a3"></div><div class="arc a4"></div>
-    <svg class="grille" width="100%" height="100%"><rect x="34" y="80" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="90" y="161" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="230" y="120" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="165" y="203" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="120" y="100" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="15" y="164" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="61" y="238" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="237" y="180" width="5" height="5" rx="1" ry="1" fill="#404040"/><rect x="204" y="53" width="5" height="5" rx="1" ry="1" fill="#404040"/></svg>
+    <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1" fill="#404040"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
     <div class="socle"></div>
-  </div></div>
-  <div class="legende"><h3>Analyse continue</h3><p>Darkmoon balaie la cible sans relâche, marque chaque faille au moment où elle apparaît et la prouve avant de la signaler.</p></div>
+  </div>
 </div>
 <div id="scene">
   <div class="inner">
     <div class="eyebrow">LA SOLUTION</div>
     <p class="txt" id="p"></p>
+    <p class="sous">Vous confiez une cible. Il explore, trouve les failles, les prouve, et livre un rapport clair.</p>
     <div class="piliers"><div class="pilier"><div class="n">1</div><div class="t">En continu</div><div class="d">À chaque évolution, pas une fois par an.</div></div><div class="pilier"><div class="n">2</div><div class="t">Avec preuves</div><div class="d">Chaque faille est démontrée, pas signalée.</div></div><div class="pilier"><div class="n">3</div><div class="t">Sous contrôle</div><div class="d">Vos données restent chez vous.</div></div></div>
   </div>
 </div>
@@ -174,7 +186,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "Darkmoon", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "teste", "d": 2.487, "r": 0.094, "b": 12, "s": 0.91}, {"t": "vos", "d": 2.448, "r": 0.167, "b": 13, "s": 0.919}, {"t": "systèmes", "d": 2.386, "r": 0.268, "b": 12, "s": 0.928}, {"t": "en", "d": 2.309, "r": 0.38, "b": 15, "s": 0.936}, {"t": "continu,", "d": 2.221, "r": 0.419, "b": 18, "s": 0.942}, {"t": "tout", "d": 2.132, "r": 0.521, "b": 15, "s": 0.947}, {"t": "seul.", "d": 2.049, "r": 0.586, "b": 18, "s": 0.949}, {"t": "Vous", "d": 1.979, "r": 0.666, "b": 13, "s": 0.95}, {"t": "confiez", "d": 1.929, "r": 0.791, "b": 12, "s": 0.949}, {"t": "une", "d": 1.903, "r": 0.852, "b": 18, "s": 0.945}, {"t": "cible.", "d": 1.904, "r": 0.905, "b": 15, "s": 0.94}, {"t": "Il", "d": 1.931, "r": 0.985, "b": 14, "s": 0.934}, {"t": "explore,", "d": 1.982, "r": 1.076, "b": 14, "s": 0.926}, {"t": "trouve", "d": 2.053, "r": 1.167, "b": 16, "s": 0.917}, {"t": "les", "d": 2.137, "r": 1.246, "b": 14, "s": 0.907}, {"t": "failles,", "d": 2.226, "r": 1.302, "b": 15, "s": 0.897}, {"t": "les", "d": 2.313, "r": 1.393, "b": 13, "s": 0.887}, {"t": "prouve,", "d": 2.39, "r": 1.48, "b": 15, "s": 0.878}, {"t": "et", "d": 2.45, "r": 1.555, "b": 18, "s": 0.869}, {"t": "livre", "d": 2.488, "r": 1.646, "b": 19, "s": 0.862}, {"t": "un", "d": 2.5, "r": 1.714, "b": 19, "s": 0.856}, {"t": "rapport", "d": 2.485, "r": 1.779, "b": 15, "s": 0.852}, {"t": "clair.", "d": 2.445, "r": 1.878, "b": 15, "s": 0.85}];
+const MOTS = [{"t": "Darkmoon", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "teste", "d": 2.487, "r": 0.149, "b": 12, "s": 0.91}, {"t": "vos", "d": 2.448, "r": 0.264, "b": 13, "s": 0.919}, {"t": "systèmes", "d": 2.386, "r": 0.401, "b": 12, "s": 0.928}, {"t": "en", "d": 2.309, "r": 0.548, "b": 15, "s": 0.936}, {"t": "continu,", "d": 2.221, "r": 0.62, "b": 18, "s": 0.942}, {"t": "tout", "d": 2.132, "r": 0.753, "b": 15, "s": 0.947}, {"t": "seul.", "d": 2.049, "r": 0.849, "b": 18, "s": 0.949}];
 const pTexte = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');
@@ -219,13 +231,13 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[80, 34], [161, 90], [120, 230], [203, 165], [100, 120], [164, 15], [238, 61], [180, 237], [53, 204]];
+const POINTS = [[28, 22], [56, 34], [42, 68], [70, 55], [35, 40], [57, 12], [82, 26], [62, 78], [18, 66]];
 const cible = document.querySelector('.cible');
 let k = 0;
 function viser() {
   const [top, left] = POINTS[k];
-  cible.style.top = top + 'px';
-  cible.style.left = left + 'px';
+  cible.style.top = top + '%';
+  cible.style.left = left + '%';
   // les deux anneaux sont rejoues a chaque saut, comme la cle React du
   // composant qui change avec l'index
   cible.querySelectorAll('.onde,.battement').forEach(e => {
@@ -256,10 +268,8 @@ function ouvrir() {
     decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2600, easing: COURBE, fill: 'backwards' }),
     radar.animate([
-      { opacity: 0, filter: 'blur(24px)',
-        transform: 'translateY(-50%) scale(.9)' },
-      { opacity: 1, filter: 'blur(0px)',
-        transform: 'translateY(-50%) scale(1.12)' }],
+      { opacity: 0, filter: 'blur(24px)', transform: 'scale(.94)' },
+      { opacity: 1, filter: 'blur(0px)', transform: 'none' }],
       { duration: 2200, delay: 300, easing: COURBE, fill: 'backwards' }),
     ...blocs.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(16px)', filter: 'blur(12px)' },
