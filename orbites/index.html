@@ -30,16 +30,16 @@
   /* Le cadre laisse passer la souris, le bloc de texte non : sans ca le
      texte n'etait pas selectionnable. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         justify-content:center;align-items:flex-start;padding-top:58px;
+         justify-content:center;align-items:flex-start;padding-top:44px;
          pointer-events:none}
   #scene .inner{pointer-events:auto}
-  .inner{position:relative;text-align:center;width:68rem;max-width:68rem;
+  .inner{position:relative;text-align:center;width:66rem;max-width:66rem;
          padding-left:2rem;padding-right:2rem}
   .inner::before{content:"";position:absolute;inset:-16% -8%;z-index:-1;
                  background:radial-gradient(52% 46% at 50% 50%,
                    rgba(0,0,0,.74) 0%, rgba(0,0,0,.52) 44%,
                    rgba(0,0,0,.22) 70%, rgba(0,0,0,0) 100%)}
-  .txt{color:#fff;font-size:2.6rem;line-height:1.625;letter-spacing:.025em;
+  .txt{color:#fff;font-size:1.92rem;line-height:1.625;letter-spacing:.025em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
@@ -49,28 +49,6 @@
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
-  .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;
-           color:rgb(220 234 244 / .62);margin-bottom:16px}
-  .sous{font-size:16.5px;line-height:1.6;font-weight:300;
-        color:rgb(255 255 255 / .76);margin:18px auto 0;max-width:64ch;
-        text-shadow:0 0 16px rgb(0 0 0 / .95)}
-  /* Le chapeau porte son propre filet, de part et d'autre : c'est lui qui
-     separe le titre de la legende des perimetres, sans ajouter de bloc. */
-  .chapeau{margin-top:28px;font-size:11px;letter-spacing:.28em;
-           text-transform:uppercase;color:rgb(220 234 244 / .72);
-           display:flex;align-items:center;gap:16px;
-           text-shadow:0 0 16px rgb(0 0 0 / .9)}
-  .chapeau::before,.chapeau::after{content:"";flex:1;height:1px;
-    background:linear-gradient(to right,rgb(220 234 244 / 0),rgb(220 234 244 / .3),
-                               rgb(220 234 244 / 0))}
-  /* Les huit perimetres nommes par le PPTX, en une ligne discrete. */
-  .scopes{margin-top:14px;display:flex;flex-wrap:nowrap;
-          justify-content:center;gap:0 20px}
-  .scopes span{font-size:12.5px;letter-spacing:.05em;
-               color:rgb(255 255 255 / .6);display:flex;align-items:center;
-               gap:9px;text-shadow:0 0 14px rgb(0 0 0 / .95)}
-  .scopes span::before{content:"";width:4px;height:4px;flex:none;
-    background:rgb(220 234 244 / .85);box-shadow:0 0 8px rgb(120 170 255 / .85)}
   .pied{position:absolute;left:76px;right:76px;bottom:26px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
@@ -83,7 +61,7 @@
      720, 880 et 1060 px, et les pastilles leur diametre naturel. Mettre le
      bloc entier a l'echelle grossissait tout ensemble et deformait la
      lecture ; ici il n'est que POSITIONNE. */
-  #orbites{position:absolute;left:50%;bottom:-132px;width:1120px;
+  #orbites{position:absolute;left:50%;bottom:-92px;width:1120px;
            height:640px;z-index:2;transform:translateX(-50%);
            pointer-events:none}
   /* Habillage d'origine du composant : `border border-border` pour
@@ -98,12 +76,14 @@
   /* Le composant a deux paliers, `p-3` avec `w-6` et, au-dessus de 768 px,
      `p-4` avec `w-8`. A la taille de la slide c'est le premier qui va :
      l'icone en 32 px ecrasait la pastille. */
+  /* Le filet des pastilles est retire : il decoupait cinquante petits ronds
+     sur le fond et hachait la lecture de la planete. Reste le disque sombre,
+     qui suffit a detacher l'icone. */
   .pastille{margin-top:-30px;padding:12px;border-radius:9999px;
-            border:1px solid rgb(255 255 255 / .12);background:#0a0a0a;
-            position:relative;z-index:10;display:flex}
+            background:#0a0a0a;position:relative;z-index:10;display:flex}
   .pastille img{width:24px;height:24px;display:block}
   #sphere{position:absolute;bottom:0;left:50%;
-          transform:translate(-50%,50%);width:575px;aspect-ratio:1;
+          transform:translate(-50%,50%);width:640px;aspect-ratio:1;
           z-index:9;pointer-events:none}
   #sphere canvas{width:100%;height:auto;border-radius:9999px;display:block}
   /* ── L'ouverture : rideau noir, flou qui se leve ─────────────────────── */
@@ -164,11 +144,7 @@
 </div>
 <div id="scene">
   <div class="inner">
-    <div class="eyebrow">LE PROBLÈME · 2/2</div>
     <p class="txt" id="p"></p>
-    <p class="sous">Les outils « IA » du marché s'arrêtent au web. Le reste = angle mort.</p>
-    <div class="chapeau">Tous les scopes couverts par Darkmoon</div>
-    <div class="scopes"><span>Applications web</span><span>API</span><span>Active Directory</span><span>Kubernetes</span><span>Cloud</span><span>Réseaux internes</span><span>Systèmes legacy</span><span>CMS / e-commerce</span></div>
   </div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>05 / 14</span></div>
@@ -182,7 +158,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "La", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 2.487, "r": 0.22, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 2.448, "r": 0.386, "b": 13, "s": 0.919}, {"t": "explose.", "d": 2.386, "r": 0.57, "b": 12, "s": 0.928}];
+const MOTS = [{"t": "La", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 2.487, "r": 0.081, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 2.448, "r": 0.144, "b": 13, "s": 0.919}, {"t": "explose.", "d": 2.386, "r": 0.236, "b": 12, "s": 0.928}, {"t": "Les", "d": 2.309, "r": 0.34, "b": 15, "s": 0.936}, {"t": "outils", "d": 2.221, "r": 0.372, "b": 18, "s": 0.942}, {"t": "«", "d": 2.132, "r": 0.466, "b": 15, "s": 0.947}, {"t": "IA", "d": 2.049, "r": 0.524, "b": 18, "s": 0.949}, {"t": "»", "d": 1.979, "r": 0.596, "b": 13, "s": 0.95}, {"t": "du", "d": 1.929, "r": 0.714, "b": 12, "s": 0.949}, {"t": "marché", "d": 1.903, "r": 0.769, "b": 18, "s": 0.945}, {"t": "s'arrêtent", "d": 1.904, "r": 0.815, "b": 15, "s": 0.94}, {"t": "au", "d": 1.931, "r": 0.888, "b": 14, "s": 0.934}, {"t": "web.", "d": 1.982, "r": 0.973, "b": 14, "s": 0.926}, {"t": "Le", "d": 2.053, "r": 1.058, "b": 16, "s": 0.917}, {"t": "reste", "d": 2.137, "r": 1.131, "b": 14, "s": 0.907}, {"t": "=", "d": 2.226, "r": 1.18, "b": 15, "s": 0.897}, {"t": "angle", "d": 2.313, "r": 1.266, "b": 13, "s": 0.887}, {"t": "mort.", "d": 2.39, "r": 1.347, "b": 15, "s": 0.878}, {"t": "Tous", "d": 2.45, "r": 1.415, "b": 18, "s": 0.869}, {"t": "les", "d": 2.488, "r": 1.501, "b": 19, "s": 0.862}, {"t": "scopes", "d": 2.5, "r": 1.563, "b": 19, "s": 0.856}, {"t": "couverts", "d": 2.485, "r": 1.623, "b": 15, "s": 0.852}, {"t": "par", "d": 2.445, "r": 1.716, "b": 15, "s": 0.85}, {"t": "Darkmoon", "d": 2.383, "r": 1.751, "b": 16, "s": 0.85}, {"t": ":", "d": 2.304, "r": 1.845, "b": 17, "s": 0.852}, {"t": "Applications", "d": 2.216, "r": 1.926, "b": 16, "s": 0.856}, {"t": "web,", "d": 2.127, "r": 1.991, "b": 13, "s": 0.861}, {"t": "API,", "d": 2.044, "r": 2.037, "b": 18, "s": 0.868}, {"t": "Active", "d": 1.975, "r": 2.11, "b": 17, "s": 0.877}, {"t": "Directory,", "d": 1.927, "r": 2.18, "b": 19, "s": 0.886}, {"t": "Kubernetes,", "d": 1.902, "r": 2.264, "b": 13, "s": 0.896}, {"t": "Cloud,", "d": 1.905, "r": 2.351, "b": 17, "s": 0.906}, {"t": "Réseaux", "d": 1.933, "r": 2.401, "b": 17, "s": 0.916}, {"t": "internes,", "d": 1.986, "r": 2.484, "b": 19, "s": 0.925}, {"t": "Systèmes", "d": 2.057, "r": 2.528, "b": 13, "s": 0.933}, {"t": "legacy,", "d": 2.142, "r": 2.642, "b": 19, "s": 0.94}, {"t": "CMS", "d": 2.231, "r": 2.7, "b": 13, "s": 0.945}, {"t": "/", "d": 2.318, "r": 2.738, "b": 16, "s": 0.948}, {"t": "e-commerce.", "d": 2.394, "r": 2.837, "b": 19, "s": 0.95}];
 const pTexte = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');
