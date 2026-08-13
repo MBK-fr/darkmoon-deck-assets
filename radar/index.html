@@ -101,6 +101,13 @@
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+  /* Les petits carres du composant sont en `#404040`, un gris qui se perd
+     sur du noir. Ils passent en neon bleu : le trace reste petit, c'est le
+     halo en `drop-shadow`, en deux portees, qui les fait exister. Le bleu
+     est celui de la charte, et il laisse le rouge a la cible qui bouge. */
+  .grille rect{fill:#7ab6ff;
+    filter:drop-shadow(0 0 4px rgba(122,182,255,.95))
+           drop-shadow(0 0 11px rgba(59,130,246,.5))}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
   /* Neon : le point reste petit et sature, et c'est le halo qui porte, en
      trois portees. Deux teintes alternent, le rouge du composant et un
@@ -154,10 +161,8 @@
         <circle class="socle" r="104"/>
       </g>
     </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="22%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="8%" y="44%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="18%" y="68%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="44%" y="86%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="78%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="52%" y="50%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="58%" y="33%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="38%" y="14%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="54%" y="8%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="64%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="90%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="74%" y="26%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="86%" y="48%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="88%" y="74%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="70%" y="92%" width="6" height="6" rx="1" ry="1" fill="#404040"/></svg>
-    <div class="cible c1"><div class="onde"></div><div class="battement"></div></div>
-    <div class="cible c2 orange"><div class="onde"></div><div class="battement"></div></div>
-    <div class="cible c3"><div class="onde"></div><div class="battement"></div></div>
+    <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1"/><rect x="12%" y="22%" width="6" height="6" rx="1" ry="1"/><rect x="8%" y="44%" width="6" height="6" rx="1" ry="1"/><rect x="18%" y="68%" width="6" height="6" rx="1" ry="1"/><rect x="44%" y="86%" width="6" height="6" rx="1" ry="1"/><rect x="66%" y="78%" width="6" height="6" rx="1" ry="1"/><rect x="52%" y="50%" width="6" height="6" rx="1" ry="1"/><rect x="58%" y="33%" width="6" height="6" rx="1" ry="1"/><rect x="38%" y="14%" width="6" height="6" rx="1" ry="1"/><rect x="54%" y="8%" width="6" height="6" rx="1" ry="1"/><rect x="40%" y="64%" width="6" height="6" rx="1" ry="1"/><rect x="12%" y="90%" width="6" height="6" rx="1" ry="1"/><rect x="74%" y="26%" width="6" height="6" rx="1" ry="1"/><rect x="86%" y="48%" width="6" height="6" rx="1" ry="1"/><rect x="88%" y="74%" width="6" height="6" rx="1" ry="1"/><rect x="70%" y="92%" width="6" height="6" rx="1" ry="1"/></svg>
+    <div class="cible"><div class="onde"></div><div class="battement"></div></div>
   </div>
 </div>
 <div id="scene">
@@ -221,9 +226,11 @@ const POINTS = [[28, 22], [56, 34], [42, 68], [70, 55], [35, 40], [57, 12], [82,
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
+// Une seule cible mouvante, comme le composant : ce sont les petits carres
+// qui portent la couleur, pas des cibles supplementaires.
 const cibles = [...document.querySelectorAll('.cible')];
 cibles.forEach((cible, n) => {
-  let k = Math.floor(n * POINTS.length / cibles.length);
+  let k = 0;
   const viser = () => {
     const [top, left] = POINTS[k];
     cible.style.top = top + '%';
