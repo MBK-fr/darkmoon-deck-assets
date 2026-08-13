@@ -13,7 +13,7 @@
      `p`. Meme emplacement, meme ordre ; seules la taille et la police
      changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:flex-end;padding:0 76px 92px;pointer-events:none}
+         align-items:flex-end;padding:0 76px 86px;pointer-events:none}
   .inner{position:relative;width:56rem;max-width:56rem;text-align:left;
          pointer-events:auto}
   .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
@@ -21,9 +21,15 @@
                  background:radial-gradient(64% 60% at 30% 60%,
                    rgba(0,0,0,.86) 0%, rgba(0,0,0,.64) 42%,
                    rgba(0,0,0,.28) 70%, rgba(0,0,0,0) 100%)}
-  .eyebrow{font-size:11px;letter-spacing:.42em;text-transform:uppercase;
-           color:rgb(220 234 244 / .55);margin-bottom:22px}
-  .txt{color:#fff;font-size:1.95rem;line-height:1.5;letter-spacing:.012em;
+  /* Le pas typographique : chaque niveau a sa taille, sa graisse et son
+     interlettrage, et l'ecart vertical suit la hierarchie plutot que d'etre
+     constant. C'est ce qui manquait pour que le bloc se tienne. */
+  .eyebrow{font-size:10.5px;letter-spacing:.46em;text-transform:uppercase;
+           color:rgb(220 234 244 / .5);margin-bottom:26px;
+           display:flex;align-items:center;gap:14px}
+  .eyebrow::after{content:"";width:46px;height:1px;
+    background:linear-gradient(to right,rgb(220 234 244 / .35),rgb(220 234 244 / 0))}
+  .txt{color:#fff;font-size:2.45rem;line-height:1.34;letter-spacing:-.008em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
@@ -35,17 +41,19 @@
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
   /* Les trois piliers du PPTX, en colonnes separees par un filet, comme une
      table editoriale : le chiffre en exposant, le titre, la ligne. */
-  .sous{margin:16px 0 0;font-size:16.5px;line-height:1.6;font-weight:300;
-        color:rgb(255 255 255 / .74);max-width:56ch}
-  .piliers{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);
-           gap:0;max-width:44rem}
-  .pilier{padding:0 30px;border-left:1px solid rgb(220 234 244 / .14)}
+  .sous{margin:20px 0 0;font-size:17px;line-height:1.66;font-weight:300;
+        color:rgb(255 255 255 / .7);max-width:52ch;letter-spacing:.004em}
+  .piliers{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);
+           gap:0;max-width:47rem}
+  .pilier{padding:2px 34px;border-left:1px solid rgb(220 234 244 / .12)}
   .pilier:first-child{padding-left:0;border-left:0}
-  .pilier .n{font-size:10.5px;letter-spacing:.24em;color:rgb(220 234 244 / .45)}
-  .pilier .t{margin-top:10px;font-size:15px;color:#fff;font-weight:400;
-             letter-spacing:.01em}
-  .pilier .d{margin-top:7px;font-size:13.5px;line-height:1.62;
-             color:rgb(255 255 255 / .6)}
+  /* le chiffre est traite comme un folio : grand, clair, tres discret */
+  .pilier .n{font-size:23px;font-weight:200;line-height:1;
+             color:rgb(220 234 244 / .28);letter-spacing:.02em}
+  .pilier .t{margin-top:12px;font-size:15px;color:#fff;font-weight:400;
+             letter-spacing:.012em}
+  .pilier .d{margin-top:8px;font-size:13.5px;line-height:1.68;
+             color:rgb(255 255 255 / .58)}
   .pied{position:absolute;left:76px;right:76px;bottom:26px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
@@ -57,11 +65,11 @@
      la slide. Sa geometrie, elle, est conservee et mise a l'echelle : les
      memes quatre arcs aux memes largeurs relatives, le meme balayage, les
      memes neuf points, le meme disque au pied. */
-  #radar{position:absolute;left:0;right:0;top:-6%;height:74%;z-index:2;
+  #radar{position:absolute;left:0;right:0;top:0;height:560px;z-index:2;
          pointer-events:none;overflow:hidden}
   #radar .haut{position:absolute;inset:0}
   /* le balayage : meme degrade, meme sequence, meme duree, agrandi */
-  .faisceau{position:absolute;bottom:0;left:50%;width:760px;height:760px;
+  .faisceau{position:absolute;bottom:0;left:50%;width:620px;height:620px;
     transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       rgba(255,255,255,.3) 5%, transparent 60%);
@@ -77,13 +85,19 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  /* les quatre arcs, aux memes largeurs relatives que le composant */
-  .arc{position:absolute;left:50%;transform:translateX(-50%);height:200%;
-       border-top:1px dashed rgb(64 64 64 / .8);border-radius:9999px}
-  .arc.a1{top:9%;width:130%}
-  .arc.a2{top:22%;width:110%}
-  .arc.a3{top:35%;width:96%}
-  .arc.a4{top:48%;width:76%}
+  /* Les arcs sont traces en SVG, en cercles VRAIS : des div en `rounded-full`
+     etirees a la largeur de la slide donnaient des ellipses, c'est ce qu'on
+     voyait. Un cercle SVG de rayon fixe reste rond quelle que soit la boite.
+     Les quatre rayons gardent les rapports du composant, 130, 110, 96 et 76
+     pour cent les uns des autres. */
+  /* La boite est a taille fixe, 1280 par 560, donc une unite SVG vaut un
+     pixel et les cercles restent ronds. `preserveAspectRatio` par defaut,
+     surtout pas `none`, qui les etirerait a nouveau. */
+  #trace{position:absolute;left:50%;bottom:0;width:1280px;height:560px;
+         transform:translateX(-50%);overflow:visible}
+  #trace circle{fill:none;stroke:rgb(64 64 64 / .8);stroke-width:1;
+                stroke-dasharray:5 7}
+  #trace circle.socle{stroke:#262626;stroke-dasharray:none}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
@@ -107,68 +121,27 @@
   /* Le disque du composant est `bg-black` : opaque, il faisait une tache
      sombre au milieu du decor maintenant que la carte a disparu. Il ne garde
      que son contour, le fond passe au travers. */
-  .socle{position:absolute;bottom:-7rem;left:50%;transform:translateX(-50%);
-         width:15rem;height:15rem;border-radius:9999px;
-         border:1px solid #262626;background:transparent}
-  /* le decor est clair par endroits : un voile calme le cote texte */
-  #voile{position:absolute;inset:0;z-index:0;
-         background:linear-gradient(100deg,rgb(0 0 0 / .9) 0%,
-           rgb(0 0 0 / .74) 40%,rgb(0 0 0 / .4) 68%,rgb(0 0 0 / .25) 100%)}
+  /* Fond noir, comme demande. Une vignette a peine marquee evite l'aplat
+     parfaitement plat, qui sonne creux sur un ecran de projection. */
+  #voile{position:absolute;inset:0;z-index:0;background:#000}
+  #voile::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 90% at 50% 108%,
+      rgb(18 24 38 / .55) 0%, rgb(8 11 18 / .35) 42%, rgb(0 0 0 / 0) 72%)}
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
-
-  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
-     on le teinte avec les couleurs relevees dans l'animation des cartes :
-     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
-     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
-     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 background-image:linear-gradient(135deg,
-                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
-                   #8a4a44 100%);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
-  #ether .grain{position:absolute;inset:0;
-                background-image:url('../ether/noise.png');
-                background-size:240px;background-repeat:repeat;opacity:.5}
 </style></head><body>
-<div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
-  <div class="grain"></div>
-</div>
 <div id="voile"></div>
 <div id="radar">
   <div class="haut">
     <div class="faisceau"></div>
-    <div class="arc a1"></div><div class="arc a2"></div>
-    <div class="arc a3"></div><div class="arc a4"></div>
+    <svg id="trace" width="1280" height="560" viewBox="0 0 1280 560">
+      <g transform="translate(640,560)">
+        <circle r="520"/><circle r="440"/><circle r="352"/>
+        <circle r="268"/><circle class="socle" r="120"/>
+      </g>
+    </svg>
     <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1" fill="#404040"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
-    <div class="socle"></div>
   </div>
 </div>
 <div id="scene">
@@ -253,6 +226,7 @@ setInterval(viser, 3000);
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
+// cette slide est sur fond noir : il n'y a pas de decor a faire monter
 const decor = document.getElementById('ether');
 const radar = document.getElementById('radar');
 const blocs = [...document.querySelectorAll('#scene .inner > *')];
@@ -265,8 +239,8 @@ function ouvrir() {
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
       { duration: 2200, easing: COURBE, fill: 'backwards' }),
-    decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
     radar.animate([
       { opacity: 0, filter: 'blur(24px)', transform: 'scale(.94)' },
       { opacity: 1, filter: 'blur(0px)', transform: 'none' }],
