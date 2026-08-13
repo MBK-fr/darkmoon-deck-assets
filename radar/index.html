@@ -58,23 +58,21 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── Le composant, a ses proportions ──────────────────────────────────
-     Sa carte fait 350 x 480 px, un format portrait. La remplir en largeur
-     sur une slide 1280 x 720 reviendrait a l'etirer, donc a changer ses
-     arcs, ses pointilles et son balayage. On garde ses dimensions et on met
-     le tout a l'echelle 1,5, ce qui remplit exactement la hauteur : les
-     proportions, le motif des pointilles et les valeurs sont ceux du
-     demonstrateur. Seuls le fond et la bordure de la carte disparaissent,
-     pour se fondre dans la slide. */
-  #radar{position:absolute;right:64px;top:50%;width:350px;height:480px;
-         z-index:2;overflow:hidden;pointer-events:none;
-         transform:translateY(-50%) scale(1.5);transform-origin:right center}
-  #radar .champ{position:absolute;left:50%;height:100%;min-width:300px;
-                max-width:300px;transform:translateX(-50%)}
-  #radar .haut{position:relative;height:80%;width:100%}
-  /* le balayage : memes valeurs que le composant */
-  .faisceau{position:absolute;bottom:20px;left:148px;width:250px;height:250px;
-    transform-origin:bottom left;pointer-events:none;
+  /* ── Le composant, etale sur toute la slide ───────────────────────────
+     Sa carte fait 350 x 480 : l'agrandir d'un bloc deformerait ses arcs et
+     ses pointilles. On garde donc son ECHELLE DE DETAIL — trait de 1 px en
+     pointilles, carres de 5 px, memes couleurs, meme balayage — et on
+     multiplie les elements pour couvrir la slide : douze couronnes au lieu
+     de quatre, quarante points au lieu de neuf. Le dessin reste le sien, il
+     y en a simplement davantage. */
+  #radar{position:absolute;inset:0;z-index:2;overflow:hidden;
+         pointer-events:none}
+  #radar .champ{position:absolute;left:50%;bottom:0;width:1280px;
+                height:720px;transform:translateX(-50%)}
+  #radar .haut{position:relative;height:100%;width:100%}
+  /* le balayage : meme degrade, meme sequence, meme duree, a l'echelle */
+  .faisceau{position:absolute;bottom:40px;left:640px;width:1180px;
+    height:1180px;transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       rgba(255,255,255,.3) 5%, transparent 60%);
     animation:balayage 18s ease-in-out infinite}
@@ -89,16 +87,12 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  /* les quatre arcs, aux valeurs exactes du composant */
-  .arc{position:absolute;left:50%;transform:translateX(-50%);height:100%;
+  /* les couronnes : meme construction que la sienne, en plus nombreuses */
+  .arc{position:absolute;left:50%;transform:translateX(-50%);height:1500px;
        border-top:1px dashed rgb(64 64 64 / .8);border-radius:9999px}
-  .arc.a1{top:48px;width:130%}
-  .arc.a2{top:100px;width:110%}
-  .arc.a3{top:152px;width:100%}
-  .arc.a4{top:204px;width:80%}
-  .socle{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
-         width:7rem;height:7rem;border-radius:9999px;border:1px solid #262626;
-         background:#000}
+  .socle{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+         width:190px;height:190px;border-radius:9999px;
+         border:1px solid #262626;background:#000}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
@@ -140,9 +134,20 @@
 <div id="radar">
   <div class="champ"><div class="haut">
     <div class="faisceau"></div>
-    <div class="arc a1"></div><div class="arc a2"></div>
-    <div class="arc a3"></div><div class="arc a4"></div>
-    <svg class="grille" width="100%" height="100%"><rect x="34" y="80" width="5" height="5" rx="1" ry="1"/><rect x="90" y="161" width="5" height="5" rx="1" ry="1"/><rect x="230" y="120" width="5" height="5" rx="1" ry="1"/><rect x="165" y="203" width="5" height="5" rx="1" ry="1"/><rect x="120" y="100" width="5" height="5" rx="1" ry="1"/><rect x="15" y="164" width="5" height="5" rx="1" ry="1"/><rect x="61" y="238" width="5" height="5" rx="1" ry="1"/><rect x="237" y="180" width="5" height="5" rx="1" ry="1"/><rect x="204" y="53" width="5" height="5" rx="1" ry="1"/></svg>
+    <div class="arc" style="top:40px;width:152%"></div>
+    <div class="arc" style="top:96px;width:143%"></div>
+    <div class="arc" style="top:152px;width:134%"></div>
+    <div class="arc" style="top:208px;width:125%"></div>
+    <div class="arc" style="top:264px;width:116%"></div>
+    <div class="arc" style="top:320px;width:107%"></div>
+    <div class="arc" style="top:376px;width:98%"></div>
+    <div class="arc" style="top:432px;width:89%"></div>
+    <div class="arc" style="top:488px;width:80%"></div>
+    <div class="arc" style="top:544px;width:71%"></div>
+    <div class="arc" style="top:600px;width:62%"></div>
+    <div class="arc" style="top:656px;width:53%"></div>
+
+    <svg class="grille" width="100%" height="100%"><rect x="145" y="96" width="5" height="5" rx="1" ry="1"/><rect x="384" y="193" width="5" height="5" rx="1" ry="1"/><rect x="981" y="144" width="5" height="5" rx="1" ry="1"/><rect x="704" y="244" width="5" height="5" rx="1" ry="1"/><rect x="512" y="120" width="5" height="5" rx="1" ry="1"/><rect x="64" y="197" width="5" height="5" rx="1" ry="1"/><rect x="260" y="286" width="5" height="5" rx="1" ry="1"/><rect x="1011" y="216" width="5" height="5" rx="1" ry="1"/><rect x="870" y="64" width="5" height="5" rx="1" ry="1"/><rect x="300" y="72" width="5" height="5" rx="1" ry="1"/><rect x="690" y="108" width="5" height="5" rx="1" ry="1"/><rect x="210" y="150" width="5" height="5" rx="1" ry="1"/><rect x="1120" y="168" width="5" height="5" rx="1" ry="1"/><rect x="420" y="210" width="5" height="5" rx="1" ry="1"/><rect x="880" y="232" width="5" height="5" rx="1" ry="1"/><rect x="150" y="264" width="5" height="5" rx="1" ry="1"/><rect x="610" y="300" width="5" height="5" rx="1" ry="1"/><rect x="1180" y="318" width="5" height="5" rx="1" ry="1"/><rect x="330" y="340" width="5" height="5" rx="1" ry="1"/><rect x="760" y="372" width="5" height="5" rx="1" ry="1"/><rect x="96" y="396" width="5" height="5" rx="1" ry="1"/><rect x="1050" y="420" width="5" height="5" rx="1" ry="1"/><rect x="470" y="444" width="5" height="5" rx="1" ry="1"/><rect x="900" y="470" width="5" height="5" rx="1" ry="1"/><rect x="240" y="492" width="5" height="5" rx="1" ry="1"/><rect x="1220" y="516" width="5" height="5" rx="1" ry="1"/><rect x="660" y="540" width="5" height="5" rx="1" ry="1"/><rect x="60" y="560" width="5" height="5" rx="1" ry="1"/><rect x="1000" y="584" width="5" height="5" rx="1" ry="1"/><rect x="380" y="606" width="5" height="5" rx="1" ry="1"/><rect x="820" y="628" width="5" height="5" rx="1" ry="1"/><rect x="180" y="650" width="5" height="5" rx="1" ry="1"/><rect x="1140" y="664" width="5" height="5" rx="1" ry="1"/><rect x="560" y="54" width="5" height="5" rx="1" ry="1"/><rect x="1080" y="84" width="5" height="5" rx="1" ry="1"/><rect x="44" y="132" width="5" height="5" rx="1" ry="1"/><rect x="1230" y="258" width="5" height="5" rx="1" ry="1"/><rect x="30" y="348" width="5" height="5" rx="1" ry="1"/><rect x="1160" y="462" width="5" height="5" rx="1" ry="1"/><rect x="1250" y="600" width="5" height="5" rx="1" ry="1"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
     <div class="socle"></div>
   </div></div>
@@ -204,7 +209,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[80, 34], [161, 90], [120, 230], [203, 165], [100, 120], [164, 15], [238, 61], [180, 237], [53, 204]];
+const POINTS = [[96, 145], [193, 384], [144, 981], [244, 704], [120, 512], [197, 64], [286, 260], [216, 1011], [64, 870], [72, 300], [108, 690], [150, 210], [168, 1120], [210, 420], [232, 880], [264, 150], [300, 610], [318, 1180], [340, 330], [372, 760], [396, 96], [420, 1050], [444, 470], [470, 900], [492, 240], [516, 1220], [540, 660], [560, 60], [584, 1000], [606, 380], [628, 820], [650, 180], [664, 1140], [54, 560], [84, 1080], [132, 44], [258, 1230], [348, 30], [462, 1160], [600, 1250]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
