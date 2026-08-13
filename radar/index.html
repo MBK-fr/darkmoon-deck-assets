@@ -102,13 +102,25 @@
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  .cible{position:absolute;width:9px;height:9px;border-radius:1px;
-    background:#ef4444;border-top:1px solid #f87171;
-    box-shadow:0 0 14px 5px rgba(239,68,68,.9);
+  /* Neon : le point reste petit et sature, et c'est le halo qui porte, en
+     trois portees. Deux teintes alternent, le rouge du composant et un
+     orange plus chaud, pour qu'on distingue les cibles entre elles. */
+  .cible{position:absolute;width:8px;height:8px;border-radius:1px;
+    background:#ff3b30;border-top:1px solid #ff8a7a;
+    box-shadow:0 0 6px 2px rgba(255,59,48,1),
+               0 0 18px 6px rgba(255,59,48,.55),
+               0 0 40px 12px rgba(255,90,43,.28);
     transition:top .9s cubic-bezier(.22,1.2,.36,1),
                left .9s cubic-bezier(.22,1.2,.36,1)}
-  .cible .onde,.cible .battement{position:absolute;left:-9px;top:-9px;
-    width:300%;height:300%;border-radius:9999px;border:1px solid #ef4444}
+  .cible.orange{background:#ff8a1f;border-top-color:#ffc48a;
+    box-shadow:0 0 6px 2px rgba(255,138,31,1),
+               0 0 18px 6px rgba(255,138,31,.5),
+               0 0 40px 12px rgba(255,170,80,.24)}
+  .cible .onde,.cible .battement{position:absolute;left:-8px;top:-8px;
+    width:300%;height:300%;border-radius:9999px;
+    border:1px solid rgba(255,59,48,.9)}
+  .cible.orange .onde,.cible.orange .battement{
+    border-color:rgba(255,138,31,.9)}
   .cible .onde{animation:onde 1.2s ease-out 1.3s both}
   .cible .battement{transform:scale(1.3);
     box-shadow:0 0 24px 5px rgba(239,68,68,.6);
@@ -136,17 +148,20 @@
     <div class="faisceau"></div>
     <svg id="trace" width="1280" height="560" viewBox="0 0 1280 560">
       <g transform="translate(640,560)">
-        <circle r="520"/><circle r="440"/><circle r="352"/>
-        <circle r="268"/><circle class="socle" r="120"/>
+        <circle r="620"/><circle r="560"/><circle r="500"/>
+        <circle r="440"/><circle r="382"/><circle r="324"/>
+        <circle r="268"/><circle r="212"/><circle r="160"/>
+        <circle class="socle" r="104"/>
       </g>
     </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1" fill="#404040"/></svg>
-    <div class="cible"><div class="onde"></div><div class="battement"></div></div>
+    <svg class="grille" width="100%" height="100%"><rect x="22%" y="28%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="34%" y="56%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="68%" y="42%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="55%" y="70%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="35%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="57%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="26%" y="82%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="78%" y="62%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="18%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="22%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="8%" y="44%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="18%" y="68%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="44%" y="86%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="66%" y="78%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="52%" y="50%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="58%" y="33%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="38%" y="14%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="54%" y="8%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="40%" y="64%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="12%" y="90%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="74%" y="26%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="86%" y="48%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="88%" y="74%" width="6" height="6" rx="1" ry="1" fill="#404040"/><rect x="70%" y="92%" width="6" height="6" rx="1" ry="1" fill="#404040"/></svg>
+    <div class="cible c1"><div class="onde"></div><div class="battement"></div></div>
+    <div class="cible c2 orange"><div class="onde"></div><div class="battement"></div></div>
+    <div class="cible c3"><div class="onde"></div><div class="battement"></div></div>
   </div>
 </div>
 <div id="scene">
   <div class="inner">
-    <div class="eyebrow">LA SOLUTION</div>
     <p class="txt" id="p"></p>
   </div>
 </div>
@@ -157,7 +172,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "Darkmoon", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "teste", "d": 2.487, "r": 0.076, "b": 12, "s": 0.91}, {"t": "vos", "d": 2.448, "r": 0.136, "b": 13, "s": 0.919}, {"t": "systèmes", "d": 2.386, "r": 0.224, "b": 12, "s": 0.928}, {"t": "en", "d": 2.309, "r": 0.325, "b": 15, "s": 0.936}, {"t": "continu,", "d": 2.221, "r": 0.354, "b": 18, "s": 0.942}, {"t": "tout", "d": 2.132, "r": 0.445, "b": 15, "s": 0.947}, {"t": "seul.", "d": 2.049, "r": 0.5, "b": 18, "s": 0.949}, {"t": "Vous", "d": 1.979, "r": 0.57, "b": 13, "s": 0.95}, {"t": "confiez", "d": 1.929, "r": 0.685, "b": 12, "s": 0.949}, {"t": "une", "d": 1.903, "r": 0.738, "b": 18, "s": 0.945}, {"t": "cible.", "d": 1.904, "r": 0.782, "b": 15, "s": 0.94}, {"t": "Il", "d": 1.931, "r": 0.852, "b": 14, "s": 0.934}, {"t": "explore,", "d": 1.982, "r": 0.934, "b": 14, "s": 0.926}, {"t": "trouve", "d": 2.053, "r": 1.017, "b": 16, "s": 0.917}, {"t": "les", "d": 2.137, "r": 1.088, "b": 14, "s": 0.907}, {"t": "failles,", "d": 2.226, "r": 1.135, "b": 15, "s": 0.897}, {"t": "les", "d": 2.313, "r": 1.218, "b": 13, "s": 0.887}, {"t": "prouve,", "d": 2.39, "r": 1.297, "b": 15, "s": 0.878}, {"t": "et", "d": 2.45, "r": 1.363, "b": 18, "s": 0.869}, {"t": "livre", "d": 2.488, "r": 1.447, "b": 19, "s": 0.862}, {"t": "un", "d": 2.5, "r": 1.506, "b": 19, "s": 0.856}, {"t": "rapport", "d": 2.485, "r": 1.564, "b": 15, "s": 0.852}, {"t": "clair.", "d": 2.445, "r": 1.655, "b": 15, "s": 0.85}, {"t": "En", "d": 2.383, "r": 1.688, "b": 16, "s": 0.85}, {"t": "continu", "d": 2.304, "r": 1.78, "b": 17, "s": 0.852}, {"t": ":", "d": 2.216, "r": 1.859, "b": 16, "s": 0.856}, {"t": "à", "d": 2.127, "r": 1.921, "b": 13, "s": 0.861}, {"t": "chaque", "d": 2.044, "r": 1.966, "b": 18, "s": 0.868}, {"t": "évolution,", "d": 1.975, "r": 2.037, "b": 17, "s": 0.877}, {"t": "pas", "d": 1.927, "r": 2.105, "b": 19, "s": 0.886}, {"t": "une", "d": 1.902, "r": 2.187, "b": 13, "s": 0.896}, {"t": "fois", "d": 1.905, "r": 2.272, "b": 17, "s": 0.906}, {"t": "par", "d": 1.933, "r": 2.32, "b": 17, "s": 0.916}, {"t": "an.", "d": 1.986, "r": 2.401, "b": 19, "s": 0.925}, {"t": "Avec", "d": 2.057, "r": 2.443, "b": 13, "s": 0.933}, {"t": "preuves", "d": 2.142, "r": 2.555, "b": 19, "s": 0.94}, {"t": ":", "d": 2.231, "r": 2.611, "b": 13, "s": 0.945}, {"t": "chaque", "d": 2.318, "r": 2.647, "b": 16, "s": 0.948}, {"t": "faille", "d": 2.394, "r": 2.745, "b": 19, "s": 0.95}, {"t": "est", "d": 2.453, "r": 2.795, "b": 18, "s": 0.949}, {"t": "démontrée,", "d": 2.489, "r": 2.893, "b": 17, "s": 0.947}, {"t": "pas", "d": 2.5, "r": 2.918, "b": 19, "s": 0.943}, {"t": "signalée.", "d": 2.483, "r": 3.002, "b": 13, "s": 0.937}, {"t": "Sous", "d": 2.442, "r": 3.077, "b": 15, "s": 0.929}, {"t": "contrôle", "d": 2.378, "r": 3.159, "b": 14, "s": 0.921}, {"t": ":", "d": 2.299, "r": 3.225, "b": 18, "s": 0.911}, {"t": "vos", "d": 2.211, "r": 3.276, "b": 19, "s": 0.901}, {"t": "données", "d": 2.122, "r": 3.328, "b": 19, "s": 0.891}, {"t": "restent", "d": 2.04, "r": 3.412, "b": 16, "s": 0.882}, {"t": "chez", "d": 1.972, "r": 3.504, "b": 18, "s": 0.873}, {"t": "vous.", "d": 1.925, "r": 3.57, "b": 16, "s": 0.865}];
+const MOTS = [{"t": "La", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "solution :", "d": 2.487, "r": 0.075, "b": 12, "s": 0.91}, {"t": "Darkmoon", "d": 2.448, "r": 0.134, "b": 13, "s": 0.919}, {"t": "teste", "d": 2.386, "r": 0.223, "b": 12, "s": 0.928}, {"t": "vos", "d": 2.309, "r": 0.323, "b": 15, "s": 0.936}, {"t": "systèmes", "d": 2.221, "r": 0.351, "b": 18, "s": 0.942}, {"t": "en", "d": 2.132, "r": 0.442, "b": 15, "s": 0.947}, {"t": "continu,", "d": 2.049, "r": 0.497, "b": 18, "s": 0.949}, {"t": "tout", "d": 1.979, "r": 0.566, "b": 13, "s": 0.95}, {"t": "seul.", "d": 1.929, "r": 0.682, "b": 12, "s": 0.949}, {"t": "Vous", "d": 1.903, "r": 0.734, "b": 18, "s": 0.945}, {"t": "confiez", "d": 1.904, "r": 0.777, "b": 15, "s": 0.94}, {"t": "une", "d": 1.931, "r": 0.847, "b": 14, "s": 0.934}, {"t": "cible.", "d": 1.982, "r": 0.93, "b": 14, "s": 0.926}, {"t": "Il", "d": 2.053, "r": 1.012, "b": 16, "s": 0.917}, {"t": "explore,", "d": 2.137, "r": 1.082, "b": 14, "s": 0.907}, {"t": "trouve", "d": 2.226, "r": 1.129, "b": 15, "s": 0.897}, {"t": "les", "d": 2.313, "r": 1.212, "b": 13, "s": 0.887}, {"t": "failles,", "d": 2.39, "r": 1.291, "b": 15, "s": 0.878}, {"t": "les", "d": 2.45, "r": 1.357, "b": 18, "s": 0.869}, {"t": "prouve,", "d": 2.488, "r": 1.44, "b": 19, "s": 0.862}, {"t": "et", "d": 2.5, "r": 1.499, "b": 19, "s": 0.856}, {"t": "livre", "d": 2.485, "r": 1.557, "b": 15, "s": 0.852}, {"t": "un", "d": 2.445, "r": 1.647, "b": 15, "s": 0.85}, {"t": "rapport", "d": 2.383, "r": 1.68, "b": 16, "s": 0.85}, {"t": "clair.", "d": 2.304, "r": 1.771, "b": 17, "s": 0.852}, {"t": "En", "d": 2.216, "r": 1.85, "b": 16, "s": 0.856}, {"t": "continu", "d": 2.127, "r": 1.913, "b": 13, "s": 0.861}, {"t": ":", "d": 2.044, "r": 1.957, "b": 18, "s": 0.868}, {"t": "à", "d": 1.975, "r": 2.027, "b": 17, "s": 0.877}, {"t": "chaque", "d": 1.927, "r": 2.095, "b": 19, "s": 0.886}, {"t": "évolution,", "d": 1.902, "r": 2.177, "b": 13, "s": 0.896}, {"t": "pas", "d": 1.905, "r": 2.262, "b": 17, "s": 0.906}, {"t": "une", "d": 1.933, "r": 2.309, "b": 17, "s": 0.916}, {"t": "fois", "d": 1.986, "r": 2.39, "b": 19, "s": 0.925}, {"t": "par", "d": 2.057, "r": 2.432, "b": 13, "s": 0.933}, {"t": "an.", "d": 2.142, "r": 2.544, "b": 19, "s": 0.94}, {"t": "Avec", "d": 2.231, "r": 2.599, "b": 13, "s": 0.945}, {"t": "preuves", "d": 2.318, "r": 2.636, "b": 16, "s": 0.948}, {"t": ":", "d": 2.394, "r": 2.733, "b": 19, "s": 0.95}, {"t": "chaque", "d": 2.453, "r": 2.783, "b": 18, "s": 0.949}, {"t": "faille", "d": 2.489, "r": 2.88, "b": 17, "s": 0.947}, {"t": "est", "d": 2.5, "r": 2.905, "b": 19, "s": 0.943}, {"t": "démontrée,", "d": 2.483, "r": 2.989, "b": 13, "s": 0.937}, {"t": "pas", "d": 2.442, "r": 3.064, "b": 15, "s": 0.929}, {"t": "signalée.", "d": 2.378, "r": 3.146, "b": 14, "s": 0.921}, {"t": "Sous", "d": 2.299, "r": 3.212, "b": 18, "s": 0.911}, {"t": "contrôle", "d": 2.211, "r": 3.262, "b": 19, "s": 0.901}, {"t": ":", "d": 2.122, "r": 3.314, "b": 19, "s": 0.891}, {"t": "vos", "d": 2.04, "r": 3.398, "b": 16, "s": 0.882}, {"t": "données", "d": 1.972, "r": 3.489, "b": 18, "s": 0.873}, {"t": "restent", "d": 1.925, "r": 3.556, "b": 16, "s": 0.865}, {"t": "chez", "d": 1.902, "r": 3.615, "b": 17, "s": 0.859}, {"t": "vous.", "d": 1.906, "r": 3.682, "b": 18, "s": 0.854}];
 const pTexte = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');
@@ -202,23 +217,29 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[28, 22], [56, 34], [42, 68], [70, 55], [35, 40], [57, 12], [82, 26], [62, 78], [18, 66]];
-const cible = document.querySelector('.cible');
-let k = 0;
-function viser() {
-  const [top, left] = POINTS[k];
-  cible.style.top = top + '%';
-  cible.style.left = left + '%';
-  // les deux anneaux sont rejoues a chaque saut, comme la cle React du
-  // composant qui change avec l'index
-  cible.querySelectorAll('.onde,.battement').forEach(e => {
-    const a = e.style.animation;
-    e.style.animation = 'none'; void e.offsetWidth; e.style.animation = a || '';
-  });
-  k = (k + 1) % POINTS.length;
-}
-viser();
-setInterval(viser, 3000);
+const POINTS = [[28, 22], [56, 34], [42, 68], [70, 55], [35, 40], [57, 12], [82, 26], [62, 78], [18, 66], [22, 12], [44, 8], [68, 18], [86, 44], [78, 66], [50, 52], [33, 58], [14, 38], [8, 54], [64, 40], [90, 12], [26, 74], [48, 86], [74, 88], [92, 70]];
+// Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
+// seconde chacune : elles ne tombent jamais sur le meme point ni au meme
+// instant.
+const cibles = [...document.querySelectorAll('.cible')];
+cibles.forEach((cible, n) => {
+  let k = Math.floor(n * POINTS.length / cibles.length);
+  const viser = () => {
+    const [top, left] = POINTS[k];
+    cible.style.top = top + '%';
+    cible.style.left = left + '%';
+    // les anneaux sont rejoues a chaque saut, comme la cle React du
+    // composant qui change avec l'index
+    cible.querySelectorAll('.onde,.battement').forEach(e => {
+      const a = e.style.animation;
+      e.style.animation = 'none'; void e.offsetWidth;
+      e.style.animation = a || '';
+    });
+    k = (k + 1) % POINTS.length;
+  };
+  viser();
+  setTimeout(() => { viser(); setInterval(viser, 3000); }, n * 1000);
+});
 
 // ── Ouverture : rideau noir, flou qui se leve ────────────────────────────
 const rideau = document.createElement('div');
