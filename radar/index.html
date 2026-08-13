@@ -19,8 +19,8 @@
      `p`. Meme emplacement, meme ordre ; seules la taille et la police
      changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:center;padding:0 76px;pointer-events:none}
-  .inner{position:relative;width:40rem;max-width:40rem;text-align:left;
+         align-items:flex-end;padding:0 76px 78px;pointer-events:none}
+  .inner{position:relative;width:44rem;max-width:44rem;text-align:left;
          pointer-events:auto}
   .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
                  z-index:-1;
@@ -72,13 +72,25 @@
      du balayage changent, puisqu'un cercle complet appelle un tour complet.
      Le trace est en SVG, dans une boite carree a taille fixe, donc les
      cercles restent ronds. */
-  #radar{position:absolute;right:72px;top:50%;width:540px;height:540px;
-         transform:translateY(-50%);z-index:2;pointer-events:none}
+  /* Le radar est CENTRE dans la slide, et son balayage est clip a son
+     disque : sans ce masque, le carre du degrade depassait des couronnes et
+     laissait un coin gris flottant en bas a droite. C'est ce que faisait
+     `overflow-hidden` sur la carte du composant. */
+  #radar{position:absolute;left:50%;top:50%;width:540px;height:540px;
+         transform:translate(-50%,-50%);z-index:2;pointer-events:none}
   #radar .champ,#radar .haut{position:absolute;inset:0}
-  .faisceau{position:absolute;top:50%;left:50%;width:270px;height:270px;
-    transform-origin:bottom left;pointer-events:none;
-    background:radial-gradient(circle at 0% 100%,
-      var(--faisceau) 5%, transparent 60%);
+  #radar .masque{position:absolute;inset:0;border-radius:50%;
+                 overflow:hidden}
+  /* Le balayage du composant est un carre de degrade ancre par son coin :
+     dans sa carte, `overflow-hidden` en coupait les bords droits. Sur un
+     disque entier ces bords restaient visibles et donnaient ce quadrilatere
+     gris flottant. Le faisceau devient donc un vrai secteur, trace en
+     degrade conique sur tout le disque : meme blanc a 30 pour cent au coeur
+     du faisceau, plus aucun bord droit. */
+  .faisceau{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+    background:conic-gradient(from 0deg,
+      var(--faisceau) 0deg, rgba(255,255,255,.14) 16deg,
+      rgba(255,255,255,.05) 34deg, transparent 62deg, transparent 360deg);
     animation:balayage 12s linear infinite}
   /* Un cercle complet appelle un tour complet : le balayage tourne sans
      rebrousser chemin, la ou le composant oscillait entre -55 et -40 degres
@@ -129,7 +141,7 @@
 <div id="voile"></div>
 <div id="radar">
   <div class="champ"><div class="haut">
-    <div class="faisceau"></div>
+    <div class="masque"><div class="faisceau"></div></div>
     <svg id="trace" width="540" height="540" viewBox="0 0 540 540">
       <g transform="translate(270,270)"><circle r="264"/><circle r="236"/><circle r="208"/><circle r="180"/><circle r="152"/><circle r="124"/><circle r="96"/><circle r="68"/><circle class="socle" r="26"/></g>
     </svg>
