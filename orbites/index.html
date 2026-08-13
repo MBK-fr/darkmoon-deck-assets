@@ -83,20 +83,22 @@
      211 degres et celui de la texture des cartes entre 196 et 213. Le
      masque a 135 degres la garde plus dense au coin haut gauche, du cote de
      la lumiere de la slide. */
-  /* ── Neon, au sens propre ─────────────────────────────────────────────
-     Un neon n'est pas un trait blanc epais : c'est un tube PEU lumineux
-     entoure d'un halo. Le filet descend donc a un blanc bleute a 34 pour
-     cent, et c'est le halo qui fait l'effet, en quatre portees : 4 px serre
-     et vif, 11 et 22 px de plus en plus larges et faibles, plus une lueur
-     interieure qui fait respirer le disque. La couleur vient de la charte,
-     le royal `#5693fe` eclairci. */
+  /* ── Le neon, fin et symetrique ───────────────────────────────────────
+     Trois corrections par rapport a l'essai precedent :
+       . la couleur quitte le bleu pour l'alice de la charte, presque neutre ;
+       . le tube descend a 16 pour cent, il ne doit pas se lire comme un
+         trait mais comme la trace d'une lumiere ;
+       . le halo est SYMETRIQUE, autant dedans que dehors, et aux memes
+         portees : 3 px serre, 9 px large, des deux cotes. Avant il ne
+         rayonnait que vers l'exterieur, ce qui epaississait le contour au
+         lieu de le faire briller. */
   .pastille{margin-top:-30px;padding:12px;border-radius:9999px;
             background:#000;position:relative;z-index:10;display:flex;
-            border:1px solid rgb(178 210 255 / .34);
-            box-shadow:0 0 4px rgb(126 174 255 / .55),
-                       0 0 11px rgb(86 147 254 / .34),
-                       0 0 22px rgb(70 120 220 / .20),
-                       inset 0 0 7px rgb(126 174 255 / .22),
+            border:1px solid rgb(220 234 244 / .16);
+            box-shadow:0 0 3px rgb(220 234 244 / .17),
+                       0 0 9px rgb(220 234 244 / .09),
+                       inset 0 0 3px rgb(220 234 244 / .17),
+                       inset 0 0 9px rgb(220 234 244 / .09),
                        0 6px 20px rgb(0 0 0 / .95),
                        0 20px 52px rgb(0 0 0 / .9),
                        0 0 60px rgb(0 0 0 / .85)}
