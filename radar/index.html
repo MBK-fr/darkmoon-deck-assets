@@ -4,7 +4,7 @@
   /* Les couleurs d'origine du composant, sans transposition : le balayage
      en `rgba(255,255,255,.3)`, les couronnes en `rgb(64 64 64 / .8)`, les
      carres en `#404040`. */
-  :root{--faisceau:rgba(255,255,255,.3);
+  :root{--faisceau:rgba(255,255,255,.18);
         --trait:rgb(64 64 64 / .8);
         --point:#404040}
   html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
@@ -19,8 +19,8 @@
      `p`. Meme emplacement, meme ordre ; seules la taille et la police
      changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:flex-end;padding:0 76px 84px;pointer-events:none}
-  .inner{position:relative;width:53rem;max-width:53rem;text-align:left;
+         align-items:flex-end;padding:0 76px 78px;pointer-events:none}
+  .inner{position:relative;width:44rem;max-width:44rem;text-align:left;
          pointer-events:auto}
   .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
                  z-index:-1;
@@ -64,19 +64,18 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── La scene, en cercles VRAIS et plus contrastee ────────────────────
-     Trois corrections :
-       . les couronnes etaient des `div` en `border-radius: 9999px` de 1500
-         px de haut et d'une largeur en pourcentage : des ELLIPSES. Elles
-         sont tracees en SVG, en cercles de rayon fixe, centres sous le bas
-         du cadre. Le motif des pointilles reprend celui du navigateur, deux
-         pixels de trait pour deux de vide, mesure sur le composant ;
-       . seize couronnes et soixante-dix points au lieu de douze et quarante ;
-       . le contraste : le trait passe de `rgb(64 64 64 / .8)` a `rgb(96 96
-         96 / .95)`, les carres de `#404040` a `#6e6e6e`, et le balayage de
-         30 a 38 pour cent de blanc. Sur un fond noir de projection, les
-         valeurs du composant, prevues pour une carte de 350 px, etaient
-         trop basses une fois etalees. */
+  /* ── La scene, sur toute la page ──────────────────────────────────────
+     Retour a la composition qui remplit le cadre : couronnes en SVG, donc
+     des cercles vrais, centrees sous le bas de la slide, et le balayage
+     carre du composant avec sa sequence de rotations.
+     Trois reglages demandes :
+       . le rayon de scan est RESSERRE. Le carre de degrade couvre par
+         construction un quart de tour ; un masque conique le taille a
+         trente degres, avec dix degres de fondu de chaque cote, sans
+         toucher a sa chute radiale ;
+       . le blanc descend de 30 a 18 pour cent, donc l'ombre du faisceau est
+         plus douce ;
+       . vingt-six couronnes au lieu de seize, plus rapprochees. */
   #radar{position:absolute;inset:0;z-index:2;overflow:hidden;
          pointer-events:none}
   #radar .champ{position:absolute;left:0;bottom:0;width:100%;height:100%}
@@ -85,6 +84,12 @@
     height:1240px;transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       var(--faisceau) 5%, transparent 60%);
+    -webkit-mask-image:conic-gradient(from 0deg at 0% 100%,
+      transparent 0deg, rgb(0 0 0 / .4) 14deg, #000 26deg, #000 48deg,
+      rgb(0 0 0 / .4) 62deg, transparent 76deg);
+    mask-image:conic-gradient(from 0deg at 0% 100%,
+      transparent 0deg, rgb(0 0 0 / .4) 14deg, #000 26deg, #000 48deg,
+      rgb(0 0 0 / .4) 62deg, transparent 76deg);
     animation:balayage 18s ease-in-out infinite}
   @keyframes balayage{
     0%{opacity:.7;transform:rotate(-55deg)}
@@ -146,9 +151,9 @@
   <div class="champ"><div class="haut">
     <div class="faisceau"></div>
     <svg id="trace" width="1280" height="720" viewBox="0 0 1280 720">
-      <g transform="translate(640,700)"><circle r="1180"/><circle r="1110"/><circle r="1040"/><circle r="970"/><circle r="900"/><circle r="830"/><circle r="760"/><circle r="690"/><circle r="620"/><circle r="550"/><circle r="480"/><circle r="410"/><circle r="340"/><circle r="270"/><circle r="200"/><circle r="130"/><circle class="socle" r="96"/></g>
+      <g transform="translate(640,700)"><circle r="1180"/><circle r="1136"/><circle r="1092"/><circle r="1048"/><circle r="1004"/><circle r="960"/><circle r="916"/><circle r="872"/><circle r="828"/><circle r="784"/><circle r="740"/><circle r="696"/><circle r="652"/><circle r="608"/><circle r="564"/><circle r="520"/><circle r="476"/><circle r="432"/><circle r="388"/><circle r="344"/><circle r="300"/><circle r="256"/><circle r="212"/><circle r="168"/><circle r="124"/><circle r="80"/><circle class="socle" r="96"/></g>
     </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="658" y="155" width="5" height="5" rx="1" ry="1"/><rect x="393" y="296" width="5" height="5" rx="1" ry="1"/><rect x="880" y="575" width="5" height="5" rx="1" ry="1"/><rect x="582" y="507" width="5" height="5" rx="1" ry="1"/><rect x="1025" y="410" width="5" height="5" rx="1" ry="1"/><rect x="440" y="529" width="5" height="5" rx="1" ry="1"/><rect x="1076" y="257" width="5" height="5" rx="1" ry="1"/><rect x="640" y="78" width="5" height="5" rx="1" ry="1"/><rect x="484" y="481" width="5" height="5" rx="1" ry="1"/><rect x="505" y="462" width="5" height="5" rx="1" ry="1"/><rect x="40" y="542" width="5" height="5" rx="1" ry="1"/><rect x="919" y="508" width="5" height="5" rx="1" ry="1"/><rect x="757" y="654" width="5" height="5" rx="1" ry="1"/><rect x="834" y="655" width="5" height="5" rx="1" ry="1"/><rect x="308" y="256" width="5" height="5" rx="1" ry="1"/><rect x="379" y="643" width="5" height="5" rx="1" ry="1"/><rect x="30" y="573" width="5" height="5" rx="1" ry="1"/><rect x="222" y="343" width="5" height="5" rx="1" ry="1"/><rect x="510" y="313" width="5" height="5" rx="1" ry="1"/><rect x="1040" y="437" width="5" height="5" rx="1" ry="1"/><rect x="362" y="517" width="5" height="5" rx="1" ry="1"/><rect x="700" y="444" width="5" height="5" rx="1" ry="1"/><rect x="420" y="128" width="5" height="5" rx="1" ry="1"/><rect x="318" y="437" width="5" height="5" rx="1" ry="1"/><rect x="360" y="405" width="5" height="5" rx="1" ry="1"/><rect x="131" y="339" width="5" height="5" rx="1" ry="1"/><rect x="470" y="174" width="5" height="5" rx="1" ry="1"/><rect x="652" y="366" width="5" height="5" rx="1" ry="1"/><rect x="1011" y="123" width="5" height="5" rx="1" ry="1"/><rect x="1263" y="406" width="5" height="5" rx="1" ry="1"/><rect x="625" y="436" width="5" height="5" rx="1" ry="1"/><rect x="885" y="595" width="5" height="5" rx="1" ry="1"/><rect x="123" y="501" width="5" height="5" rx="1" ry="1"/><rect x="681" y="225" width="5" height="5" rx="1" ry="1"/><rect x="298" y="485" width="5" height="5" rx="1" ry="1"/><rect x="1021" y="544" width="5" height="5" rx="1" ry="1"/><rect x="711" y="521" width="5" height="5" rx="1" ry="1"/><rect x="253" y="543" width="5" height="5" rx="1" ry="1"/><rect x="1020" y="534" width="5" height="5" rx="1" ry="1"/><rect x="577" y="431" width="5" height="5" rx="1" ry="1"/><rect x="667" y="567" width="5" height="5" rx="1" ry="1"/><rect x="740" y="456" width="5" height="5" rx="1" ry="1"/><rect x="1054" y="141" width="5" height="5" rx="1" ry="1"/><rect x="651" y="430" width="5" height="5" rx="1" ry="1"/></svg>
+    <svg class="grille" width="100%" height="100%"><rect x="1237" y="335" width="5" height="5" rx="1" ry="1"/><rect x="1191" y="204" width="5" height="5" rx="1" ry="1"/><rect x="459" y="590" width="5" height="5" rx="1" ry="1"/><rect x="1077" y="-7" width="5" height="5" rx="1" ry="1"/><rect x="603" y="581" width="5" height="5" rx="1" ry="1"/><rect x="867" y="40" width="5" height="5" rx="1" ry="1"/><rect x="885" y="525" width="5" height="5" rx="1" ry="1"/><rect x="513" y="597" width="5" height="5" rx="1" ry="1"/><rect x="918" y="428" width="5" height="5" rx="1" ry="1"/><rect x="1071" y="411" width="5" height="5" rx="1" ry="1"/><rect x="206" y="50" width="5" height="5" rx="1" ry="1"/><rect x="630" y="619" width="5" height="5" rx="1" ry="1"/><rect x="703" y="274" width="5" height="5" rx="1" ry="1"/><rect x="554" y="553" width="5" height="5" rx="1" ry="1"/><rect x="262" y="613" width="5" height="5" rx="1" ry="1"/><rect x="1099" y="578" width="5" height="5" rx="1" ry="1"/><rect x="761" y="676" width="5" height="5" rx="1" ry="1"/><rect x="754" y="104" width="5" height="5" rx="1" ry="1"/><rect x="428" y="426" width="5" height="5" rx="1" ry="1"/><rect x="477" y="670" width="5" height="5" rx="1" ry="1"/><rect x="59" y="399" width="5" height="5" rx="1" ry="1"/><rect x="256" y="634" width="5" height="5" rx="1" ry="1"/><rect x="83" y="278" width="5" height="5" rx="1" ry="1"/><rect x="504" y="111" width="5" height="5" rx="1" ry="1"/><rect x="933" y="529" width="5" height="5" rx="1" ry="1"/><rect x="617" y="626" width="5" height="5" rx="1" ry="1"/><rect x="479" y="505" width="5" height="5" rx="1" ry="1"/><rect x="83" y="466" width="5" height="5" rx="1" ry="1"/><rect x="565" y="142" width="5" height="5" rx="1" ry="1"/><rect x="134" y="368" width="5" height="5" rx="1" ry="1"/><rect x="383" y="405" width="5" height="5" rx="1" ry="1"/><rect x="763" y="382" width="5" height="5" rx="1" ry="1"/><rect x="647" y="492" width="5" height="5" rx="1" ry="1"/><rect x="877" y="342" width="5" height="5" rx="1" ry="1"/><rect x="1035" y="527" width="5" height="5" rx="1" ry="1"/><rect x="49" y="258" width="5" height="5" rx="1" ry="1"/><rect x="1267" y="305" width="5" height="5" rx="1" ry="1"/><rect x="313" y="585" width="5" height="5" rx="1" ry="1"/><rect x="20" y="500" width="5" height="5" rx="1" ry="1"/><rect x="666" y="403" width="5" height="5" rx="1" ry="1"/><rect x="423" y="571" width="5" height="5" rx="1" ry="1"/><rect x="944" y="69" width="5" height="5" rx="1" ry="1"/><rect x="1189" y="562" width="5" height="5" rx="1" ry="1"/><rect x="564" y="672" width="5" height="5" rx="1" ry="1"/><rect x="556" y="552" width="5" height="5" rx="1" ry="1"/><rect x="662" y="538" width="5" height="5" rx="1" ry="1"/><rect x="902" y="253" width="5" height="5" rx="1" ry="1"/><rect x="600" y="533" width="5" height="5" rx="1" ry="1"/><rect x="613" y="623" width="5" height="5" rx="1" ry="1"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
   </div></div>
 </div>
@@ -209,7 +214,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[155, 658], [296, 393], [575, 880], [507, 582], [410, 1025], [529, 440], [257, 1076], [78, 640], [481, 484], [462, 505], [542, 40], [508, 919], [654, 757], [655, 834], [256, 308], [643, 379], [573, 30], [343, 222], [313, 510], [437, 1040], [517, 362], [444, 700], [128, 420], [437, 318], [405, 360], [339, 131], [174, 470], [366, 652], [123, 1011], [406, 1263], [436, 625], [595, 885], [501, 123], [225, 681], [485, 298], [544, 1021], [521, 711], [543, 253], [534, 1020], [431, 577], [567, 667], [456, 740], [141, 1054], [430, 651]];
+const POINTS = [[335, 1237], [204, 1191], [590, 459], [-7, 1077], [581, 603], [40, 867], [525, 885], [597, 513], [428, 918], [411, 1071], [50, 206], [619, 630], [274, 703], [553, 554], [613, 262], [578, 1099], [676, 761], [104, 754], [426, 428], [670, 477], [399, 59], [634, 256], [278, 83], [111, 504], [529, 933], [626, 617], [505, 479], [466, 83], [142, 565], [368, 134], [405, 383], [382, 763], [492, 647], [342, 877], [527, 1035], [258, 49], [305, 1267], [585, 313], [500, 20], [403, 666], [571, 423], [69, 944], [562, 1189], [672, 564], [552, 556], [538, 662], [253, 902], [533, 600], [623, 613]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
