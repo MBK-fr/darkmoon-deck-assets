@@ -1,16 +1,12 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8">
 <title>Darkmoon, la solution</title>
 <style>
-  /* Teintes prises dans le decor des autres slides : l'etheral y ressort a
-     rgb(40,67,95), teinte 211 degres. Trois reglages ont ete construits et
-     mesures sur le cone et sur le fond :
-         A  cone 15,2  ·  B  cone 17,5  ·  C  cone 9,4  (sur 255)
-     C disparaissait a la projection, B restait clair. A est retenu : le
-     cone reste sous le niveau du texte, et le bleu remplace le blanc et le
-     gris neutre du composant, trop clairs une fois etales sur la slide. */
-  :root{--faisceau:rgba(96,140,196,.20);
-        --trait:rgb(58 82 112 / .85);
-        --point:#4a6a94}
+  /* Les couleurs d'origine du composant, sans transposition : le balayage
+     en `rgba(255,255,255,.3)`, les couronnes en `rgb(64 64 64 / .8)`, les
+     carres en `#404040`. */
+  :root{--faisceau:rgba(255,255,255,.3);
+        --trait:rgb(64 64 64 / .8);
+        --point:#404040}
   html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
             font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
             -webkit-font-smoothing:antialiased}
