@@ -13,8 +13,8 @@
      `p`. Meme emplacement, meme ordre ; seules la taille et la police
      changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:flex-end;padding:0 76px 86px;pointer-events:none}
-  .inner{position:relative;width:56rem;max-width:56rem;text-align:left;
+         align-items:flex-end;padding:0 76px 84px;pointer-events:none}
+  .inner{position:relative;width:53rem;max-width:53rem;text-align:left;
          pointer-events:auto}
   .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
                  z-index:-1;
@@ -29,7 +29,7 @@
            display:flex;align-items:center;gap:14px}
   .eyebrow::after{content:"";width:46px;height:1px;
     background:linear-gradient(to right,rgb(220 234 244 / .35),rgb(220 234 244 / 0))}
-  .txt{color:#fff;font-size:2.45rem;line-height:1.34;letter-spacing:-.008em;
+  .txt{color:#fff;font-size:1.62rem;line-height:1.62;letter-spacing:.014em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
@@ -148,8 +148,6 @@
   <div class="inner">
     <div class="eyebrow">LA SOLUTION</div>
     <p class="txt" id="p"></p>
-    <p class="sous">Vous confiez une cible. Il explore, trouve les failles, les prouve, et livre un rapport clair.</p>
-    <div class="piliers"><div class="pilier"><div class="n">1</div><div class="t">En continu</div><div class="d">À chaque évolution, pas une fois par an.</div></div><div class="pilier"><div class="n">2</div><div class="t">Avec preuves</div><div class="d">Chaque faille est démontrée, pas signalée.</div></div><div class="pilier"><div class="n">3</div><div class="t">Sous contrôle</div><div class="d">Vos données restent chez vous.</div></div></div>
   </div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>06 / 14</span></div>
@@ -159,7 +157,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "Darkmoon", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "teste", "d": 2.487, "r": 0.149, "b": 12, "s": 0.91}, {"t": "vos", "d": 2.448, "r": 0.264, "b": 13, "s": 0.919}, {"t": "systèmes", "d": 2.386, "r": 0.401, "b": 12, "s": 0.928}, {"t": "en", "d": 2.309, "r": 0.548, "b": 15, "s": 0.936}, {"t": "continu,", "d": 2.221, "r": 0.62, "b": 18, "s": 0.942}, {"t": "tout", "d": 2.132, "r": 0.753, "b": 15, "s": 0.947}, {"t": "seul.", "d": 2.049, "r": 0.849, "b": 18, "s": 0.949}];
+const MOTS = [{"t": "Darkmoon", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "teste", "d": 2.487, "r": 0.076, "b": 12, "s": 0.91}, {"t": "vos", "d": 2.448, "r": 0.136, "b": 13, "s": 0.919}, {"t": "systèmes", "d": 2.386, "r": 0.224, "b": 12, "s": 0.928}, {"t": "en", "d": 2.309, "r": 0.325, "b": 15, "s": 0.936}, {"t": "continu,", "d": 2.221, "r": 0.354, "b": 18, "s": 0.942}, {"t": "tout", "d": 2.132, "r": 0.445, "b": 15, "s": 0.947}, {"t": "seul.", "d": 2.049, "r": 0.5, "b": 18, "s": 0.949}, {"t": "Vous", "d": 1.979, "r": 0.57, "b": 13, "s": 0.95}, {"t": "confiez", "d": 1.929, "r": 0.685, "b": 12, "s": 0.949}, {"t": "une", "d": 1.903, "r": 0.738, "b": 18, "s": 0.945}, {"t": "cible.", "d": 1.904, "r": 0.782, "b": 15, "s": 0.94}, {"t": "Il", "d": 1.931, "r": 0.852, "b": 14, "s": 0.934}, {"t": "explore,", "d": 1.982, "r": 0.934, "b": 14, "s": 0.926}, {"t": "trouve", "d": 2.053, "r": 1.017, "b": 16, "s": 0.917}, {"t": "les", "d": 2.137, "r": 1.088, "b": 14, "s": 0.907}, {"t": "failles,", "d": 2.226, "r": 1.135, "b": 15, "s": 0.897}, {"t": "les", "d": 2.313, "r": 1.218, "b": 13, "s": 0.887}, {"t": "prouve,", "d": 2.39, "r": 1.297, "b": 15, "s": 0.878}, {"t": "et", "d": 2.45, "r": 1.363, "b": 18, "s": 0.869}, {"t": "livre", "d": 2.488, "r": 1.447, "b": 19, "s": 0.862}, {"t": "un", "d": 2.5, "r": 1.506, "b": 19, "s": 0.856}, {"t": "rapport", "d": 2.485, "r": 1.564, "b": 15, "s": 0.852}, {"t": "clair.", "d": 2.445, "r": 1.655, "b": 15, "s": 0.85}, {"t": "En", "d": 2.383, "r": 1.688, "b": 16, "s": 0.85}, {"t": "continu", "d": 2.304, "r": 1.78, "b": 17, "s": 0.852}, {"t": ":", "d": 2.216, "r": 1.859, "b": 16, "s": 0.856}, {"t": "à", "d": 2.127, "r": 1.921, "b": 13, "s": 0.861}, {"t": "chaque", "d": 2.044, "r": 1.966, "b": 18, "s": 0.868}, {"t": "évolution,", "d": 1.975, "r": 2.037, "b": 17, "s": 0.877}, {"t": "pas", "d": 1.927, "r": 2.105, "b": 19, "s": 0.886}, {"t": "une", "d": 1.902, "r": 2.187, "b": 13, "s": 0.896}, {"t": "fois", "d": 1.905, "r": 2.272, "b": 17, "s": 0.906}, {"t": "par", "d": 1.933, "r": 2.32, "b": 17, "s": 0.916}, {"t": "an.", "d": 1.986, "r": 2.401, "b": 19, "s": 0.925}, {"t": "Avec", "d": 2.057, "r": 2.443, "b": 13, "s": 0.933}, {"t": "preuves", "d": 2.142, "r": 2.555, "b": 19, "s": 0.94}, {"t": ":", "d": 2.231, "r": 2.611, "b": 13, "s": 0.945}, {"t": "chaque", "d": 2.318, "r": 2.647, "b": 16, "s": 0.948}, {"t": "faille", "d": 2.394, "r": 2.745, "b": 19, "s": 0.95}, {"t": "est", "d": 2.453, "r": 2.795, "b": 18, "s": 0.949}, {"t": "démontrée,", "d": 2.489, "r": 2.893, "b": 17, "s": 0.947}, {"t": "pas", "d": 2.5, "r": 2.918, "b": 19, "s": 0.943}, {"t": "signalée.", "d": 2.483, "r": 3.002, "b": 13, "s": 0.937}, {"t": "Sous", "d": 2.442, "r": 3.077, "b": 15, "s": 0.929}, {"t": "contrôle", "d": 2.378, "r": 3.159, "b": 14, "s": 0.921}, {"t": ":", "d": 2.299, "r": 3.225, "b": 18, "s": 0.911}, {"t": "vos", "d": 2.211, "r": 3.276, "b": 19, "s": 0.901}, {"t": "données", "d": 2.122, "r": 3.328, "b": 19, "s": 0.891}, {"t": "restent", "d": 2.04, "r": 3.412, "b": 16, "s": 0.882}, {"t": "chez", "d": 1.972, "r": 3.504, "b": 18, "s": 0.873}, {"t": "vous.", "d": 1.925, "r": 3.57, "b": 16, "s": 0.865}];
 const pTexte = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');
