@@ -83,15 +83,21 @@
      211 degres et celui de la texture des cartes entre 196 et 213. Le
      masque a 135 degres la garde plus dense au coin haut gauche, du cote de
      la lumiere de la slide. */
-  /* Un filet blanc d'un pixel, et rien autour. Le halo est retire : sur un
-     disque de 48 px, meme deux couches a 9 et 5 pour cent se lisaient comme
-     du neon. L'epaisseur ne peut pas descendre sous le pixel, Chromium
-     ramene toute bordure plus fine a un pixel ecran ; c'est donc l'opacite
-     qui affine le trait, de .78 a .42. */
+  /* ── Neon, au sens propre ─────────────────────────────────────────────
+     Un neon n'est pas un trait blanc epais : c'est un tube PEU lumineux
+     entoure d'un halo. Le filet descend donc a un blanc bleute a 34 pour
+     cent, et c'est le halo qui fait l'effet, en quatre portees : 4 px serre
+     et vif, 11 et 22 px de plus en plus larges et faibles, plus une lueur
+     interieure qui fait respirer le disque. La couleur vient de la charte,
+     le royal `#5693fe` eclairci. */
   .pastille{margin-top:-30px;padding:12px;border-radius:9999px;
             background:#000;position:relative;z-index:10;display:flex;
-            border:1px solid rgb(255 255 255 / .42);
-            box-shadow:0 6px 20px rgb(0 0 0 / .95),
+            border:1px solid rgb(178 210 255 / .34);
+            box-shadow:0 0 4px rgb(126 174 255 / .55),
+                       0 0 11px rgb(86 147 254 / .34),
+                       0 0 22px rgb(70 120 220 / .20),
+                       inset 0 0 7px rgb(126 174 255 / .22),
+                       0 6px 20px rgb(0 0 0 / .95),
                        0 20px 52px rgb(0 0 0 / .9),
                        0 0 60px rgb(0 0 0 / .85)}
   .pastille::after{content:"";position:absolute;inset:0;border-radius:inherit;
