@@ -19,8 +19,8 @@
      `p`. Meme emplacement, meme ordre ; seules la taille et la police
      changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:flex-end;padding:0 76px 84px;pointer-events:none}
-  .inner{position:relative;width:53rem;max-width:53rem;text-align:left;
+         align-items:center;padding:0 76px;pointer-events:none}
+  .inner{position:relative;width:40rem;max-width:40rem;text-align:left;
          pointer-events:auto}
   .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
                  z-index:-1;
@@ -64,46 +64,31 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── La scene, en cercles VRAIS et plus contrastee ────────────────────
-     Trois corrections :
-       . les couronnes etaient des `div` en `border-radius: 9999px` de 1500
-         px de haut et d'une largeur en pourcentage : des ELLIPSES. Elles
-         sont tracees en SVG, en cercles de rayon fixe, centres sous le bas
-         du cadre. Le motif des pointilles reprend celui du navigateur, deux
-         pixels de trait pour deux de vide, mesure sur le composant ;
-       . seize couronnes et soixante-dix points au lieu de douze et quarante ;
-       . le contraste : le trait passe de `rgb(64 64 64 / .8)` a `rgb(96 96
-         96 / .95)`, les carres de `#404040` a `#6e6e6e`, et le balayage de
-         30 a 38 pour cent de blanc. Sur un fond noir de projection, les
-         valeurs du composant, prevues pour une carte de 350 px, etaient
-         trop basses une fois etalees. */
-  #radar{position:absolute;inset:0;z-index:2;overflow:hidden;
-         pointer-events:none}
-  #radar .champ{position:absolute;left:0;bottom:0;width:100%;height:100%}
-  #radar .haut{position:relative;height:100%;width:100%}
-  .faisceau{position:absolute;bottom:36px;left:640px;width:1240px;
-    height:1240px;transform-origin:bottom left;pointer-events:none;
+  /* ── Le radar, au milieu et en cercles complets ───────────────────────
+     Plutot qu'une portion geante ancree au bas du cadre, la scene devient un
+     radar entier, pose au centre droit de la slide : des couronnes fermees,
+     un balayage qui fait le tour, la cible qui saute de point en point. Les
+     valeurs du composant sont conservees, seules la composition et la course
+     du balayage changent, puisqu'un cercle complet appelle un tour complet.
+     Le trace est en SVG, dans une boite carree a taille fixe, donc les
+     cercles restent ronds. */
+  #radar{position:absolute;right:72px;top:50%;width:540px;height:540px;
+         transform:translateY(-50%);z-index:2;pointer-events:none}
+  #radar .champ,#radar .haut{position:absolute;inset:0}
+  .faisceau{position:absolute;top:50%;left:50%;width:270px;height:270px;
+    transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       var(--faisceau) 5%, transparent 60%);
-    animation:balayage 18s ease-in-out infinite}
-  @keyframes balayage{
-    0%{opacity:.7;transform:rotate(-55deg)}
-    11%{opacity:1;transform:rotate(-40deg)}
-    22%{opacity:.7;transform:rotate(-50deg)}
-    33%{opacity:1;transform:rotate(-45deg)}
-    44%{opacity:.7;transform:rotate(-55deg)}
-    55%{opacity:1;transform:rotate(-50deg)}
-    66%{opacity:.7;transform:rotate(-45deg)}
-    77%{opacity:1;transform:rotate(-50deg)}
-    88%{opacity:.7;transform:rotate(-45deg)}
-    100%{opacity:.7;transform:rotate(-55deg)}}
-  /* Boite a taille fixe : une unite SVG vaut un pixel, les cercles restent
-     ronds. `preserveAspectRatio` par defaut, jamais `none`. */
-  #trace{position:absolute;left:50%;bottom:0;width:1280px;height:720px;
-         transform:translateX(-50%);overflow:visible}
+    animation:balayage 12s linear infinite}
+  /* Un cercle complet appelle un tour complet : le balayage tourne sans
+     rebrousser chemin, la ou le composant oscillait entre -55 et -40 degres
+     parce qu'il ne montrait qu'un quart de disque. */
+  @keyframes balayage{from{transform:rotate(0deg)}
+                      to{transform:rotate(360deg)}}
+  #trace{position:absolute;inset:0;width:540px;height:540px;overflow:visible}
   #trace circle{fill:none;stroke:var(--trait);stroke-width:1;
                 stroke-dasharray:2 2}
-  #trace circle.socle{stroke:#3a3a3a;stroke-dasharray:none}
+  #trace circle.socle{stroke:#262626;stroke-dasharray:none}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
@@ -145,10 +130,10 @@
 <div id="radar">
   <div class="champ"><div class="haut">
     <div class="faisceau"></div>
-    <svg id="trace" width="1280" height="720" viewBox="0 0 1280 720">
-      <g transform="translate(640,700)"><circle r="1180"/><circle r="1110"/><circle r="1040"/><circle r="970"/><circle r="900"/><circle r="830"/><circle r="760"/><circle r="690"/><circle r="620"/><circle r="550"/><circle r="480"/><circle r="410"/><circle r="340"/><circle r="270"/><circle r="200"/><circle r="130"/><circle class="socle" r="96"/></g>
+    <svg id="trace" width="540" height="540" viewBox="0 0 540 540">
+      <g transform="translate(270,270)"><circle r="264"/><circle r="236"/><circle r="208"/><circle r="180"/><circle r="152"/><circle r="124"/><circle r="96"/><circle r="68"/><circle class="socle" r="26"/></g>
     </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="658" y="155" width="5" height="5" rx="1" ry="1"/><rect x="393" y="296" width="5" height="5" rx="1" ry="1"/><rect x="880" y="575" width="5" height="5" rx="1" ry="1"/><rect x="582" y="507" width="5" height="5" rx="1" ry="1"/><rect x="1025" y="410" width="5" height="5" rx="1" ry="1"/><rect x="440" y="529" width="5" height="5" rx="1" ry="1"/><rect x="1076" y="257" width="5" height="5" rx="1" ry="1"/><rect x="640" y="78" width="5" height="5" rx="1" ry="1"/><rect x="484" y="481" width="5" height="5" rx="1" ry="1"/><rect x="505" y="462" width="5" height="5" rx="1" ry="1"/><rect x="40" y="542" width="5" height="5" rx="1" ry="1"/><rect x="919" y="508" width="5" height="5" rx="1" ry="1"/><rect x="757" y="654" width="5" height="5" rx="1" ry="1"/><rect x="834" y="655" width="5" height="5" rx="1" ry="1"/><rect x="308" y="256" width="5" height="5" rx="1" ry="1"/><rect x="379" y="643" width="5" height="5" rx="1" ry="1"/><rect x="30" y="573" width="5" height="5" rx="1" ry="1"/><rect x="222" y="343" width="5" height="5" rx="1" ry="1"/><rect x="510" y="313" width="5" height="5" rx="1" ry="1"/><rect x="1040" y="437" width="5" height="5" rx="1" ry="1"/><rect x="362" y="517" width="5" height="5" rx="1" ry="1"/><rect x="700" y="444" width="5" height="5" rx="1" ry="1"/><rect x="420" y="128" width="5" height="5" rx="1" ry="1"/><rect x="318" y="437" width="5" height="5" rx="1" ry="1"/><rect x="360" y="405" width="5" height="5" rx="1" ry="1"/><rect x="131" y="339" width="5" height="5" rx="1" ry="1"/><rect x="470" y="174" width="5" height="5" rx="1" ry="1"/><rect x="652" y="366" width="5" height="5" rx="1" ry="1"/><rect x="1011" y="123" width="5" height="5" rx="1" ry="1"/><rect x="1263" y="406" width="5" height="5" rx="1" ry="1"/><rect x="625" y="436" width="5" height="5" rx="1" ry="1"/><rect x="885" y="595" width="5" height="5" rx="1" ry="1"/><rect x="123" y="501" width="5" height="5" rx="1" ry="1"/><rect x="681" y="225" width="5" height="5" rx="1" ry="1"/><rect x="298" y="485" width="5" height="5" rx="1" ry="1"/><rect x="1021" y="544" width="5" height="5" rx="1" ry="1"/><rect x="711" y="521" width="5" height="5" rx="1" ry="1"/><rect x="253" y="543" width="5" height="5" rx="1" ry="1"/><rect x="1020" y="534" width="5" height="5" rx="1" ry="1"/><rect x="577" y="431" width="5" height="5" rx="1" ry="1"/><rect x="667" y="567" width="5" height="5" rx="1" ry="1"/><rect x="740" y="456" width="5" height="5" rx="1" ry="1"/><rect x="1054" y="141" width="5" height="5" rx="1" ry="1"/><rect x="651" y="430" width="5" height="5" rx="1" ry="1"/></svg>
+    <svg class="grille" width="100%" height="100%"><rect x="321" y="95" width="5" height="5" rx="1" ry="1"/><rect x="281" y="200" width="5" height="5" rx="1" ry="1"/><rect x="394" y="181" width="5" height="5" rx="1" ry="1"/><rect x="334" y="200" width="5" height="5" rx="1" ry="1"/><rect x="59" y="164" width="5" height="5" rx="1" ry="1"/><rect x="211" y="308" width="5" height="5" rx="1" ry="1"/><rect x="283" y="143" width="5" height="5" rx="1" ry="1"/><rect x="383" y="325" width="5" height="5" rx="1" ry="1"/><rect x="531" y="273" width="5" height="5" rx="1" ry="1"/><rect x="284" y="334" width="5" height="5" rx="1" ry="1"/><rect x="239" y="393" width="5" height="5" rx="1" ry="1"/><rect x="203" y="133" width="5" height="5" rx="1" ry="1"/><rect x="417" y="241" width="5" height="5" rx="1" ry="1"/><rect x="392" y="174" width="5" height="5" rx="1" ry="1"/><rect x="118" y="360" width="5" height="5" rx="1" ry="1"/><rect x="210" y="376" width="5" height="5" rx="1" ry="1"/><rect x="252" y="204" width="5" height="5" rx="1" ry="1"/><rect x="309" y="184" width="5" height="5" rx="1" ry="1"/><rect x="376" y="514" width="5" height="5" rx="1" ry="1"/><rect x="519" y="363" width="5" height="5" rx="1" ry="1"/><rect x="225" y="326" width="5" height="5" rx="1" ry="1"/><rect x="325" y="44" width="5" height="5" rx="1" ry="1"/><rect x="382" y="96" width="5" height="5" rx="1" ry="1"/><rect x="379" y="506" width="5" height="5" rx="1" ry="1"/><rect x="274" y="419" width="5" height="5" rx="1" ry="1"/><rect x="109" y="478" width="5" height="5" rx="1" ry="1"/><rect x="412" y="384" width="5" height="5" rx="1" ry="1"/><rect x="475" y="318" width="5" height="5" rx="1" ry="1"/><rect x="177" y="262" width="5" height="5" rx="1" ry="1"/><rect x="157" y="448" width="5" height="5" rx="1" ry="1"/><rect x="231" y="356" width="5" height="5" rx="1" ry="1"/><rect x="182" y="180" width="5" height="5" rx="1" ry="1"/><rect x="367" y="426" width="5" height="5" rx="1" ry="1"/><rect x="218" y="232" width="5" height="5" rx="1" ry="1"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
   </div></div>
 </div>
@@ -209,7 +194,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[155, 658], [296, 393], [575, 880], [507, 582], [410, 1025], [529, 440], [257, 1076], [78, 640], [481, 484], [462, 505], [542, 40], [508, 919], [654, 757], [655, 834], [256, 308], [643, 379], [573, 30], [343, 222], [313, 510], [437, 1040], [517, 362], [444, 700], [128, 420], [437, 318], [405, 360], [339, 131], [174, 470], [366, 652], [123, 1011], [406, 1263], [436, 625], [595, 885], [501, 123], [225, 681], [485, 298], [544, 1021], [521, 711], [543, 253], [534, 1020], [431, 577], [567, 667], [456, 740], [141, 1054], [430, 651]];
+const POINTS = [[95, 321], [200, 281], [181, 394], [200, 334], [164, 59], [308, 211], [143, 283], [325, 383], [273, 531], [334, 284], [393, 239], [133, 203], [241, 417], [174, 392], [360, 118], [376, 210], [204, 252], [184, 309], [514, 376], [363, 519], [326, 225], [44, 325], [96, 382], [506, 379], [419, 274], [478, 109], [384, 412], [318, 475], [262, 177], [448, 157], [356, 231], [180, 182], [426, 367], [232, 218]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
