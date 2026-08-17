@@ -30,6 +30,8 @@
   .par{margin:0;color:#fff;font-weight:300;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
+  /* une fois la sequence finie, le paragraphe sort de la scene 3D */
+  .par.fini{perspective:none}
   .par.corps{font-size:1.66rem;line-height:1.62;letter-spacing:.016em;
              color:#fff;margin:0;max-width:none}
   /* Les trois mots-cles en neon, dans la couleur du fond : la scene bloim
@@ -71,6 +73,8 @@
   .par{margin:0;color:#fff;font-weight:300;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
+  /* une fois la sequence finie, le paragraphe sort de la scene 3D */
+  .par.fini{perspective:none}
   .par.corps{font-size:1.66rem;line-height:1.62;letter-spacing:.016em;
              color:#fff;margin:0;max-width:none}
   /* Les trois mots-cles en neon, dans la couleur du fond : la scene bloim
@@ -212,15 +216,23 @@ function jouerTexte() {
     });
   }, 200));
   const fin = Math.max(...MOTS.map(w => w.r + w.d));
+  // A la pose, on retire TOUT ce qui maintient un calque composite : un
+  // `blur(0px)`, un `will-change` ou une scene 3D suffisent a faire
+  // rasteriser le mot a sa taille puis a le remettre a l'echelle, et c'est
+  // ce qui ramollissait le texte.
   setTimeout(() => spans.forEach(e => {
     e.style.filter = '';
     e.style.transform = '';
+    e.style.willChange = 'auto';
     e.classList.add('pose');
+    e.parentElement.classList.add('fini');
     // l'ombre reste apres la pose : c'est elle qui tient la lisibilite sur
     // un fond anime, maintenant qu'il n'y a plus de bloc derriere
     e.style.textShadow = '0 2px 8px rgba(255,255,255,.08), ' + NOIR;
   }), (fin + 0.3) * 1000);
-  setTimeout(jouerTexte, (fin + 1) * 1000 + 4000);
+  // Pas de rejeu en boucle : avec cinquante-cinq mots, le cycle repartait
+  // toutes les douze secondes et le texte passait le plus clair de son temps
+  // dans le flou. Il ne se rejoue qu'au retour sur la slide, via `ouvrir`.
 }
 jouerTexte();
 
