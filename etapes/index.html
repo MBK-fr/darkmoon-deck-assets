@@ -262,6 +262,103 @@
   #cote .bas i{font-style:normal;display:block;color:#fff;font-weight:600}
   #cote .bas em{font-style:normal;display:block;font-size:11px;
                 color:rgb(255 255 255 / .45)}
+  /* ── Les trois ecrans du produit, l'un apres l'autre ─────────────────
+     Le chassis ne bouge pas : seule la zone de contenu change. Les ecrans
+     sont superposes et se croisent en fondu. */
+  #app{height:880px}
+  #contenu{position:relative;padding:0}
+  .ecran{position:absolute;inset:0;padding:20px 24px 34px;overflow:hidden;
+         display:flex;flex-direction:column;opacity:0;
+         transition:opacity .75s ease}
+  .ecran.vu{opacity:1}
+  #ecran-dash h1{margin:0 0 14px}
+
+  /* ── L'ecran `infra` ─────────────────────────────────────────────────
+     En-tete, barre de compteurs et graphe, repris de `infra.html`. */
+  .infra-header{display:flex;align-items:center;gap:18px;margin-bottom:14px}
+  .infra-back{display:flex;align-items:center;gap:7px;background:none;
+              border:0;padding:0;font:inherit;font-size:12px;color:#9ca3af}
+  .infra-title{display:flex;align-items:center;gap:12px}
+  .infra-title-icon{display:flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;color:#fff;flex:none;
+    background:rgb(255 255 255 / .05);
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08)}
+  .infra-h1{margin:0;font-family:'Space Mono',ui-monospace,monospace;
+            font-size:19px;text-transform:uppercase;color:#fff}
+  .infra-sub{margin:2px 0 0;font-size:11.5px;color:#9ca3af}
+  .infra-actions{margin-left:auto}
+  .infra-action-btn{display:flex;align-items:center;gap:7px;font:inherit;
+    font-size:12px;color:#d4d4d8;background:rgb(255 255 255 / .04);
+    border:0;padding:7px 12px;border-radius:8px;
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08)}
+  .infra-stats{display:flex;align-items:center;gap:16px;padding:10px 16px;
+    border-radius:10px;background:#131313;margin-bottom:12px;
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .07)}
+  .infra-stat{display:flex;flex-direction:column;gap:1px}
+  .infra-stat-val{font-size:17px;font-weight:600;color:#fff;
+                  font-variant-numeric:tabular-nums}
+  .infra-stat-lbl{font-size:10px;letter-spacing:.06em;color:#9ca3af;
+                  text-transform:capitalize}
+  .infra-stat-sep{width:1px;height:24px;background:rgb(255 255 255 / .1);
+                  flex:none}
+  .infra-graph-wrap{position:relative;flex:1;min-height:0;border-radius:10px;
+    background:#000;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .07);
+    overflow:hidden}
+  #ig{position:absolute;inset:10px;width:calc(100% - 20px);
+      height:calc(100% - 20px)}
+  .ig-n{opacity:0;transition:opacity .55s ease}
+  .ig-n.vu{opacity:1}
+  .ig-legend{position:absolute;left:12px;bottom:12px;padding:9px 11px;
+    border-radius:9px;background:rgb(0 0 0 / .72);z-index:2;
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .09)}
+  .ig-legend-title{margin:0 0 6px;font-size:9.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:rgb(255 255 255 / .45)}
+  .ig-legend-row{display:flex;align-items:center;gap:7px;padding:1px 0}
+  .ig-sev-pip{width:7px;height:7px;border-radius:9999px;flex:none}
+  .ig-legend-name{font-size:10.5px;color:#d4d4d8;text-transform:capitalize}
+
+  /* ── L'ecran `report` ────────────────────────────────────────────────
+     Le markdown du pentest, avec la feuille `report.scss` du produit. */
+  .rap-tete{display:flex;align-items:center;justify-content:space-between;
+            margin-bottom:16px}
+  .rap-gauche{display:flex;align-items:center;gap:12px}
+  .rap-gauche h1{margin:0;font-family:'Space Mono',ui-monospace,monospace;
+                 font-size:22px;text-transform:uppercase;color:#fff}
+  .dm-icon-btn{display:flex;align-items:center;justify-content:center;
+    width:32px;height:32px;border-radius:8px;color:#9ca3af;flex:none;
+    background:rgb(255 255 255 / .04);
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08)}
+  .rap-id{font-size:12px;color:#6b7280;
+          font-family:'Space Mono',ui-monospace,monospace}
+  .rap-actions{display:flex;align-items:center;gap:8px}
+  .dm-btn{display:flex;align-items:center;gap:7px;font:inherit;font-size:12px;
+          border:0;padding:8px 13px;border-radius:8px}
+  .dm-btn-ghost{color:#d4d4d8;background:rgb(255 255 255 / .04);
+                box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08)}
+  .dm-btn-primary{color:#fff;background:#4f46e5}
+  .report-body{flex:1;min-height:0;overflow:hidden;border-radius:12px;
+    background:#131313;padding:22px 26px;color:#d1d5db;font-size:13px;
+    line-height:1.62;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .07)}
+  #contenu .report-body h1{margin:0 0 14px;padding-bottom:10px;font-size:21px;
+    font-weight:700;color:#fff;border-bottom:1px solid rgb(255 255 255 / .1);
+    font-family:inherit;text-transform:none}
+  #contenu .report-body h2{margin:0 0 14px;padding-bottom:8px;font-size:17px;
+    font-weight:700;color:#fff;border-bottom:1px solid rgb(255 255 255 / .06);
+    font-family:inherit;text-transform:none}
+  #contenu .report-body h3{margin:16px 0 8px;font-size:14.5px;font-weight:600;
+    color:#fff;font-family:inherit;text-transform:none}
+  .report-body p{margin:9px 0}
+  .report-body strong{color:#fff}
+  .report-body code{border-radius:4px;background:rgb(255 255 255 / .1);
+    padding:1px 5px;font-size:11.5px;color:#34d399;
+    font-family:'Space Mono',ui-monospace,monospace}
+  .report-body table{width:100%;border-collapse:collapse;font-size:12px;
+                     margin-top:14px}
+  .report-body thead tr{border-bottom:1px solid rgb(255 255 255 / .2)}
+  .report-body th{padding:8px 10px;text-align:left;font-weight:600;
+    color:#e5e7eb;background:rgb(255 255 255 / .04);white-space:nowrap}
+  .report-body tbody tr{border-bottom:1px solid rgb(255 255 255 / .05)}
+  .report-body td{padding:8px 10px;color:#9ca3af;vertical-align:top}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
@@ -315,7 +412,27 @@
       <div class="bas"><span>MB</span>
         <div><i>Mehdi Boutayeb</i><em>asc-it.fr</em></div></div>
     </div>
-    <div id="contenu">
+    <div id="contenu"><div class="ecran" id="ecran-infra">
+      <div class="infra-header">
+        <button class="infra-back"><svg   class="lucide lucide-arrow-left"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m12 19-7-7 7-7" />   <path d="M19 12H5" /> </svg>
+          <span>Back to campaign</span></button>
+        <div class="infra-title">
+          <div class="infra-title-icon"><svg   class="lucide lucide-network"   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect x="16" y="16" width="6" height="6" rx="1" />   <rect x="2" y="16" width="6" height="6" rx="1" />   <rect x="9" y="2" width="6" height="6" rx="1" />   <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />   <path d="M12 12V8" /> </svg></div>
+          <div><h1 class="infra-h1">Infrastructure Map</h1>
+            <p class="infra-sub">Campaign &middot; camp_20260426_3d2&hellip;
+              &middot; 26 Apr 2026</p></div>
+        </div>
+        <div class="infra-actions">
+          <button class="infra-action-btn"><svg   class="lucide lucide-refresh-cw"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />   <path d="M21 3v5h-5" />   <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />   <path d="M8 16H3v5" /> </svg>
+            Refresh</button>
+        </div>
+      </div>
+      <div class="infra-stats"><div class="infra-stat"><span class="infra-stat-val" style="color:#fff">17</span><span class="infra-stat-lbl">Nodes</span></div><div class="infra-stat-sep"></div><div class="infra-stat"><span class="infra-stat-val" style="color:#fff">14</span><span class="infra-stat-lbl">Connections</span></div><div class="infra-stat-sep"></div><div class="infra-stat"><span class="infra-stat-val" style="color:#ef4444">57</span><span class="infra-stat-lbl">Vulnerabilities</span></div><div class="infra-stat-sep"></div><div class="infra-stat"><span class="infra-stat-val" style="color:#ef4444">8</span><span class="infra-stat-lbl">critical</span></div><div class="infra-stat-sep"></div><div class="infra-stat"><span class="infra-stat-val" style="color:#f97316">24</span><span class="infra-stat-lbl">high</span></div><div class="infra-stat-sep"></div><div class="infra-stat"><span class="infra-stat-val" style="color:#eab308">21</span><span class="infra-stat-lbl">medium</span></div><div class="infra-stat-sep"></div><div class="infra-stat"><span class="infra-stat-val" style="color:#22c55e">4</span><span class="infra-stat-lbl">low</span></div></div>
+      <div class="infra-graph-wrap"><svg id="ig" viewBox="-30 -22 1110 516" preserveAspectRatio="xMidYMid meet"><defs><marker id="fl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="rgba(255,255,255,0.42)"/></marker></defs><path d="M 525.0 60.0 L 525.0 83.0 Q 525.0 95.0 513.0 95.0 L 427.0 95.0 Q 415.0 95.0 415.0 107.0 L 415.0 130.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 60.0 L 525.0 130.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 415.0 190.0 L 415.0 213.0 Q 415.0 225.0 427.0 225.0 L 513.0 225.0 Q 525.0 225.0 525.0 237.0 L 525.0 260.0" fill="none" stroke="rgba(120,130,255,0.85)" stroke-width="2" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 513.0 355.0 L 42.0 355.0 Q 30.0 355.0 30.0 367.0 L 30.0 390.0" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 513.0 355.0 L 152.0 355.0 Q 140.0 355.0 140.0 367.0 L 140.0 390.0" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 635.0 60.0 L 635.0 130.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 513.0 355.0 L 262.0 355.0 Q 250.0 355.0 250.0 367.0 L 250.0 390.0" fill="none" stroke="rgba(120,130,255,0.85)" stroke-width="2" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 513.0 355.0 L 372.0 355.0 Q 360.0 355.0 360.0 367.0 L 360.0 390.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 513.0 355.0 L 482.0 355.0 Q 470.0 355.0 470.0 367.0 L 470.0 390.0" fill="none" stroke="rgba(120,130,255,0.85)" stroke-width="2" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 537.0 355.0 L 568.0 355.0 Q 580.0 355.0 580.0 367.0 L 580.0 390.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 537.0 355.0 L 678.0 355.0 Q 690.0 355.0 690.0 367.0 L 690.0 390.0" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 537.0 355.0 L 788.0 355.0 Q 800.0 355.0 800.0 367.0 L 800.0 390.0" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 537.0 355.0 L 898.0 355.0 Q 910.0 355.0 910.0 367.0 L 910.0 390.0" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="1.5" marker-end="url(#fl)"/><path d="M 525.0 320.0 L 525.0 343.0 Q 525.0 355.0 537.0 355.0 L 1008.0 355.0 Q 1020.0 355.0 1020.0 367.0 L 1020.0 390.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" marker-end="url(#fl)"/><g class="ig-n" data-k="0"><rect x="385.0" y="0" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="415" y="37" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">🎯</text><text x="415" y="75" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">172.19.0.3…</text></g><g class="ig-n" data-k="1"><rect x="495.0" y="0" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="525" y="37" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">🖥</text><text x="525" y="75" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">172.19.0.3…</text></g><g class="ig-n" data-k="2"><rect x="605.0" y="0" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="635" y="37" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">🖥</text><text x="635" y="75" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Juice Shop Host…</text></g><g class="ig-n" data-k="3"><rect x="385.0" y="130" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="415" y="167" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">⚙</text><text x="415" y="205" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Nginx (HTTP)…</text></g><g class="ig-n" data-k="4"><rect x="495.0" y="130" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="525" y="167" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">⚙</text><text x="525" y="205" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Nginx (HTTPS)…</text></g><g class="ig-n" data-k="5"><rect x="605.0" y="130" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="635" y="167" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">⚙</text><text x="635" y="205" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Nginx Reverse…</text></g><g class="ig-n" data-k="6"><rect x="495.0" y="260" width="60" height="60" rx="14" fill="#000000" stroke="#F44336" stroke-width="2"/><text x="525" y="297" font-size="20" text-anchor="middle" fill="#F44336">🌍</text><text x="525" y="335" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">OWASP Juice S…</text><g><rect x="540.5" y="251" width="29" height="18" rx="9" fill="#F44336"/><text x="555.0" y="264" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">31</text></g></g><g class="ig-n" data-k="7"><rect x="0.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="30" y="427" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">◎</text><text x="30" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Swagger UI…</text></g><g class="ig-n" data-k="8"><rect x="110.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="#FF7043" stroke-width="2"/><text x="140" y="427" font-size="20" text-anchor="middle" fill="#FF7043">◎</text><text x="140" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Application C…</text><g><rect x="159.0" y="381" width="22" height="18" rx="9" fill="#FF7043"/><text x="170.0" y="394" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">1</text></g></g><g class="ig-n" data-k="9"><rect x="220.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="250" y="427" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">🌍</text><text x="250" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Angular SPA F…</text></g><g class="ig-n" data-k="10"><rect x="330.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="360" y="427" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">⚙</text><text x="360" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">SQLite Datab…</text></g><g class="ig-n" data-k="11"><rect x="440.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="470" y="427" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">🌍</text><text x="470" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">NeDB (MongoD…</text></g><g class="ig-n" data-k="12"><rect x="550.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="580" y="427" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">⚙</text><text x="580" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Socket.IO (We…</text></g><g class="ig-n" data-k="13"><rect x="660.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="#FF7043" stroke-width="2"/><text x="690" y="427" font-size="20" text-anchor="middle" fill="#FF7043">◎</text><text x="690" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">FTP Directory…</text><g><rect x="709.0" y="381" width="22" height="18" rx="9" fill="#FF7043"/><text x="720.0" y="394" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">1</text></g></g><g class="ig-n" data-k="14"><rect x="770.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="#FFB300" stroke-width="2"/><text x="800" y="427" font-size="20" text-anchor="middle" fill="#FFB300">◎</text><text x="800" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Prometheus M…</text><g><rect x="819.0" y="381" width="22" height="18" rx="9" fill="#FFB300"/><text x="830.0" y="394" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">1</text></g></g><g class="ig-n" data-k="15"><rect x="880.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="#FF7043" stroke-width="2"/><text x="910" y="427" font-size="20" text-anchor="middle" fill="#FF7043">◎</text><text x="910" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">JWT Public Ke…</text><g><rect x="929.0" y="381" width="22" height="18" rx="9" fill="#FF7043"/><text x="940.0" y="394" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">1</text></g></g><g class="ig-n" data-k="16"><rect x="990.0" y="390" width="60" height="60" rx="14" fill="#000000" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="1020" y="427" font-size="20" text-anchor="middle" fill="rgba(255,255,255,0.55)">⚙</text><text x="1020" y="465" font-size="10" font-weight="500" text-anchor="middle" fill="#D0D5DD">Socket.IO Web…</text></g></svg>
+        <div class="ig-legend"><p class="ig-legend-title">Severity</p>
+          <div class="ig-legend-row"><span class="ig-sev-pip" style="background:#F44336"></span><span class="ig-legend-name">critical</span></div><div class="ig-legend-row"><span class="ig-sev-pip" style="background:#FF7043"></span><span class="ig-legend-name">high</span></div><div class="ig-legend-row"><span class="ig-sev-pip" style="background:#FFB300"></span><span class="ig-legend-name">medium</span></div><div class="ig-legend-row"><span class="ig-sev-pip" style="background:#66BB6A"></span><span class="ig-legend-name">low</span></div><div class="ig-legend-row"><span class="ig-sev-pip" style="background:#42A5F5"></span><span class="ig-legend-name">info</span></div></div>
+      </div>
+    </div><div class="ecran" id="ecran-dash">
       <h1>Dashboard</h1>
       <div class="bloc"><h2>statistics</h2>
         <div class="tuiles"><div class="tuile"><div class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></div><div class="lib">projects</div><div class="val" id="v-projets">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-target"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" />   <circle cx="12" cy="12" r="6" />   <circle cx="12" cy="12" r="2" /> </svg></div><div class="lib">targets</div><div class="val" id="v-cibles">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-layers"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />   <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />   <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg></div><div class="lib">campaigns</div><div class="val" id="v-campagnes">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-search-x"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m13.5 8.5-5 5" />   <path d="m8.5 8.5 5 5" />   <circle cx="11" cy="11" r="8" />   <path d="m21 21-4.3-4.3" /> </svg></div><div class="lib">vulnerabilities</div><div class="val" id="v-vulns">0</div></div></div></div>
@@ -333,7 +450,56 @@
             <th>open vulnerabilities</th><th>last campaign</th></tr></thead>
           <tbody><tr class="vu"><td class="id">tgt_5b1adf</td><td>172.19.0.3</td><td class="pile">OWASP Juice Shop v19.2.1, Node.js / Express 4.22.1, Angular 19, Nginx, SQLite / Sequelize, JWT RS256, Socket.IO</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>57</td><td>Apr 26, 2026</td></tr></tbody>
         </table></div></div>
-    </div>
+    </div><div class="ecran" id="ecran-rapport">
+      <div class="rap-tete">
+        <div class="rap-gauche">
+          <span class="dm-icon-btn"><svg   class="lucide lucide-arrow-left"   xmlns="http://www.w3.org/2000/svg"   width="16"   height="16"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m12 19-7-7 7-7" />   <path d="M19 12H5" /> </svg></span>
+          <h1>Report</h1>
+          <span class="rap-id">camp_20260426_3d2f919b</span>
+        </div>
+        <div class="rap-actions">
+          <button class="dm-btn dm-btn-ghost"><svg   class="lucide lucide-file-text"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />   <path d="M14 2v5a1 1 0 0 0 1 1h5" />   <path d="M10 9H8" />   <path d="M16 13H8" />   <path d="M16 17H8" /> </svg>
+            <span>Markdown</span></button>
+          <button class="dm-btn dm-btn-primary"><svg   class="lucide lucide-download"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12 15V3" />   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />   <path d="m7 10 5 5 5-5" /> </svg>
+            <span>Export PDF</span></button>
+        </div>
+      </div>
+      <div class="report-body">
+        <h1>Vulnerability Assessment Report</h1>
+        <h2>OWASP Juice Shop v19.2.1 &mdash; 172.19.0.3</h2>
+        <p><strong>For:</strong> Executive Leadership / Non-Technical
+          Stakeholders<br><strong>Classification:</strong> Confidential</p>
+        <h3>Overall Security Verdict: CRITICAL &mdash; Immediate Action
+          Required</h3>
+        <p>The web application tested (<strong>OWASP Juice Shop</strong>)
+          presents a <strong>critically insufficient security posture</strong>.
+          The assessment uncovered <strong>57 vulnerabilities</strong>, of
+          which <strong>8 are critical</strong> and <strong>24 are high
+          severity</strong>. In plain terms: an attacker with no special
+          skills could take full control of this application in under 5
+          minutes.</p>
+        <h3>The 3 Most Critical Issues</h3>
+        <p><strong>1. The administrator password is trivially guessable
+          (<code>admin123</code>)</strong><br>Any attacker can log in as the
+          platform administrator without any hacking tools. Once inside, they
+          have full control over all users, orders, and data.</p>
+        <p><strong>2. All user passwords are stored insecurely and are fully
+          readable</strong><br>The application stores passwords using an
+          outdated and easily reversible format (MD5). Anyone who gains even
+          partial access to the database can recover every user's password in
+          seconds.</p>
+        <table><thead><tr><th>Priority</th><th>Action</th>
+          <th>Deadline</th></tr></thead><tbody>
+          <tr><td>Immediate</td><td>Change the administrator password to a
+            strong, unique credential</td><td>Within 24 hours</td></tr>
+          <tr><td>Immediate</td><td>Audit and restrict all API endpoints,
+            enforce authentication on every sensitive route</td>
+            <td>Within 48 hours</td></tr>
+          <tr><td>Urgent</td><td>Replace MD5 password hashing with bcrypt or
+            Argon2 and force a password reset</td><td>Within 1 week</td></tr>
+        </tbody></table>
+      </div>
+    </div></div>
   </div></div>
 <div id="scene">
   <div id="gauche">
@@ -349,8 +515,8 @@ const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 110px rgba(0,0,0,.9)';
 const MOTS = [{"t": "Il", "e": 0, "d": 1.7, "r": 0, "b": 11, "s": 0.92}, {"t": "commence", "e": 0, "d": 1.691, "r": 0.066, "b": 10, "s": 0.928}, {"t": "par", "e": 0, "d": 1.665, "r": 0.123, "b": 14, "s": 0.936}, {"t": "découvrir", "e": 0, "d": 1.624, "r": 0.194, "b": 14, "s": 0.943}, {"t": "votre", "e": 0, "d": 1.572, "r": 0.262, "b": 14, "s": 0.949}, {"t": "environnement,", "e": 0, "d": 1.514, "r": 0.339, "b": 10, "s": 0.954}, {"t": "sans", "e": 0, "d": 1.455, "r": 0.417, "b": 10, "s": 0.957}, {"t": "que", "e": 0, "d": 1.399, "r": 0.48, "b": 14, "s": 0.959}, {"t": "vous", "e": 0, "d": 1.353, "r": 0.557, "b": 14, "s": 0.96}, {"t": "ayez", "e": 0, "d": 1.319, "r": 0.615, "b": 11, "s": 0.959}, {"t": "à", "e": 0, "d": 1.302, "r": 0.705, "b": 14, "s": 0.956}, {"t": "le", "e": 0, "d": 1.303, "r": 0.788, "b": 14, "s": 0.952}, {"t": "lui", "e": 0, "d": 1.321, "r": 0.843, "b": 10, "s": 0.947}, {"t": "décrire", "e": 0, "d": 1.355, "r": 0.929, "b": 10, "s": 0.941}, {"t": ":", "e": 0, "d": 1.402, "r": 0.982, "b": 11, "s": 0.933}, {"t": "ce", "e": 0, "d": 1.458, "r": 1.042, "b": 11, "s": 0.926}, {"t": "qui", "e": 0, "d": 1.517, "r": 1.122, "b": 14, "s": 0.918}, {"t": "tourne,", "e": 0, "d": 1.576, "r": 1.182, "b": 15, "s": 0.91}, {"t": "ce", "e": 0, "d": 1.627, "r": 1.247, "b": 14, "s": 0.902}, {"t": "qui", "e": 0, "d": 1.667, "r": 1.333, "b": 11, "s": 0.896}, {"t": "répond,", "e": 0, "d": 1.692, "r": 1.395, "b": 14, "s": 0.89}, {"t": "ce", "e": 0, "d": 1.7, "r": 1.478, "b": 14, "s": 0.885}, {"t": "qui", "e": 0, "d": 1.69, "r": 1.522, "b": 11, "s": 0.882}, {"t": "est", "e": 0, "d": 1.663, "r": 1.61, "b": 14, "s": 0.88}, {"t": "exposé.", "e": 0, "d": 1.622, "r": 1.677, "b": 12, "s": 0.88}, {"t": "Les", "e": 0, "d": 1.569, "r": 1.749, "b": 13, "s": 0.882}, {"t": "ports,", "e": 0, "d": 1.511, "r": 1.814, "b": 11, "s": 0.885}, {"t": "les", "e": 0, "d": 1.451, "r": 1.902, "b": 15, "s": 0.889}, {"t": "services,", "e": 0, "d": 1.396, "r": 1.971, "b": 10, "s": 0.895}, {"t": "les", "e": 0, "d": 1.35, "r": 2.033, "b": 14, "s": 0.901}, {"t": "versions,", "e": 0, "d": 1.318, "r": 2.1, "b": 12, "s": 0.909}, {"t": "les", "e": 0, "d": 1.302, "r": 2.179, "b": 12, "s": 0.917}, {"t": "points", "e": 0, "d": 1.303, "r": 2.244, "b": 10, "s": 0.925}, {"t": "d'entrée", "e": 0, "d": 1.322, "r": 2.295, "b": 13, "s": 0.932}, {"t": "oubliés.", "e": 0, "d": 1.357, "r": 2.367, "b": 12, "s": 0.94}, {"t": "La", "e": 0, "d": 1.405, "r": 2.436, "b": 13, "s": 0.946}, {"t": "carte", "e": 0, "d": 1.461, "r": 2.517, "b": 15, "s": 0.952}, {"t": "se", "e": 0, "d": 1.521, "r": 2.573, "b": 14, "s": 0.956}, {"t": "dessine", "e": 0, "d": 1.579, "r": 2.663, "b": 12, "s": 0.959}, {"t": "seule,", "e": 0, "d": 1.63, "r": 2.724, "b": 12, "s": 0.96}, {"t": "et", "e": 0, "d": 1.669, "r": 2.804, "b": 14, "s": 0.96}, {"t": "elle", "e": 0, "d": 1.693, "r": 2.882, "b": 10, "s": 0.958}, {"t": "reste", "e": 0, "d": 1.7, "r": 2.954, "b": 12, "s": 0.954}, {"t": "à", "e": 0, "d": 1.689, "r": 3.009, "b": 15, "s": 0.949}, {"t": "jour.", "e": 0, "d": 1.661, "r": 3.063, "b": 15, "s": 0.943}, {"t": "Il", "e": 1, "d": 1.619, "r": 0.008, "b": 15, "s": 0.936}, {"t": "choisit", "e": 1, "d": 1.566, "r": 0.073, "b": 15, "s": 0.929}, {"t": "ensuite", "e": 1, "d": 1.507, "r": 0.153, "b": 12, "s": 0.921}, {"t": "les", "e": 1, "d": 1.448, "r": 0.219, "b": 15, "s": 0.913}, {"t": "bons", "e": 1, "d": 1.393, "r": 0.274, "b": 13, "s": 0.905}, {"t": "outils,", "e": 1, "d": 1.348, "r": 0.344, "b": 14, "s": 0.898}, {"t": "ceux", "e": 1, "d": 1.316, "r": 0.405, "b": 10, "s": 0.892}, {"t": "qui", "e": 1, "d": 1.301, "r": 0.479, "b": 12, "s": 0.887}, {"t": "correspondent", "e": 1, "d": 1.304, "r": 0.545, "b": 11, "s": 0.883}, {"t": "à", "e": 1, "d": 1.324, "r": 0.626, "b": 13, "s": 0.881}, {"t": "ce", "e": 1, "d": 1.36, "r": 0.683, "b": 13, "s": 0.88}, {"t": "qu'il", "e": 1, "d": 1.408, "r": 0.766, "b": 12, "s": 0.881}, {"t": "vient", "e": 1, "d": 1.464, "r": 0.855, "b": 13, "s": 0.883}, {"t": "de", "e": 1, "d": 1.524, "r": 0.925, "b": 12, "s": 0.887}, {"t": "trouver.", "e": 1, "d": 1.582, "r": 0.988, "b": 12, "s": 0.892}, {"t": "Web,", "e": 1, "d": 1.632, "r": 1.057, "b": 13, "s": 0.899}, {"t": "cloud,", "e": 1, "d": 1.671, "r": 1.138, "b": 11, "s": 0.906}, {"t": "Active", "e": 1, "d": 1.694, "r": 1.173, "b": 11, "s": 0.913}, {"t": "Directory,", "e": 1, "d": 1.7, "r": 1.249, "b": 11, "s": 0.921}, {"t": "Kubernetes,", "e": 1, "d": 1.688, "r": 1.31, "b": 14, "s": 0.929}, {"t": "réseau", "e": 1, "d": 1.659, "r": 1.387, "b": 12, "s": 0.937}, {"t": ":", "e": 1, "d": 1.616, "r": 1.45, "b": 13, "s": 0.944}, {"t": "il", "e": 1, "d": 1.563, "r": 1.541, "b": 14, "s": 0.95}, {"t": "active", "e": 1, "d": 1.504, "r": 1.613, "b": 11, "s": 0.954}, {"t": "la", "e": 1, "d": 1.445, "r": 1.688, "b": 14, "s": 0.958}, {"t": "compétence", "e": 1, "d": 1.39, "r": 1.768, "b": 15, "s": 0.96}, {"t": "qui", "e": 1, "d": 1.346, "r": 1.827, "b": 10, "s": 0.96}, {"t": "sert,", "e": 1, "d": 1.315, "r": 1.888, "b": 15, "s": 0.959}, {"t": "au", "e": 1, "d": 1.301, "r": 1.972, "b": 13, "s": 0.956}, {"t": "moment", "e": 1, "d": 1.304, "r": 2.026, "b": 13, "s": 0.952}, {"t": "où", "e": 1, "d": 1.325, "r": 2.084, "b": 15, "s": 0.946}, {"t": "elle", "e": 1, "d": 1.362, "r": 2.166, "b": 11, "s": 0.939}, {"t": "sert,", "e": 1, "d": 1.411, "r": 2.223, "b": 11, "s": 0.932}, {"t": "plutôt", "e": 1, "d": 1.468, "r": 2.308, "b": 10, "s": 0.924}, {"t": "qu'un", "e": 1, "d": 1.528, "r": 2.374, "b": 10, "s": 0.916}, {"t": "catalogue", "e": 1, "d": 1.585, "r": 2.434, "b": 14, "s": 0.908}, {"t": "de", "e": 1, "d": 1.635, "r": 2.506, "b": 10, "s": 0.901}, {"t": "scans", "e": 1, "d": 1.672, "r": 2.608, "b": 14, "s": 0.894}, {"t": "lancés", "e": 1, "d": 1.695, "r": 2.641, "b": 11, "s": 0.889}, {"t": "à", "e": 1, "d": 1.7, "r": 2.735, "b": 11, "s": 0.884}, {"t": "l'aveugle.", "e": 1, "d": 1.687, "r": 2.805, "b": 12, "s": 0.882}, {"t": "Il", "e": 2, "d": 1.657, "r": 0.004, "b": 13, "s": 0.88}, {"t": "teste", "e": 2, "d": 1.614, "r": 0.055, "b": 13, "s": 0.88}, {"t": "et", "e": 2, "d": 1.56, "r": 0.16, "b": 13, "s": 0.882}, {"t": "prouve", "e": 2, "d": 1.501, "r": 0.209, "b": 12, "s": 0.885}, {"t": "chaque", "e": 2, "d": 1.442, "r": 0.263, "b": 10, "s": 0.89}, {"t": "faille,", "e": 2, "d": 1.388, "r": 0.36, "b": 15, "s": 0.896}, {"t": "au", "e": 2, "d": 1.344, "r": 0.411, "b": 15, "s": 0.903}, {"t": "lieu", "e": 2, "d": 1.314, "r": 0.476, "b": 10, "s": 0.91}, {"t": "de", "e": 2, "d": 1.301, "r": 0.548, "b": 14, "s": 0.918}, {"t": "se", "e": 2, "d": 1.305, "r": 0.624, "b": 15, "s": 0.926}, {"t": "contenter", "e": 2, "d": 1.327, "r": 0.702, "b": 10, "s": 0.934}, {"t": "de", "e": 2, "d": 1.364, "r": 0.78, "b": 12, "s": 0.941}, {"t": "la", "e": 2, "d": 1.414, "r": 0.859, "b": 10, "s": 0.947}, {"t": "signaler.", "e": 2, "d": 1.471, "r": 0.918, "b": 12, "s": 0.953}, {"t": "Une", "e": 2, "d": 1.531, "r": 0.981, "b": 11, "s": 0.957}, {"t": "vulnérabilité", "e": 2, "d": 1.588, "r": 1.044, "b": 11, "s": 0.959}, {"t": "n'est", "e": 2, "d": 1.637, "r": 1.121, "b": 14, "s": 0.96}, {"t": "retenue", "e": 2, "d": 1.674, "r": 1.183, "b": 11, "s": 0.959}, {"t": "que", "e": 2, "d": 1.695, "r": 1.265, "b": 11, "s": 0.957}, {"t": "si", "e": 2, "d": 1.699, "r": 1.342, "b": 13, "s": 0.953}, {"t": "elle", "e": 2, "d": 1.685, "r": 1.41, "b": 11, "s": 0.948}, {"t": "a", "e": 2, "d": 1.655, "r": 1.458, "b": 13, "s": 0.942}, {"t": "été", "e": 2, "d": 1.611, "r": 1.534, "b": 10, "s": 0.935}, {"t": "exploitée,", "e": 2, "d": 1.557, "r": 1.63, "b": 12, "s": 0.928}, {"t": "avec", "e": 2, "d": 1.497, "r": 1.679, "b": 11, "s": 0.92}, {"t": "la", "e": 2, "d": 1.438, "r": 1.758, "b": 12, "s": 0.912}, {"t": "requête,", "e": 2, "d": 1.385, "r": 1.818, "b": 15, "s": 0.904}, {"t": "la", "e": 2, "d": 1.342, "r": 1.91, "b": 12, "s": 0.897}, {"t": "réponse", "e": 2, "d": 1.313, "r": 1.943, "b": 10, "s": 0.891}, {"t": "et", "e": 2, "d": 1.3, "r": 2.019, "b": 11, "s": 0.886}, {"t": "la", "e": 2, "d": 1.306, "r": 2.094, "b": 13, "s": 0.883}, {"t": "trace", "e": 2, "d": 1.329, "r": 2.175, "b": 14, "s": 0.881}, {"t": "qui", "e": 2, "d": 1.367, "r": 2.254, "b": 13, "s": 0.88}, {"t": "vont", "e": 2, "d": 1.417, "r": 2.326, "b": 12, "s": 0.881}, {"t": "avec.", "e": 2, "d": 1.474, "r": 2.392, "b": 10, "s": 0.884}, {"t": "Vos", "e": 2, "d": 1.534, "r": 2.463, "b": 10, "s": 0.888}, {"t": "équipes", "e": 2, "d": 1.591, "r": 2.536, "b": 15, "s": 0.893}, {"t": "ne", "e": 2, "d": 1.639, "r": 2.6, "b": 13, "s": 0.9}, {"t": "passent", "e": 2, "d": 1.676, "r": 2.676, "b": 13, "s": 0.907}, {"t": "plus", "e": 2, "d": 1.696, "r": 2.742, "b": 12, "s": 0.915}, {"t": "leurs", "e": 2, "d": 1.699, "r": 2.783, "b": 15, "s": 0.923}, {"t": "journées", "e": 2, "d": 1.684, "r": 2.866, "b": 13, "s": 0.931}, {"t": "à", "e": 2, "d": 1.653, "r": 2.95, "b": 10, "s": 0.938}, {"t": "trier", "e": 2, "d": 1.608, "r": 3.019, "b": 11, "s": 0.945}, {"t": "des", "e": 2, "d": 1.553, "r": 3.1, "b": 10, "s": 0.951}, {"t": "faux", "e": 2, "d": 1.494, "r": 3.136, "b": 13, "s": 0.955}, {"t": "positifs.", "e": 2, "d": 1.435, "r": 3.232, "b": 11, "s": 0.958}, {"t": "Il", "e": 3, "d": 1.382, "r": 0.004, "b": 14, "s": 0.96}, {"t": "restitue", "e": 3, "d": 1.34, "r": 0.089, "b": 15, "s": 0.96}, {"t": "enfin", "e": 3, "d": 1.311, "r": 0.157, "b": 11, "s": 0.958}, {"t": "un", "e": 3, "d": 1.3, "r": 0.212, "b": 11, "s": 0.955}, {"t": "rapport", "e": 3, "d": 1.307, "r": 0.261, "b": 15, "s": 0.951}, {"t": "clair,", "e": 3, "d": 1.33, "r": 0.356, "b": 14, "s": 0.945}, {"t": "lisible", "e": 3, "d": 1.369, "r": 0.43, "b": 11, "s": 0.938}, {"t": "par", "e": 3, "d": 1.42, "r": 0.487, "b": 11, "s": 0.931}, {"t": "vos", "e": 3, "d": 1.478, "r": 0.573, "b": 11, "s": 0.923}, {"t": "équipes", "e": 3, "d": 1.537, "r": 0.611, "b": 11, "s": 0.915}, {"t": "comme", "e": 3, "d": 1.594, "r": 0.692, "b": 11, "s": 0.907}, {"t": "par", "e": 3, "d": 1.642, "r": 0.781, "b": 12, "s": 0.9}, {"t": "vos", "e": 3, "d": 1.677, "r": 0.83, "b": 13, "s": 0.893}, {"t": "auditeurs.", "e": 3, "d": 1.697, "r": 0.923, "b": 10, "s": 0.888}, {"t": "Le", "e": 3, "d": 1.699, "r": 0.996, "b": 12, "s": 0.884}, {"t": "tableau", "e": 3, "d": 1.683, "r": 1.066, "b": 15, "s": 0.881}, {"t": "de", "e": 3, "d": 1.651, "r": 1.123, "b": 14, "s": 0.88}, {"t": "bord", "e": 3, "d": 1.605, "r": 1.187, "b": 14, "s": 0.88}, {"t": "se", "e": 3, "d": 1.55, "r": 1.245, "b": 11, "s": 0.882}, {"t": "remplit,", "e": 3, "d": 1.491, "r": 1.331, "b": 10, "s": 0.886}, {"t": "la", "e": 3, "d": 1.432, "r": 1.415, "b": 11, "s": 0.891}, {"t": "campagne", "e": 3, "d": 1.379, "r": 1.474, "b": 11, "s": 0.897}, {"t": "se", "e": 3, "d": 1.338, "r": 1.527, "b": 13, "s": 0.904}, {"t": "ferme,", "e": 3, "d": 1.31, "r": 1.615, "b": 10, "s": 0.911}, {"t": "les", "e": 3, "d": 1.3, "r": 1.682, "b": 12, "s": 0.919}, {"t": "cibles", "e": 3, "d": 1.308, "r": 1.757, "b": 14, "s": 0.927}, {"t": "à", "e": 3, "d": 1.332, "r": 1.822, "b": 10, "s": 0.935}, {"t": "risque", "e": 3, "d": 1.372, "r": 1.905, "b": 10, "s": 0.942}, {"t": "remontent", "e": 3, "d": 1.423, "r": 1.95, "b": 12, "s": 0.948}, {"t": "en", "e": 3, "d": 1.481, "r": 2.012, "b": 10, "s": 0.953}, {"t": "tête.", "e": 3, "d": 1.541, "r": 2.1, "b": 14, "s": 0.957}, {"t": "Et", "e": 3, "d": 1.597, "r": 2.151, "b": 10, "s": 0.959}, {"t": "tout", "e": 3, "d": 1.644, "r": 2.238, "b": 14, "s": 0.96}, {"t": "cela", "e": 3, "d": 1.679, "r": 2.329, "b": 14, "s": 0.959}, {"t": "tourne", "e": 3, "d": 1.697, "r": 2.38, "b": 15, "s": 0.957}, {"t": "chez", "e": 3, "d": 1.698, "r": 2.441, "b": 14, "s": 0.953}, {"t": "vous,", "e": 3, "d": 1.681, "r": 2.521, "b": 13, "s": 0.947}, {"t": "dans", "e": 3, "d": 1.648, "r": 2.59, "b": 11, "s": 0.941}, {"t": "votre", "e": 3, "d": 1.602, "r": 2.668, "b": 12, "s": 0.934}, {"t": "cloud", "e": 3, "d": 1.547, "r": 2.747, "b": 11, "s": 0.926}, {"t": "ou", "e": 3, "d": 1.487, "r": 2.814, "b": 11, "s": 0.918}, {"t": "en", "e": 3, "d": 1.429, "r": 2.867, "b": 13, "s": 0.91}, {"t": "service", "e": 3, "d": 1.377, "r": 2.938, "b": 10, "s": 0.903}, {"t": "géré,", "e": 3, "d": 1.336, "r": 3.017, "b": 13, "s": 0.896}, {"t": "avec", "e": 3, "d": 1.309, "r": 3.063, "b": 15, "s": 0.89}, {"t": "l'IA", "e": 3, "d": 1.3, "r": 3.142, "b": 10, "s": 0.885}, {"t": "de", "e": 3, "d": 1.309, "r": 3.236, "b": 11, "s": 0.882}, {"t": "votre", "e": 3, "d": 1.334, "r": 3.308, "b": 15, "s": 0.88}, {"t": "choix.", "e": 3, "d": 1.375, "r": 3.366, "b": 11, "s": 0.88}];
 const ETAPES = ["Il commence par découvrir votre environnement, sans que vous ayez à le lui décrire : ce qui tourne, ce qui répond, ce qui est exposé. Les ports, les services, les versions, les points d'entrée oubliés. La carte se dessine seule, et elle reste à jour.", "Il choisit ensuite les bons outils, ceux qui correspondent à ce qu'il vient de trouver. Web, cloud, Active Directory, Kubernetes, réseau : il active la compétence qui sert, au moment où elle sert, plutôt qu'un catalogue de scans lancés à l'aveugle.", "Il teste et prouve chaque faille, au lieu de se contenter de la signaler. Une vulnérabilité n'est retenue que si elle a été exploitée, avec la requête, la réponse et la trace qui vont avec. Vos équipes ne passent plus leurs journées à trier des faux positifs.", "Il restitue enfin un rapport clair, lisible par vos équipes comme par vos auditeurs. Le tableau de bord se remplit, la campagne se ferme, les cibles à risque remontent en tête. Et tout cela tourne chez vous, dans votre cloud ou en service géré, avec l'IA de votre choix."];
-const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "severites": 0, "lignes": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 25, "severites": 0, "lignes": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 57, "severites": 1, "lignes": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "severites": 1, "lignes": 6, "table": true, "statut": "completed"}];
-const DUREE = 8600;                      // un temps dure 8,6 secondes
+const ETATS = [{"ecran": "infra", "projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "severites": 0, "lignes": 1, "table": false, "statut": "running"}, {"ecran": "dash", "projets": 1, "cibles": 1, "campagnes": 1, "vulns": 25, "severites": 0, "lignes": 1, "table": false, "statut": "running"}, {"ecran": "dash", "projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "severites": 1, "lignes": 6, "table": true, "statut": "completed"}, {"ecran": "rapport", "projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "severites": 1, "lignes": 6, "table": true, "statut": "completed"}];
+const DUREE = 6200;                      // un temps dure 6,2 secondes
 
 const zone = document.getElementById('temps');
 
@@ -407,6 +573,18 @@ function compteur(el, cible, duree) {
 
 function poserDash(n) {
   const etat = ETATS[n];
+  // l'ecran du produit qui correspond au temps courant
+  ['infra', 'dash', 'rapport'].forEach(e => {
+    document.getElementById('ecran-' + e)
+            .classList.toggle('vu', e === etat.ecran);
+  });
+  // la carte se dessine noeud par noeud a la decouverte
+  if (etat.ecran === 'infra') {
+    document.querySelectorAll('#ig .ig-n').forEach((g, i) => {
+      g.classList.remove('vu');
+      setTimeout(() => g.classList.add('vu'), 180 + i * 150);
+    });
+  }
   compteur(document.getElementById('v-projets'), etat.projets, 900);
   compteur(document.getElementById('v-cibles'), etat.cibles, 900);
   compteur(document.getElementById('v-campagnes'), etat.campagnes, 1100);
@@ -440,9 +618,8 @@ function poserDash(n) {
 (function ajuster() {
   const app = document.getElementById('app');
   const c = document.getElementById('carte');
-  app.style.transform = 'none';
   const k = 786 / 1280;                  // l'ecran fait 1280 px, la carte 786
-  const h = app.offsetHeight;
+  const h = 880;                         // hauteur fixe : trois ecrans
   // `zoom` et non `scale` : la mise a l'echelle passe par la mise en page,
   // donc le texte est rendu a sa taille reelle et reste net. Un `scale`
   // rasterise l'ecran puis l'etire, et tout devient mou.
