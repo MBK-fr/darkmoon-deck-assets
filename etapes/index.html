@@ -9,16 +9,11 @@
   /* ── La colonne de gauche : le texte, en quatre temps ────────────────── */
   #scene{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
          gap:44px;padding:0 72px;pointer-events:none}
-  #gauche{width:392px;flex:none;pointer-events:auto;height:232px;
-          overflow:hidden;
-          -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 9%,
-                             #000 88%,transparent 100%);
-          mask-image:linear-gradient(to bottom,transparent 0,#000 9%,
-                     #000 88%,transparent 100%)}
+  #gauche{width:392px;flex:none;pointer-events:auto}
   /* le temps courant : un paragraphe, une seule taille, rien d'autre */
   /* Le seul texte de la slide : un paragraphe compact, une seule taille. */
   .temps{margin:0;font-size:1.2rem;font-weight:300;line-height:1.72;
-         letter-spacing:.012em;color:#fff;max-width:26ch;perspective:900px;will-change:transform;
+         letter-spacing:.012em;color:#fff;max-width:26ch;perspective:900px;
          text-shadow:0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95),
                      0 8px 40px rgba(0,0,0,.9)}
   .m{display:inline-block;margin-right:.3em;
@@ -222,32 +217,20 @@
      et non une evocation redessinee. */
   #carte{position:absolute;right:34px;top:50%;width:786px;height:590px;
          transform:translateY(-50%);z-index:2;overflow:hidden;
-         pointer-events:none;background:transparent;border-radius:12px;
+         pointer-events:none;background:#000;border-radius:12px;
          box-shadow:0 60px 160px rgb(0 0 0 / .95), 0 24px 60px rgb(0 0 0 / .9),
                     0 0 70px 26px rgb(0 0 0 / .72)}
   /* Le fondu : plus de filet, plus d'arete. Les bords de l'ecran se
      dissolvent dans le decor sur une vingtaine de pixels, et une ombre
      noire large enfonce la carte dans le fond. */
-  #app{-webkit-mask-image:
-         linear-gradient(to right,transparent 0,#000 22px,
-                         #000 calc(100% - 22px),transparent 100%),
-         linear-gradient(to bottom,transparent 0,#000 22px,
-                         #000 calc(100% - 22px),transparent 100%);
-       -webkit-mask-composite:source-in;mask-composite:intersect;
-       mask-image:
-         linear-gradient(to right,transparent 0,#000 22px,
-                         #000 calc(100% - 22px),transparent 100%),
-         linear-gradient(to bottom,transparent 0,#000 22px,
-                         #000 calc(100% - 22px),transparent 100%)}
-  /* un peu d'air en bas : la derniere ligne ne doit pas tomber dans le
-     fondu du bord */
-  #contenu{padding-bottom:40px}
+  /* Le fondu se fait a l'ombre, pas au masque : un masque force un calque
+     composite, et l'ecran, deja mis a l'echelle, en ressortait mou. */
   #carte::after{content:'';position:absolute;inset:0;z-index:4;
                 border-radius:inherit;pointer-events:none;
-                box-shadow:inset 0 0 66px 14px rgb(0 0 0 / .5)}
+                box-shadow:inset 0 0 90px 26px rgb(0 0 0 / .72),
+                           inset 0 0 30px 6px rgb(0 0 0 / .55)}
   #app{position:absolute;top:0;left:0;right:auto;bottom:auto;width:1280px;
-       height:auto;flex-direction:row;transform:scale(.6047);
-       transform-origin:top left}
+       height:auto;flex-direction:row}
   #barre{display:none}
   /* La barre laterale du produit : au-dessus de 1024 px, son CSS la montre.
      Les regles sont celles de `.anciencote`, telles quelles. */
@@ -370,7 +353,6 @@ const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "severite
 const DUREE = 8600;                      // un temps dure 8,6 secondes
 
 const zone = document.getElementById('temps');
-let defilement = null;
 
 function poserMots(n) {
   zone.textContent = '';
@@ -398,23 +380,6 @@ function poserMots(n) {
       e.style.textShadow = '0 2px 8px rgba(255,255,255,.1), ' + NOIR;
     });
   }, 120));
-  // Le paragraphe est plus long que sa fenetre : il remonte doucement
-  // pendant que les mots arrivent, si bien que la derniere ligne ecrite
-  // reste toujours lisible. C'est le texte qui defile, pas la slide.
-  if (defilement) defilement.cancel();
-  requestAnimationFrame(() => {
-    const trop = zone.scrollHeight - zone.parentNode.clientHeight;
-    if (trop > 4) {
-      defilement = zone.animate(
-        [{ transform: 'translateY(0)' },
-         { transform: 'translateY(0)', offset: .18 },
-         { transform: 'translateY(' + (-trop) + 'px)' }],
-        { duration: DUREE - 900, easing: 'cubic-bezier(.4,0,.5,1)',
-          fill: 'forwards' });
-    } else {
-      zone.style.transform = 'none';
-    }
-  });
   // Une fois pose, on libere le calque composite : un `blur(0px)`, un
   // `will-change` ou une scene 3D suffisent a faire rasteriser le mot puis a
   // le remettre a l'echelle, et c'est ce qui ramollit le texte.
@@ -478,7 +443,10 @@ function poserDash(n) {
   app.style.transform = 'none';
   const k = 786 / 1280;                  // l'ecran fait 1280 px, la carte 786
   const h = app.offsetHeight;
-  app.style.transform = 'scale(' + k + ')';
+  // `zoom` et non `scale` : la mise a l'echelle passe par la mise en page,
+  // donc le texte est rendu a sa taille reelle et reste net. Un `scale`
+  // rasterise l'ecran puis l'etire, et tout devient mou.
+  app.style.zoom = k;
   c.style.height = Math.round(h * k) + 'px';
 })();
 
@@ -524,6 +492,12 @@ function ouvrir() {
         transform: 'translateY(-50%) scale(1)' }],
       { duration: 2000, delay: 260, easing: COURBE, fill: 'backwards' })
   ];
+  // On rend le calque une fois l'ouverture finie : un `filter` anime laisse
+  // l'element rasterise, et l'ecran mis a l'echelle en ressort flou.
+  animations[animations.length - 1].finished.then(() => {
+    carte.style.filter = 'none';
+    carte.style.willChange = 'auto';
+  }).catch(() => {});
   derouler();
 }
 ouvrir();
