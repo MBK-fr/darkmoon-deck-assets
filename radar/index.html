@@ -57,16 +57,69 @@
      donc appelee telle quelle, sans reecriture.
      Un fond de secours en degrade est pose dessous : si le contexte WebGL
      manque, la slide reste tenue au lieu d'etre vide. */
-  #bloim{position:fixed;inset:0;z-index:0}
-  #secours{position:fixed;inset:0;z-index:-1;background:
-    radial-gradient(120% 90% at 22% 18%, rgb(26 36 64 / .55) 0%,
-      rgb(0 0 0 / 0) 60%),
-    radial-gradient(90% 80% at 82% 82%, rgb(44 24 52 / .5) 0%,
-      rgb(0 0 0 / 0) 62%), #000}
+  /* Le bloim est pose SUR le decor etheral des autres slides. Sa scene
+     rend un fond noir opaque : en `screen`, ce noir devient neutre et seule
+     sa lumiere reste, donc les deux se superposent au lieu de s'effacer.
+     Le canvas est force a couvrir toute la boite : c'est son bord, quand il
+     tombe court d'un pixel, qui tracait la ligne droite a faible opacite. */
+  #bloim{position:fixed;inset:0;z-index:1;overflow:hidden;
+         mix-blend-mode:screen}
+  #bloim canvas,#bloim>div{width:100%!important;height:100%!important;
+                           display:block}
+  /* Le secours ne peint plus de noir : il ne fait que deux lueurs, pour que
+     la slide tienne si le WebGL manque, sans masquer le decor etheral. */
+  #secours{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+    radial-gradient(60% 52% at 50% 46%, rgb(64 54 190 / .3) 0%,
+      rgb(0 0 0 / 0) 62%),
+    radial-gradient(40% 34% at 50% 46%, rgb(150 140 255 / .22) 0%,
+      rgb(0 0 0 / 0) 60%)}
 
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
 </style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
 <div id="secours"></div>
 <div id="bloim" data-us-project="9tVO0xGS8DIar1DF4Sqc" data-us-scale="1"
      data-us-dpi="1.5" data-us-fps="60" data-us-production="1"></div>
@@ -146,6 +199,8 @@ function ouvrir() {
       { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
     fond.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2600, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
     ...blocs.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(16px)', filter: 'blur(12px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
