@@ -1,0 +1,558 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<title>Darkmoon, la solution en détail</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+  *{box-sizing:border-box}
+
+  /* ── La colonne de gauche : le texte, en quatre temps ────────────────── */
+  #scene{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
+         gap:44px;padding:0 72px;pointer-events:none}
+  #gauche{width:36%;flex:none;pointer-events:auto}
+  .eyebrow{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;
+           color:rgb(220 234 244 / .55);
+           text-shadow:0 0 12px rgb(0 0 0 / .95)}
+  h1{margin:16px 0 0;font-size:1.62rem;font-weight:300;line-height:1.34;
+     letter-spacing:.008em;color:#fff;
+     text-shadow:0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95),
+                 0 8px 40px rgba(0,0,0,.9)}
+  /* le pas des etapes : le numero, le verbe, le complement */
+  .temps{margin-top:34px;min-height:132px}
+  .num{font-size:11px;letter-spacing:.3em;color:rgb(220 234 244 / .5);
+       font-variant-numeric:tabular-nums}
+  .verbe{margin-top:10px;font-size:2.05rem;font-weight:300;line-height:1.18;
+         letter-spacing:-.004em;color:#fff;perspective:900px}
+  .suite{margin-top:6px;font-size:1.3rem;font-weight:300;line-height:1.35;
+         color:rgb(255 255 255 / .74);perspective:900px}
+  .m{display:inline-block;margin-right:.3em;
+     transition-property:opacity,filter,transform,text-shadow;
+     transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+     will-change:filter,transform,opacity;transform-style:preserve-3d;
+     backface-visibility:hidden}
+  .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
+  /* la reglette des quatre temps */
+  .jalons{margin-top:26px;display:flex;gap:8px;width:220px}
+  .jalon{flex:1;height:2px;background:rgb(255 255 255 / .14);overflow:hidden}
+  .jalon i{display:block;height:100%;width:0;background:rgb(220 234 244 / .9);
+           box-shadow:0 0 10px rgb(150 190 255 / .7)}
+  .jalon.actif i{width:100%;transition:width 4s linear}
+  .jalon.fait i{width:100%}
+  /* les trois promesses, posees sous les temps */
+  .promesses{margin-top:30px;display:flex;flex-direction:column;gap:11px}
+  .promesse .t{font-size:12.5px;color:#fff;letter-spacing:.01em}
+  .promesse .d{margin-top:3px;font-size:11.5px;line-height:1.5;
+               color:rgb(255 255 255 / .55);max-width:42ch}
+  .chapeau{margin-top:28px;font-size:10px;letter-spacing:.32em;
+           text-transform:uppercase;color:rgb(220 234 244 / .5)}
+  .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  #rideau{position:fixed;inset:0;z-index:20;background:#000;
+          pointer-events:none;opacity:0}
+  /* Reglages d'echelle du tableau de bord : il est dessine pour un ecran, la
+     carte fait 632 px. On resserre les gouttieres et les corps, sans toucher
+     ni a sa structure ni a ses couleurs. Ces regles viennent APRES les
+     siennes, donc elles gagnent. */
+  #contenu{padding:16px 18px}
+  #contenu h1{font-size:22px;margin-bottom:10px}
+  #contenu h2{font-size:13px;margin-bottom:8px}
+  .tuiles{gap:9px}
+  .tuile{padding:9px 10px}
+  .tuile .ic{padding:6px}
+  .tuile .ic svg{width:24px;height:24px}
+  .tuile .lib{margin-left:40px;font-size:10.5px}
+  .tuile .val{margin-left:40px;font-size:20px}
+  .bloc{margin-bottom:12px}
+  .table table{font-size:10.5px}
+  .table th{padding:8px 10px}
+  .table td{padding:7px 10px}
+  .badge{font-size:9.5px;padding:2px 7px}
+  /* ── L'application, reproduite d'apres son CSS ────────────────────────
+     Le tableau de bord n'est plus une evocation : c'est la copie de l'ecran
+     de `ASCIT31/darkmoon-demo`, avec sa barre laterale en
+     `bg-[var(--bg-secondary)]` cerclee de `ring-white/10`, ses liens a icone
+     lucide, ses tuiles en `rounded-lg bg-[var(--bg-tertiary)]` avec
+     `inset-ring inset-ring-white/10`, l'icone posee en absolu et le texte
+     decale de `ml-16`, ses titres en Space Mono capitales, sa table
+     `divide-white/15` et ses pastilles `rounded-full px-2 py-1 text-xs`.
+     L'ecran est compose a 1100 x 800, sa taille naturelle, puis mis a
+     l'echelle d'un bloc : les proportions restent celles du produit. */
+  #carte{position:absolute;right:46px;top:50%;width:648px;height:548px;
+         transform:translateY(-50%);z-index:2;border-radius:14px;
+         overflow:hidden;pointer-events:none;background:#000;
+         box-shadow:0 30px 90px rgb(0 0 0 / .9), 0 6px 20px rgb(0 0 0 / .8)}
+  /* L'ecran est rendu a SA TAILLE, sans reduction : reduit de 40 pour cent,
+     le produit devenait une vignette illisible. On prend son palier etroit,
+     celui sous 1024 px, ou sa barre laterale cede la place a une barre du
+     haut — c'est prevu par son propre CSS, `lg:hidden` sur le tiroir et
+     `lg:pl-64` sur le contenu. */
+  #app{position:absolute;inset:0;display:flex;flex-direction:column;
+       background:#000;color:#9ca3af;
+       font-family:ui-sans-serif,system-ui,sans-serif}
+  #barre{display:flex;align-items:center;gap:14px;padding:14px 22px;
+         background:#0a0a0a;color:#9ca3af;
+         box-shadow:inset 0 -1px 0 rgb(255 255 255 / .1)}
+  #barre .logo{display:flex;align-items:center;gap:9px;
+               font-family:'Space Mono',ui-monospace,monospace;font-size:14px;
+               letter-spacing:.16em;color:#fff}
+  #barre .logo b{width:9px;height:9px;background:#fff;border-radius:2px}
+  #barre .qui{margin-left:auto;width:28px;height:28px;border-radius:9999px;
+              background:rgb(255 255 255 / .06);display:flex;
+              align-items:center;justify-content:center;font-size:11px;
+              color:#e5e7eb;
+              box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
+  #cote{display:none}
+  .anciencote{width:216px;flex:none;background:#0a0a0a;padding:0 22px 8px;
+        box-shadow:inset -1px 0 0 rgb(255 255 255 / .1);
+        display:flex;flex-direction:column;gap:18px}
+  #cote .logo{height:64px;display:flex;align-items:center;gap:9px;
+              font-family:'Space Mono',ui-monospace,monospace;font-size:15px;
+              letter-spacing:.16em;color:#fff}
+  #cote .logo b{width:9px;height:9px;background:#fff;border-radius:2px}
+  #cote nav{display:flex;flex-direction:column;gap:4px;margin:0 -8px}
+  #cote a{display:flex;align-items:center;gap:12px;padding:8px;
+          border-radius:6px;font-size:13px;font-weight:600;color:#9ca3af;
+          text-transform:capitalize}
+  #cote a.actif{background:rgb(255 255 255 / .05);color:#fff}
+  #cote .titre{margin-top:14px;font-size:11px;font-weight:600;color:#9ca3af}
+  #cote .projet{display:flex;align-items:center;gap:12px;padding:8px;
+                font-size:13px;font-weight:600;color:#9ca3af}
+  #cote .projet span{width:24px;height:24px;border-radius:8px;
+    border:1px solid rgb(255 255 255 / .1);background:rgb(255 255 255 / .05);
+    display:flex;align-items:center;justify-content:center;font-size:10px;
+    text-transform:uppercase}
+  /* le contenu */
+  #contenu{flex:1;padding:20px 24px;overflow:hidden;min-height:0;
+           display:flex;flex-direction:column}
+  #contenu h1{margin:0 0 14px;font-family:'Space Mono',ui-monospace,monospace;
+              font-size:26px;text-transform:uppercase;color:#fff}
+  #contenu h2{margin:0 0 9px;font-family:'Space Mono',ui-monospace,monospace;
+              font-size:15px;text-transform:uppercase;color:#fff}
+  .bloc{margin-bottom:14px}
+  .bloc.grand{flex:1;display:flex;flex-direction:column;min-height:0}
+  .tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .tuile{position:relative;border-radius:8px;background:#131313;
+         padding:11px 12px;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
+  .tuile .ic{position:absolute;display:flex;align-items:center;
+             justify-content:center;padding:8px;color:#fff}
+  .tuile .lib{margin-left:52px;font-size:12px;font-weight:500;color:#9ca3af;
+              text-transform:capitalize}
+  .tuile .val{margin-left:52px;display:flex;align-items:baseline;
+              font-size:24px;font-weight:600;color:#fff;line-height:1.2;
+              font-variant-numeric:tabular-nums}
+  .tuile .pct{margin-left:7px;font-size:11px;color:#9ca3af;font-weight:400}
+  /* la table des campagnes */
+  .table{border-radius:8px;overflow:hidden;
+         box-shadow:inset 0 0 0 1px rgb(255 255 255 / .15);background:#131313}
+  .table table{width:100%;border-collapse:collapse;font-size:14px}
+  .table th{padding:11px 14px;text-align:left;font-weight:600;color:#e5e7eb;
+            text-transform:capitalize;
+            box-shadow:inset 0 -1px 0 rgb(255 255 255 / .15)}
+  .table td{padding:10px 14px;color:#9ca3af;white-space:nowrap;
+            box-shadow:inset 0 1px 0 rgb(255 255 255 / .1)}
+  .table td.id{color:#fff}
+  .table tbody tr{opacity:0;transform:translateY(6px);
+                  transition:opacity .7s ease,transform .7s ease}
+  .table tbody tr.vu{opacity:1;transform:none}
+  .badge{display:inline-flex;align-items:center;gap:6px;border-radius:9999px;
+         padding:4px 8px;font-size:12px;font-weight:500;color:#e5e7eb;
+         box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);
+         text-transform:uppercase}
+  .badge b{width:6px;height:6px;border-radius:9999px}
+  /* la vignette du scan, dans le meme habillage que les tuiles */
+  /* Le scan est l'element PRINCIPAL de l'ecran : il prend la hauteur, et son
+     fond est le noir de l'application, `--bg-primary`, pas le gris des
+     tuiles. Le reste du chassis ne change pas : meme rayon, meme
+     `inset-ring` blanc a 10 pour cent que les autres cartes. */
+  .scan{position:relative;border-radius:8px;background:#000;
+        box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);flex:1;min-height:0;
+        overflow:hidden}
+  .scan .lib{position:absolute;top:12px;left:16px;z-index:2;font-size:14px;
+             font-weight:500;color:#9ca3af;text-transform:capitalize}
+  /* la legende se range a droite, avant l'indicateur : au centre elle
+     chevauchait le nom de la cible */
+  .scan .legende{position:absolute;top:14px;right:96px;z-index:2;display:flex;
+                 gap:14px;font-size:12px;color:rgb(255 255 255 / .6)}
+  .scan .legende .s{display:flex;align-items:center;gap:6px;
+                    text-transform:capitalize}
+  .scan .legende b{width:6px;height:6px;border-radius:9999px}
+  .scan .legende i{font-style:normal;color:#fff;
+                   font-variant-numeric:tabular-nums}
+  .scan .vivant{position:absolute;top:14px;right:16px;z-index:2;
+                display:flex;align-items:center;gap:7px;font-size:12px;
+                color:#9ca3af}
+  .scan .vivant i{width:6px;height:6px;border-radius:9999px;background:#22c55e;
+                  box-shadow:0 0 8px rgb(34 197 94 / .9);
+                  animation:pouls 2.2s ease-in-out infinite}
+  @keyframes pouls{0%,100%{opacity:1}50%{opacity:.4}}
+  #radar{position:absolute;inset:0}
+  #radar .champ,#radar .haut{position:absolute;inset:0}
+  /* l'arete du faisceau : le fil de lumiere en tete du balayage, ce qui
+     distingue un radar d'un cone gris */
+  .arete{position:absolute;bottom:4px;left:50%;width:1px;height:388px;
+    transform-origin:bottom center;pointer-events:none;
+    background:linear-gradient(to top,rgb(255 255 255 / .5),
+      rgb(255 255 255 / .1) 55%, transparent 100%);
+    animation:arete 18s ease-in-out infinite}
+  @keyframes arete{
+    0%{transform:rotate(35deg)}   11%{transform:rotate(50deg)}
+    22%{transform:rotate(40deg)}  33%{transform:rotate(45deg)}
+    44%{transform:rotate(35deg)}  55%{transform:rotate(40deg)}
+    66%{transform:rotate(45deg)}  77%{transform:rotate(40deg)}
+    88%{transform:rotate(45deg)}  100%{transform:rotate(35deg)}}
+  /* l'etiquette qui suit la cible, dans le style des pastilles du produit */
+  .etiquette{position:absolute;z-index:3;display:flex;align-items:center;
+    gap:7px;padding:5px 10px;border-radius:9999px;font-size:12px;
+    color:#e5e7eb;background:rgb(0 0 0 / .84);white-space:nowrap;opacity:0;
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .12),
+               0 6px 18px rgb(0 0 0 / .8);
+    transition:top .9s cubic-bezier(.22,1.2,.36,1),
+               left .9s cubic-bezier(.22,1.2,.36,1),opacity .4s ease}
+  .etiquette b{width:6px;height:6px;border-radius:9999px;flex:none}
+  /* le flux d'evenements, en Space Mono comme le reste du produit */
+  .flux{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:12px 16px;
+        display:flex;flex-direction:column;gap:4px;
+        font-family:'Space Mono',ui-monospace,monospace;font-size:12px;
+        background:linear-gradient(to top,rgb(0 0 0 / .92) 40%,
+          rgb(0 0 0 / 0))}
+  .flux div{display:flex;gap:10px;align-items:baseline;opacity:0;
+            transform:translateY(4px);
+            transition:opacity .5s ease,transform .5s ease}
+  .flux div.vu{opacity:1;transform:none}
+  .flux .t{color:rgb(255 255 255 / .32)}
+  .flux .m{color:rgb(255 255 255 / .72)}
+  .faisceau{position:absolute;bottom:0;left:50%;width:700px;height:700px;
+    transform-origin:bottom left;pointer-events:none;
+    background:radial-gradient(circle at 0% 100%,
+      var(--faisceau) 5%, transparent 60%);
+    -webkit-mask-image:conic-gradient(from 0deg at 0% 100%,
+      transparent 0deg, rgb(0 0 0 / .4) 14deg, #000 26deg, #000 48deg,
+      rgb(0 0 0 / .4) 62deg, transparent 76deg);
+    mask-image:conic-gradient(from 0deg at 0% 100%,
+      transparent 0deg, rgb(0 0 0 / .4) 14deg, #000 26deg, #000 48deg,
+      rgb(0 0 0 / .4) 62deg, transparent 76deg);
+    animation:balayage 18s ease-in-out infinite}
+  @keyframes balayage{
+    0%{opacity:.7;transform:rotate(-55deg)}
+    11%{opacity:1;transform:rotate(-40deg)}
+    22%{opacity:.7;transform:rotate(-50deg)}
+    33%{opacity:1;transform:rotate(-45deg)}
+    44%{opacity:.7;transform:rotate(-55deg)}
+    55%{opacity:1;transform:rotate(-50deg)}
+    66%{opacity:.7;transform:rotate(-45deg)}
+    77%{opacity:1;transform:rotate(-50deg)}
+    88%{opacity:.7;transform:rotate(-45deg)}
+    100%{opacity:.7;transform:rotate(-55deg)}}
+  #trace{position:absolute;left:50%;bottom:0;width:820px;height:392px;
+         transform:translateX(-50%);overflow:visible}
+  #trace circle{fill:none;stroke:var(--trait);stroke-width:1;
+                stroke-dasharray:2 2}
+  #trace circle.socle{stroke:#3a3a3a;stroke-dasharray:none}
+
+  /* Reglages d'echelle : le tableau de bord du produit est dessine pour un
+     ecran, la carte fait 632 px. On resserre les gouttieres et les corps,
+     sans toucher a sa structure ni a ses couleurs. */
+  #contenu{padding:16px 18px}
+  #contenu h1{font-size:22px;margin-bottom:10px}
+  #contenu h2{font-size:13px;margin-bottom:8px}
+  .tuiles{gap:9px}
+  .tuile{padding:9px 10px}
+  .tuile .ic{padding:6px}
+  .tuile .ic svg{width:24px;height:24px}
+  .tuile .lib{margin-left:40px;font-size:10.5px}
+  .tuile .val{margin-left:40px;font-size:20px}
+  .bloc{margin-bottom:12px}
+  .table table{font-size:10.5px}
+  .table th{padding:8px 10px}
+  .table td{padding:7px 10px}
+  .badge{font-size:9.5px;padding:2px 7px}
+  /* ── Ce que les etapes allument dans le tableau de bord ──────────────── */
+  #carte{position:absolute;right:64px;top:50%;width:632px;height:496px;
+         transform:translateY(-50%);z-index:2;border-radius:14px;
+         overflow:hidden;pointer-events:none;background:#000;
+         box-shadow:0 30px 90px rgb(0 0 0 / .9), 0 6px 20px rgb(0 0 0 / .8)}
+  .agent{display:flex;align-items:center;gap:9px;padding:7px 0;
+         font-size:13px;color:#9ca3af;opacity:.28;
+         transition:opacity .6s ease,color .6s ease}
+  .agent.vu{opacity:1;color:#e5e7eb}
+  .agent b{width:7px;height:7px;border-radius:9999px;flex:none;
+           background:#3f3f46;transition:background .6s ease,box-shadow .6s ease}
+  .agent.vu b{background:#22c55e;box-shadow:0 0 9px rgb(34 197 94 / .8)}
+  .sev{display:flex;align-items:center;gap:10px;padding:4px 0}
+  .sev .n{width:70px;font-size:12px;text-transform:capitalize}
+  .sev .piste{flex:1;height:3px;background:rgb(255 255 255 / .07);
+              border-radius:3px;overflow:hidden}
+  .sev .piste i{display:block;height:100%;width:0;border-radius:3px;
+                transition:width 1.4s cubic-bezier(.22,.61,.36,1)}
+  .sev .c{width:30px;text-align:right;font-size:12px;color:#fff;
+          font-variant-numeric:tabular-nums}
+  /* Le rapport : la ligne que le produit ecrit a la fin de la campagne,
+     `report_path` dans ses donnees. Elle n'apparait qu'au quatrieme temps. */
+  .rapport{margin-top:14px;display:flex;align-items:center;gap:10px;
+           padding:9px 11px;border-radius:8px;background:#131313;
+           box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);
+           font-size:11.5px;color:#9ca3af;opacity:0;transform:translateY(6px);
+           transition:opacity .8s ease,transform .8s ease}
+  .rapport.vu{opacity:1;transform:none}
+  .rapport .ic{display:flex;color:#e5e7eb}
+  .rapport .nom{color:#e5e7eb;font-family:'Space Mono',ui-monospace,monospace}
+  .rapport .etat{margin-left:auto;color:#4ade80;text-transform:uppercase;
+                 letter-spacing:.12em;font-size:10px}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+</style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
+<div id="carte"><div id="app">
+    <div id="barre">
+      <svg   class="lucide lucide-menu"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M4 5h16" />   <path d="M4 12h16" />   <path d="M4 19h16" /> </svg>
+      <div class="logo"><b></b>DARKMOON</div>
+      <div class="qui">MB</div>
+    </div>
+    <div id="contenu">
+      <h1>Dashboard</h1>
+      <div class="bloc"><h2>statistics</h2>
+        <div class="tuiles"><div class="tuile"><div class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></div><div class="lib">projects</div><div class="val" id="v-projets">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-target"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" />   <circle cx="12" cy="12" r="6" />   <circle cx="12" cy="12" r="2" /> </svg></div><div class="lib">targets</div><div class="val" id="v-cibles">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-layers"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />   <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />   <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg></div><div class="lib">campaigns</div><div class="val" id="v-campagnes">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-search-x"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m13.5 8.5-5 5" />   <path d="m8.5 8.5 5 5" />   <circle cx="11" cy="11" r="8" />   <path d="m21 21-4.3-4.3" /> </svg></div><div class="lib">vulnerabilities</div><div class="val" id="v-vulns">0</div></div></div></div>
+      <div class="bloc"><h2>campaign 3d2f919b</h2>
+        <div class="scan" style="height:auto;padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:10px;
+                      font-size:13px;color:#9ca3af">
+            <span style="color:#fff">172.19.0.3</span>
+            <span style="margin-left:auto;display:flex;align-items:center;
+                         gap:7px;font-size:12px">
+              <b style="width:6px;height:6px;border-radius:9999px;
+                        background:#52525b;display:inline-block"></b>
+              <span id="statut">queued</span></span>
+          </div>
+          <div style="margin-top:10px"><div class="agent"><b></b>nodejs</div><div class="agent"><b></b>headless-browser</div></div>
+          <div style="margin-top:12px"><div class="sev"><span class="n" style="color:#ef4444">critical</span><span class="piste"><i style="background:#ef4444" data-large="14.0"></i></span><span class="c" data-cible="8">0</span></div><div class="sev"><span class="n" style="color:#f97316">high</span><span class="piste"><i style="background:#f97316" data-large="42.1"></i></span><span class="c" data-cible="24">0</span></div><div class="sev"><span class="n" style="color:#eab308">medium</span><span class="piste"><i style="background:#eab308" data-large="36.8"></i></span><span class="c" data-cible="21">0</span></div><div class="sev"><span class="n" style="color:#22c55e">low</span><span class="piste"><i style="background:#22c55e" data-large="7.0"></i></span><span class="c" data-cible="4">0</span></div></div>
+          <div class="rapport">
+            <span class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="18"   height="18"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></span>
+            <span class="nom">pentest_report_172.19.0.3_20260426-1643.md</span>
+            <span class="etat">ready</span>
+          </div>
+        </div></div>
+    </div>
+  </div></div>
+<div id="scene">
+  <div id="gauche">
+    <div class="eyebrow">LA SOLUTION · EN DÉTAIL</div>
+    <h1>Modulaire, adapté à votre environnement.</h1>
+    <div class="temps">
+      <div class="num" id="num">01</div>
+      <div class="verbe" id="verbe"></div>
+      <div class="suite" id="suite"></div>
+    </div>
+    <div class="jalons"><span class="jalon"><i></i></span><span class="jalon"><i></i></span><span class="jalon"><i></i></span><span class="jalon"><i></i></span></div>
+    <div class="chapeau">Flexible et modulaire</div>
+    <div class="promesses"><div class="promesse"><div class="t">S'adapte à chaque terrain</div><div class="d">Web, cloud, AD, Kubernetes, réseau, il active ce qu'il faut.</div></div><div class="promesse"><div class="t">Se déploie où vous voulez</div><div class="d">Chez vous, dans votre cloud, ou en service géré.</div></div><div class="promesse"><div class="t">Agnostique côté IA</div><div class="d">Claude (Anthropic) ou une IA souveraine locale. Un proxy masque vos données sensibles si l'IA est externe.</div></div></div>
+  </div>
+</div>
+<div class="pied"><span>DARKMOON · ASC-IT</span><span>07 / 14</span></div>
+
+<script>
+// ── Le texte : moteur de la slide 2, joue etape par etape ────────────────
+const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
+           + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
+           + '0 0 110px rgba(0,0,0,.9)';
+const MOTS = [{"t": "Il", "e": 0, "d": 1.7, "r": 0, "b": 11, "s": 0.92}, {"t": "découvre", "e": 0, "d": 1.691, "r": 0.066, "b": 10, "s": 0.928}, {"t": "votre", "e": 0, "d": 1.665, "r": 0.123, "b": 14, "s": 0.936}, {"t": "environnement", "e": 0, "d": 1.624, "r": 0.194, "b": 14, "s": 0.943}, {"t": "Il", "e": 1, "d": 1.572, "r": 0, "b": 14, "s": 0.949}, {"t": "choisit", "e": 1, "d": 1.514, "r": 0.059, "b": 10, "s": 0.954}, {"t": "les", "e": 1, "d": 1.455, "r": 0.137, "b": 10, "s": 0.957}, {"t": "bons", "e": 1, "d": 1.399, "r": 0.2, "b": 14, "s": 0.959}, {"t": "outils", "e": 1, "d": 1.353, "r": 0.277, "b": 14, "s": 0.96}, {"t": "Il", "e": 2, "d": 1.319, "r": 0, "b": 11, "s": 0.959}, {"t": "teste", "e": 2, "d": 1.302, "r": 0.075, "b": 14, "s": 0.956}, {"t": "et", "e": 2, "d": 1.303, "r": 0.158, "b": 14, "s": 0.952}, {"t": "prouve", "e": 2, "d": 1.321, "r": 0.213, "b": 10, "s": 0.947}, {"t": "chaque", "e": 2, "d": 1.355, "r": 0.299, "b": 10, "s": 0.941}, {"t": "faille", "e": 2, "d": 1.402, "r": 0.352, "b": 11, "s": 0.933}, {"t": "Il", "e": 3, "d": 1.458, "r": 0, "b": 11, "s": 0.926}, {"t": "restitue", "e": 3, "d": 1.517, "r": 0.072, "b": 14, "s": 0.918}, {"t": "un", "e": 3, "d": 1.576, "r": 0.132, "b": 15, "s": 0.91}, {"t": "rapport", "e": 3, "d": 1.627, "r": 0.197, "b": 14, "s": 0.902}, {"t": "clair", "e": 3, "d": 1.667, "r": 0.283, "b": 11, "s": 0.896}];
+const ETAPES = [["01", "Il découvre", "votre environnement"], ["02", "Il choisit", "les bons outils"], ["03", "Il teste", "et prouve chaque faille"], ["04", "Il restitue", "un rapport clair"]];
+const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "agents": 0, "severites": 0, "table": false, "statut": "queued"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 6, "agents": 2, "severites": 0, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 57, "agents": 2, "severites": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "agents": 2, "severites": 1, "table": true, "statut": "completed"}];
+const DUREE = 5200;                      // un temps dure 5,2 secondes
+
+const zoneVerbe = document.getElementById('verbe');
+const zoneSuite = document.getElementById('suite');
+const zoneNum = document.getElementById('num');
+
+function poserMots(n) {
+  zoneVerbe.textContent = '';
+  zoneSuite.textContent = '';
+  const spans = [];
+  MOTS.filter(w => w.e === n).forEach((w, i) => {
+    const e = document.createElement('span');
+    e.className = 'm';
+    e.textContent = w.t;
+    e.style.transitionDuration = w.d + 's';
+    e.style.transitionDelay = w.r + 's';
+    // les mots du verbe d'abord, puis ceux du complement
+    const cible = i < ETAPES[n][1].split(' ').length ? zoneVerbe : zoneSuite;
+    cible.appendChild(e);
+    spans.push({e, w});
+  });
+  spans.forEach(({e, w}) => {
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' + w.s + ') rotateX(-12deg)';
+    e.style.textShadow = '0 0 34px rgba(255,255,255,.35), ' + NOIR;
+  });
+  requestAnimationFrame(() => setTimeout(() => {
+    spans.forEach(({e}) => {
+      e.style.opacity = 1;
+      e.style.filter = 'blur(0px) brightness(1)';
+      e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+      e.style.textShadow = '0 2px 8px rgba(255,255,255,.1), ' + NOIR;
+    });
+  }, 120));
+  // Une fois pose, on libere le calque composite : un `blur(0px)`, un
+  // `will-change` ou une scene 3D suffisent a faire rasteriser le mot puis a
+  // le remettre a l'echelle, et c'est ce qui ramollit le texte.
+  const fin = Math.max(...spans.map(({w}) => w.r + w.d));
+  setTimeout(() => spans.forEach(({e}) => {
+    e.style.filter = '';
+    e.style.transform = '';
+    e.style.willChange = 'auto';
+    e.classList.add('pose');
+  }), (fin + 0.25) * 1000);
+}
+
+// ── Le tableau de bord suit le meme tempo ────────────────────────────────
+function compteur(el, cible, duree) {
+  const depart = parseInt(el.textContent, 10) || 0;
+  const t0 = performance.now();
+  const pas = (now) => {
+    const t = Math.max(0, Math.min(1, (now - t0) / duree));
+    el.textContent = Math.round(depart + (cible - depart) *
+                                (1 - Math.pow(1 - t, 3)));
+    if (t < 1) requestAnimationFrame(pas);
+  };
+  requestAnimationFrame(pas);
+}
+
+function poserDash(n) {
+  const etat = ETATS[n];
+  compteur(document.getElementById('v-projets'), etat.projets, 900);
+  compteur(document.getElementById('v-cibles'), etat.cibles, 900);
+  compteur(document.getElementById('v-campagnes'), etat.campagnes, 1100);
+  compteur(document.getElementById('v-vulns'), etat.vulns, 1600);
+  document.querySelectorAll('.agent').forEach((a, i) => {
+    a.classList.toggle('vu', i < etat.agents);
+  });
+  document.querySelectorAll('.sev .piste i').forEach((b, i) => {
+    b.style.width = etat.severites ? b.dataset.large + '%' : '0';
+  });
+  document.querySelectorAll('.sev .c').forEach((c, i) => {
+    compteur(c, etat.severites ? +c.dataset.cible : 0, 1400);
+  });
+  document.querySelector('.rapport').classList.toggle('vu', etat.table);
+  const st = document.getElementById('statut');
+  st.textContent = etat.statut;
+  st.style.color = etat.statut === 'completed' ? '#4ade80'
+                 : etat.statut === 'running' ? '#f5d13b' : '#9ca3af';
+  st.previousElementSibling.style.background =
+    etat.statut === 'completed' ? '#22c55e'
+    : etat.statut === 'running' ? '#eab308' : '#52525b';
+}
+
+let temps = 0, minuterie = null;
+function jouer(n) {
+  temps = n;
+  zoneNum.textContent = ETAPES[n][0];
+  poserMots(n);
+  poserDash(n);
+  document.querySelectorAll('.jalon').forEach((j, i) => {
+    j.classList.toggle('fait', i < n);
+    j.classList.remove('actif');
+    if (i === n) requestAnimationFrame(() => j.classList.add('actif'));
+    if (i > n) j.querySelector('i').style.width = '0';
+  });
+}
+
+function derouler() {
+  clearInterval(minuterie);
+  jouer(0);
+  minuterie = setInterval(() => {
+    // La sequence s'arrete sur le dernier temps : c'est l'etat qu'on
+    // commente. Elle repart au retour sur la slide.
+    if (temps >= ETAPES.length - 1) { clearInterval(minuterie); return; }
+    jouer(temps + 1);
+  }, DUREE);
+}
+
+// ── Ouverture : rideau noir, flou qui se leve ────────────────────────────
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const decor = document.getElementById('ether');
+const carte = document.getElementById('carte');
+const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+let animations = [], derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  animations.forEach(a => a.cancel());
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2200, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
+    carte.animate([
+      { opacity: 0, filter: 'blur(22px)',
+        transform: 'translateY(-50%) scale(.96)' },
+      { opacity: 1, filter: 'blur(0px)',
+        transform: 'translateY(-50%) scale(1)' }],
+      { duration: 2000, delay: 260, easing: COURBE, fill: 'backwards' })
+  ];
+  derouler();
+}
+ouvrir();
+
+// Rejouer a chaque retour sur la slide : le lecteur translate les slides
+// voisines hors du cadre, il ne les masque pas, donc nos rAF sont brides et
+// non geles. Le signal fiable est la reprise d'une cadence pleine.
+let precedent = performance.now(), reprise = false, rapides = 0;
+(function veille() {
+  const t = performance.now(), dt = t - precedent;
+  precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
+  requestAnimationFrame(veille);
+})();
+</script>
+
+</body></html>
