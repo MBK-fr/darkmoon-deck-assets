@@ -9,31 +9,19 @@
   /* ── La colonne de gauche : le texte, en quatre temps ────────────────── */
   #scene{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
          gap:44px;padding:0 72px;pointer-events:none}
-  #gauche{width:36%;flex:none;pointer-events:auto}
-  .eyebrow{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;
-           color:rgb(220 234 244 / .55);
-           text-shadow:0 0 12px rgb(0 0 0 / .95)}
-  h1{margin:16px 0 0;font-size:1.62rem;font-weight:300;line-height:1.34;
-     letter-spacing:.008em;color:#fff;
-     text-shadow:0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95),
-                 0 8px 40px rgba(0,0,0,.9)}
+  #gauche{width:30%;flex:none;pointer-events:auto}
   /* le temps courant : un paragraphe, une seule taille, rien d'autre */
-  .temps{margin:30px 0 0;min-height:118px;font-size:1.22rem;font-weight:300;
-         line-height:1.62;letter-spacing:.012em;color:#fff;max-width:34ch;
-         perspective:900px}
+  /* Le seul texte de la slide : un paragraphe compact, une seule taille. */
+  .temps{margin:0;font-size:1.34rem;font-weight:300;line-height:1.62;
+         letter-spacing:.012em;color:#fff;max-width:26ch;perspective:900px;
+         text-shadow:0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95),
+                     0 8px 40px rgba(0,0,0,.9)}
   .m{display:inline-block;margin-right:.3em;
      transition-property:opacity,filter,transform,text-shadow;
      transition-timing-function:cubic-bezier(.25,.46,.45,.94);
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
-  /* les trois promesses, posees sous les temps */
-  .promesses{margin-top:30px;display:flex;flex-direction:column;gap:11px}
-  .promesse .t{font-size:12.5px;color:#fff;letter-spacing:.01em}
-  .promesse .d{margin-top:3px;font-size:11.5px;line-height:1.5;
-               color:rgb(255 255 255 / .55);max-width:42ch}
-  .chapeau{margin-top:28px;font-size:10px;letter-spacing:.32em;
-           text-transform:uppercase;color:rgb(220 234 244 / .5)}
   .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
@@ -43,16 +31,16 @@
      carte fait 632 px. On resserre les gouttieres et les corps, sans toucher
      ni a sa structure ni a ses couleurs. Ces regles viennent APRES les
      siennes, donc elles gagnent. */
-  #contenu{padding:12px 16px}
-  #contenu h1{font-size:19px;margin-bottom:8px}
-  #contenu h2{font-size:12px;margin-bottom:7px}
-  .tuiles{gap:9px}
-  .tuile{padding:7px 9px}
+  #contenu{padding:14px 20px}
+  #contenu h1{font-size:24px;margin-bottom:12px}
+  #contenu h2{font-size:13px;margin-bottom:9px}
+  .tuiles{gap:12px}
+  .tuile{padding:12px 14px}
   .tuile .ic{padding:6px}
-  .tuile .ic svg{width:21px;height:21px}
-  .tuile .lib{margin-left:40px;font-size:10.5px}
-  .tuile .val{margin-left:38px;font-size:17px}
-  .bloc{margin-bottom:9px}
+  .tuile .ic svg{width:26px;height:26px}
+  .tuile .lib{margin-left:48px;font-size:12px}
+  .tuile .val{margin-left:48px;font-size:24px}
+  .bloc{margin-bottom:11px}
   .table table{font-size:10.5px}
   .table th{padding:8px 10px}
   .table td{padding:7px 10px}
@@ -242,28 +230,43 @@
   /* Reglages d'echelle : le tableau de bord du produit est dessine pour un
      ecran, la carte fait 632 px. On resserre les gouttieres et les corps,
      sans toucher a sa structure ni a ses couleurs. */
-  #contenu{padding:12px 16px}
-  #contenu h1{font-size:19px;margin-bottom:8px}
-  #contenu h2{font-size:12px;margin-bottom:7px}
-  .tuiles{gap:9px}
-  .tuile{padding:7px 9px}
+  #contenu{padding:14px 20px}
+  #contenu h1{font-size:24px;margin-bottom:12px}
+  #contenu h2{font-size:13px;margin-bottom:9px}
+  .tuiles{gap:12px}
+  .tuile{padding:12px 14px}
   .tuile .ic{padding:6px}
-  .tuile .ic svg{width:21px;height:21px}
-  .tuile .lib{margin-left:40px;font-size:10.5px}
-  .tuile .val{margin-left:38px;font-size:17px}
-  .bloc{margin-bottom:9px}
+  .tuile .ic svg{width:26px;height:26px}
+  .tuile .lib{margin-left:48px;font-size:12px}
+  .tuile .val{margin-left:48px;font-size:24px}
+  .bloc{margin-bottom:11px}
   .table table{font-size:10.5px}
   .table th{padding:8px 10px}
   .table td{padding:7px 10px}
   .badge{font-size:9.5px;padding:2px 7px}
   /* ── Ce que les etapes allument dans le tableau de bord ──────────────── */
-  #carte{position:absolute;right:64px;top:50%;width:632px;height:508px;
+  #carte{position:absolute;right:56px;top:50%;width:760px;height:600px;
          transform:translateY(-50%);z-index:2;border-radius:14px;
          overflow:hidden;pointer-events:none;background:#000;
          box-shadow:0 30px 90px rgb(0 0 0 / .9), 0 6px 20px rgb(0 0 0 / .8)}
+  /* ── Registre FLAT ───────────────────────────────────────────────────
+     Plus une seule ombre, plus un seul degrade, plus un seul anneau
+     interieur : des aplats francs, separes par un filet d'un pixel, et de
+     la couleur pleine pour les severites. C'est le meme squelette que le
+     produit, mis a plat. */
+  .tuile{background:#111214;box-shadow:none;border-radius:6px}
+  .scan{background:#111214!important;box-shadow:none!important;
+        border-radius:6px}
+  .rapport{background:#16171a;box-shadow:none;border-radius:6px}
+  #barre{box-shadow:none;background:#0b0c0d;
+         border-bottom:1px solid #1e2024}
+  .sev .piste{background:#1e2024;border-radius:0}
+  .sev .piste i{border-radius:0}
+  .agent b{box-shadow:none!important}
+  .badge{box-shadow:none;border-radius:4px}
   .agents{margin-top:10px}
-  .agent{display:flex;align-items:center;gap:9px;padding:2px 0;
-         font-size:12.5px;color:#9ca3af;opacity:.28;
+  .agent{display:flex;align-items:center;gap:10px;padding:5px 0;
+         font-size:13.5px;color:#9ca3af;opacity:.28;
          transition:opacity .6s ease,color .6s ease}
   .agent .nom{font-family:'Space Mono',ui-monospace,monospace}
   .agent .niv{font-size:10px;letter-spacing:.1em;text-transform:uppercase;
@@ -274,8 +277,8 @@
      `journal` et non `flux` : le CSS repris du radar declare deja un `.flux`
      en position absolue, qui ecrasait celui-ci et faisait chevaucher les
      lignes avec les severites. */
-  .journal{margin-top:8px;display:flex;flex-direction:column;gap:2px;
-           font-family:'Space Mono',ui-monospace,monospace;font-size:11px;
+  .journal{margin-top:10px;display:flex;flex-direction:column;gap:3px;
+           font-family:'Space Mono',ui-monospace,monospace;font-size:12px;
            position:static}
   .journal .ev{display:flex;gap:9px;align-items:baseline;opacity:0;
                transform:translateY(4px);
@@ -288,20 +291,20 @@
   .agent b{width:7px;height:7px;border-radius:9999px;flex:none;
            background:#3f3f46;transition:background .6s ease,box-shadow .6s ease}
   .agent.vu b{background:#22c55e;box-shadow:0 0 9px rgb(34 197 94 / .8)}
-  .sev{display:flex;align-items:center;gap:10px;padding:2px 0}
-  .sev .n{width:70px;font-size:12px;text-transform:capitalize}
-  .sev .piste{flex:1;height:3px;background:rgb(255 255 255 / .07);
+  .sev{display:flex;align-items:center;gap:12px;padding:4px 0}
+  .sev .n{width:78px;font-size:13px;text-transform:capitalize}
+  .sev .piste{flex:1;height:4px;background:rgb(255 255 255 / .07);
               border-radius:3px;overflow:hidden}
   .sev .piste i{display:block;height:100%;width:0;border-radius:3px;
                 transition:width 1.4s cubic-bezier(.22,.61,.36,1)}
-  .sev .c{width:30px;text-align:right;font-size:12px;color:#fff;
+  .sev .c{width:34px;text-align:right;font-size:13px;color:#fff;
           font-variant-numeric:tabular-nums}
   /* Le rapport : la ligne que le produit ecrit a la fin de la campagne,
      `report_path` dans ses donnees. Elle n'apparait qu'au quatrieme temps. */
-  .rapport{margin-top:11px;display:flex;align-items:center;gap:10px;
+  .rapport{margin-top:12px;display:flex;align-items:center;gap:10px;
            padding:9px 11px;border-radius:8px;background:#131313;
            box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);
-           font-size:11.5px;color:#9ca3af;opacity:0;transform:translateY(6px);
+           font-size:12.5px;color:#9ca3af;opacity:0;transform:translateY(6px);
            transition:opacity .8s ease,transform .8s ease}
   .rapport.vu{opacity:1;transform:none}
   .rapport .ic{display:flex;color:#e5e7eb}
@@ -386,11 +389,7 @@
   </div></div>
 <div id="scene">
   <div id="gauche">
-    <div class="eyebrow">LA SOLUTION · EN DÉTAIL</div>
-    <h1>Modulaire, adapté à votre environnement.</h1>
     <p class="temps" id="temps"></p>
-    <div class="chapeau">Flexible et modulaire</div>
-    <div class="promesses"><div class="promesse"><div class="t">S'adapte à chaque terrain</div><div class="d">Web, cloud, AD, Kubernetes, réseau, il active ce qu'il faut.</div></div><div class="promesse"><div class="t">Se déploie où vous voulez</div><div class="d">Chez vous, dans votre cloud, ou en service géré.</div></div><div class="promesse"><div class="t">Agnostique côté IA</div><div class="d">Claude (Anthropic) ou une IA souveraine locale. Un proxy masque vos données sensibles si l'IA est externe.</div></div></div>
   </div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>07 / 14</span></div>
