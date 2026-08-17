@@ -9,11 +9,11 @@
   /* ── La colonne de gauche : le texte, en quatre temps ────────────────── */
   #scene{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
          gap:44px;padding:0 72px;pointer-events:none}
-  #gauche{width:30%;flex:none;pointer-events:auto}
+  #gauche{width:376px;flex:none;pointer-events:auto}
   /* le temps courant : un paragraphe, une seule taille, rien d'autre */
   /* Le seul texte de la slide : un paragraphe compact, une seule taille. */
-  .temps{margin:0;font-size:1.34rem;font-weight:300;line-height:1.62;
-         letter-spacing:.012em;color:#fff;max-width:26ch;perspective:900px;
+  .temps{margin:0;font-size:1.28rem;font-weight:300;line-height:1.62;
+         letter-spacing:.012em;color:#fff;max-width:22ch;perspective:900px;
          text-shadow:0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95),
                      0 8px 40px rgba(0,0,0,.9)}
   .m{display:inline-block;margin-right:.3em;
@@ -27,24 +27,6 @@
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
-  /* Reglages d'echelle du tableau de bord : il est dessine pour un ecran, la
-     carte fait 632 px. On resserre les gouttieres et les corps, sans toucher
-     ni a sa structure ni a ses couleurs. Ces regles viennent APRES les
-     siennes, donc elles gagnent. */
-  #contenu{padding:14px 20px}
-  #contenu h1{font-size:24px;margin-bottom:12px}
-  #contenu h2{font-size:13px;margin-bottom:9px}
-  .tuiles{gap:12px}
-  .tuile{padding:12px 14px}
-  .tuile .ic{padding:6px}
-  .tuile .ic svg{width:26px;height:26px}
-  .tuile .lib{margin-left:48px;font-size:12px}
-  .tuile .val{margin-left:48px;font-size:24px}
-  .bloc{margin-bottom:11px}
-  .table table{font-size:10.5px}
-  .table th{padding:8px 10px}
-  .table td{padding:7px 10px}
-  .badge{font-size:9.5px;padding:2px 7px}
   /* ── L'application, reproduite d'apres son CSS ────────────────────────
      Le tableau de bord n'est plus une evocation : c'est la copie de l'ecran
      de `ASCIT31/darkmoon-demo`, avec sa barre laterale en
@@ -227,90 +209,44 @@
                 stroke-dasharray:2 2}
   #trace circle.socle{stroke:#3a3a3a;stroke-dasharray:none}
 
-  /* Reglages d'echelle : le tableau de bord du produit est dessine pour un
-     ecran, la carte fait 632 px. On resserre les gouttieres et les corps,
-     sans toucher a sa structure ni a ses couleurs. */
-  #contenu{padding:14px 20px}
-  #contenu h1{font-size:24px;margin-bottom:12px}
-  #contenu h2{font-size:13px;margin-bottom:9px}
-  .tuiles{gap:12px}
-  .tuile{padding:12px 14px}
-  .tuile .ic{padding:6px}
-  .tuile .ic svg{width:26px;height:26px}
-  .tuile .lib{margin-left:48px;font-size:12px}
-  .tuile .val{margin-left:48px;font-size:24px}
-  .bloc{margin-bottom:11px}
-  .table table{font-size:10.5px}
-  .table th{padding:8px 10px}
-  .table td{padding:7px 10px}
-  .badge{font-size:9.5px;padding:2px 7px}
-  /* ── Ce que les etapes allument dans le tableau de bord ──────────────── */
-  #carte{position:absolute;right:56px;top:50%;width:760px;height:600px;
-         transform:translateY(-50%);z-index:2;border-radius:14px;
-         overflow:hidden;pointer-events:none;background:#000;
-         box-shadow:0 30px 90px rgb(0 0 0 / .9), 0 6px 20px rgb(0 0 0 / .8)}
-  /* ── Registre FLAT ───────────────────────────────────────────────────
-     Plus une seule ombre, plus un seul degrade, plus un seul anneau
-     interieur : des aplats francs, separes par un filet d'un pixel, et de
-     la couleur pleine pour les severites. C'est le meme squelette que le
-     produit, mis a plat. */
-  .tuile{background:#111214;box-shadow:none;border-radius:6px}
-  .scan{background:#111214!important;box-shadow:none!important;
-        border-radius:6px}
-  .rapport{background:#16171a;box-shadow:none;border-radius:6px}
-  #barre{box-shadow:none;background:#0b0c0d;
-         border-bottom:1px solid #1e2024}
-  .sev .piste{background:#1e2024;border-radius:0}
-  .sev .piste i{border-radius:0}
-  .agent b{box-shadow:none!important}
-  .badge{box-shadow:none;border-radius:4px}
-  .agents{margin-top:10px}
-  .agent{display:flex;align-items:center;gap:10px;padding:5px 0;
-         font-size:13.5px;color:#9ca3af;opacity:.28;
-         transition:opacity .6s ease,color .6s ease}
-  .agent .nom{font-family:'Space Mono',ui-monospace,monospace}
-  .agent .niv{font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-              color:rgb(255 255 255 / .35)}
-  .agent .sig{margin-left:auto;font-size:11px;
-              color:rgb(255 255 255 / .45);font-variant-numeric:tabular-nums}
-  /* Le journal du produit, son `stream-viewer`. La classe s'appelle
-     `journal` et non `flux` : le CSS repris du radar declare deja un `.flux`
-     en position absolue, qui ecrasait celui-ci et faisait chevaucher les
-     lignes avec les severites. */
-  .journal{margin-top:10px;display:flex;flex-direction:column;gap:3px;
-           font-family:'Space Mono',ui-monospace,monospace;font-size:12px;
-           position:static}
-  .journal .ev{display:flex;gap:9px;align-items:baseline;opacity:0;
-               transform:translateY(4px);
-               transition:opacity .5s ease,transform .5s ease}
-  .journal .ev.vu{opacity:1;transform:none}
-  .journal .tag{min-width:58px;text-transform:uppercase;letter-spacing:.08em;
-                font-size:9.5px}
-  .journal .txt{color:rgb(255 255 255 / .68)}
-  .agent.vu{opacity:1;color:#e5e7eb}
-  .agent b{width:7px;height:7px;border-radius:9999px;flex:none;
-           background:#3f3f46;transition:background .6s ease,box-shadow .6s ease}
-  .agent.vu b{background:#22c55e;box-shadow:0 0 9px rgb(34 197 94 / .8)}
-  .sev{display:flex;align-items:center;gap:12px;padding:4px 0}
-  .sev .n{width:78px;font-size:13px;text-transform:capitalize}
-  .sev .piste{flex:1;height:4px;background:rgb(255 255 255 / .07);
-              border-radius:3px;overflow:hidden}
-  .sev .piste i{display:block;height:100%;width:0;border-radius:3px;
-                transition:width 1.4s cubic-bezier(.22,.61,.36,1)}
-  .sev .c{width:34px;text-align:right;font-size:13px;color:#fff;
-          font-variant-numeric:tabular-nums}
-  /* Le rapport : la ligne que le produit ecrit a la fin de la campagne,
-     `report_path` dans ses donnees. Elle n'apparait qu'au quatrieme temps. */
-  .rapport{margin-top:12px;display:flex;align-items:center;gap:10px;
-           padding:9px 11px;border-radius:8px;background:#131313;
-           box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);
-           font-size:12.5px;color:#9ca3af;opacity:0;transform:translateY(6px);
-           transition:opacity .8s ease,transform .8s ease}
-  .rapport.vu{opacity:1;transform:none}
-  .rapport .ic{display:flex;color:#e5e7eb}
-  .rapport .nom{color:#e5e7eb;font-family:'Space Mono',ui-monospace,monospace}
-  .rapport .etat{margin-left:auto;color:#4ade80;text-transform:uppercase;
-                 letter-spacing:.12em;font-size:10px}
+  /* ── Le tableau de bord : l'ecran du produit, a sa taille naturelle ────
+     On ne retouche AUCUNE valeur de son CSS. L'ecran est compose a 1300 px
+     de large, la largeur ou son propre CSS montre la barre laterale, avec
+     ses corps, ses gouttieres et ses rayons d'origine, puis il est reduit
+     d'un seul bloc. Ce qu'on voit est donc l'application, a l'echelle,
+     et non une evocation redessinee. */
+  #carte{position:absolute;right:34px;top:50%;width:786px;height:590px;
+         transform:translateY(-50%);z-index:2;overflow:hidden;
+         pointer-events:none;background:#000;border-radius:10px;
+         box-shadow:0 40px 120px rgb(0 0 0 / .94), 0 0 0 1px rgb(255 255 255 / .07)}
+  #app{position:absolute;top:0;left:0;right:auto;bottom:auto;width:1280px;
+       height:auto;flex-direction:row;transform:scale(.6047);
+       transform-origin:top left}
+  #barre{display:none}
+  /* La barre laterale du produit : au-dessus de 1024 px, son CSS la montre.
+     Les regles sont celles de `.anciencote`, telles quelles. */
+  #cote{display:flex;flex-direction:column;gap:18px;width:216px;flex:none;
+        background:#0a0a0a;padding:0 22px 8px;
+        box-shadow:inset -1px 0 0 rgb(255 255 255 / .1)}
+  /* Ce que les etapes allument : les lignes de campagne arrivent une a une,
+     les severites ne se remplissent qu'une fois la campagne finie de
+     tourner, et la table des cibles a risque n'apparait qu'a la fin. */
+  .tuile .pct{transition:opacity .6s ease}
+  .sev-tuile .val .n{font-style:normal}
+  .table td.pile{max-width:330px;overflow:hidden;text-overflow:ellipsis}
+  #bloc-risquees{opacity:0;transform:translateY(8px);
+            transition:opacity .8s ease,transform .8s ease}
+  #bloc-risquees.vu{opacity:1;transform:none}
+  #cote .bas{margin-top:auto;display:flex;align-items:center;gap:10px;
+             padding:10px 0 4px;font-size:12px;color:#9ca3af;
+             box-shadow:inset 0 1px 0 rgb(255 255 255 / .08)}
+  #cote .bas span{width:28px;height:28px;border-radius:9999px;flex:none;
+    background:rgb(255 255 255 / .06);display:flex;align-items:center;
+    justify-content:center;font-size:11px;color:#e5e7eb;
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
+  #cote .bas i{font-style:normal;display:block;color:#fff;font-weight:600}
+  #cote .bas em{font-style:normal;display:block;font-size:11px;
+                color:rgb(255 255 255 / .45)}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
@@ -356,35 +292,32 @@
   <div class="grain"></div>
 </div>
 <div id="carte"><div id="app">
-    <div id="barre">
-      <svg   class="lucide lucide-menu"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M4 5h16" />   <path d="M4 12h16" />   <path d="M4 19h16" /> </svg>
+    <div id="cote">
       <div class="logo"><b></b>DARKMOON</div>
-      <div class="qui">MB</div>
+      <nav><a class="actif"><svg   class="lucide lucide-layout-dashboard"   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect width="7" height="9" x="3" y="3" rx="1" />   <rect width="7" height="5" x="14" y="3" rx="1" />   <rect width="7" height="9" x="14" y="12" rx="1" />   <rect width="7" height="5" x="3" y="16" rx="1" /> </svg><span>dashboard</span></a><a class=""><svg   class="lucide lucide-rocket"   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />   <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />   <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />   <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" /> </svg><span>new campaign</span></a><a class=""><svg   class="lucide lucide-calendar-clock"   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M16 14v2.2l1.6 1" />   <path d="M16 2v3" />   <path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338" />   <path d="M3 9h5.859" />   <path d="M8 2v3" />   <circle cx="16" cy="16" r="6" /> </svg><span>scheduler</span></a><a class=""><svg   class="lucide lucide-history"   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />   <path d="M3 3v5h5" />   <path d="M12 7v5l4 2" /> </svg><span>history</span></a><a class=""><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg><span>projects</span></a></nav>
+      <div class="titre">Your projects</div>
+      <div class="projet"><span>J</span>juice shop</div>
+      <div class="bas"><span>MB</span>
+        <div><i>Mehdi Boutayeb</i><em>asc-it.fr</em></div></div>
     </div>
     <div id="contenu">
       <h1>Dashboard</h1>
       <div class="bloc"><h2>statistics</h2>
-        <div class="tuiles"><div class="tuile"><div class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></div><div class="lib">projects</div><div class="val" id="v-projets">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-target"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" />   <circle cx="12" cy="12" r="6" />   <circle cx="12" cy="12" r="2" /> </svg></div><div class="lib">targets</div><div class="val" id="v-cibles">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-layers"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />   <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />   <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg></div><div class="lib">campaigns</div><div class="val" id="v-campagnes">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-search-x"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m13.5 8.5-5 5" />   <path d="m8.5 8.5 5 5" />   <circle cx="11" cy="11" r="8" />   <path d="m21 21-4.3-4.3" /> </svg></div><div class="lib">vulnerabilities</div><div class="val" id="v-vulns">0</div></div></div></div>
-      <div class="bloc"><h2>campaign 3d2f919b</h2>
-        <div class="scan" style="height:auto;padding:14px 16px">
-          <div style="display:flex;align-items:center;gap:10px;
-                      font-size:13px;color:#9ca3af">
-            <span style="color:#fff">172.19.0.3</span>
-            <span style="margin-left:auto;display:flex;align-items:center;
-                         gap:7px;font-size:12px">
-              <b style="width:6px;height:6px;border-radius:9999px;
-                        background:#52525b;display:inline-block"></b>
-              <span id="statut">queued</span></span>
-          </div>
-          <div class="agents"><div class="agent"><b></b><span class="nom">nodejs</span><span class="niv">level 1</span><span class="sig">25 findings</span></div><div class="agent"><b></b><span class="nom">headless-browser</span><span class="niv">level 2</span><span class="sig">32 findings</span></div></div>
-          <div class="journal"><div class="ev"><span class="tag" style="color:#9ca3af">recon</span><span class="txt">14 subdomains resolved</span></div><div class="ev"><span class="tag" style="color:#9ca3af">web</span><span class="txt">katana · 248 endpoints</span></div><div class="ev"><span class="tag" style="color:#ef4444">critical</span><span class="txt">Admin Account Weak Password</span></div><div class="ev"><span class="tag" style="color:#f97316">high</span><span class="txt">Wildcard CORS Policy</span></div></div>
-          <div style="margin-top:12px"><div class="sev"><span class="n" style="color:#ef4444">critical</span><span class="piste"><i style="background:#ef4444" data-large="14.0"></i></span><span class="c" data-cible="8">0</span></div><div class="sev"><span class="n" style="color:#f97316">high</span><span class="piste"><i style="background:#f97316" data-large="42.1"></i></span><span class="c" data-cible="24">0</span></div><div class="sev"><span class="n" style="color:#eab308">medium</span><span class="piste"><i style="background:#eab308" data-large="36.8"></i></span><span class="c" data-cible="21">0</span></div><div class="sev"><span class="n" style="color:#22c55e">low</span><span class="piste"><i style="background:#22c55e" data-large="7.0"></i></span><span class="c" data-cible="4">0</span></div></div>
-          <div class="rapport">
-            <span class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="18"   height="18"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></span>
-            <span class="nom">pentest_report_172.19.0.3_20260426-1643.md</span>
-            <span class="etat">ready</span>
-          </div>
-        </div></div>
+        <div class="tuiles"><div class="tuile"><div class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></div><div class="lib">projects</div><div class="val" id="v-projets">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-target"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" />   <circle cx="12" cy="12" r="6" />   <circle cx="12" cy="12" r="2" /> </svg></div><div class="lib">targets</div><div class="val" id="v-cibles">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-layers"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />   <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />   <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg></div><div class="lib">campaigns</div><div class="val" id="v-campagnes">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-search-x"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m13.5 8.5-5 5" />   <path d="m8.5 8.5 5 5" />   <circle cx="11" cy="11" r="8" />   <path d="m21 21-4.3-4.3" /> </svg></div><div class="lib">vulnerabilities</div><div class="val" id="v-vulns">0</div></div></div></div>
+      <div class="bloc"><h2>vulnerabilities by severity</h2>
+        <div class="tuiles"><div class="tuile sev-tuile"><div class="ic" style="color:#ef4444"><svg   class="lucide lucide-hexagon"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="#ef4444"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /> </svg></div><div class="lib">critical</div><div class="val" style="color:#ef4444"><i class="n" data-cible="8">0</i><span class="pct">14.04 %</span></div></div><div class="tuile sev-tuile"><div class="ic" style="color:#f97316"><svg   class="lucide lucide-square"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="#f97316"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect width="18" height="18" x="3" y="3" rx="2" /> </svg></div><div class="lib">high</div><div class="val" style="color:#f97316"><i class="n" data-cible="24">0</i><span class="pct">42.11 %</span></div></div><div class="tuile sev-tuile"><div class="ic" style="color:#eab308"><svg   class="lucide lucide-triangle"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="#eab308"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /> </svg></div><div class="lib">medium</div><div class="val" style="color:#eab308"><i class="n" data-cible="21">0</i><span class="pct">36.84 %</span></div></div><div class="tuile sev-tuile"><div class="ic" style="color:#22c55e"><svg   class="lucide lucide-circle"   xmlns="http://www.w3.org/2000/svg"   width="26"   height="26"   viewBox="0 0 24 24"   fill="none"   stroke="#22c55e"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" /> </svg></div><div class="lib">low</div><div class="val" style="color:#22c55e"><i class="n" data-cible="4">0</i><span class="pct">7.02 %</span></div></div></div></div>
+      <div class="bloc"><h2>last campaigns</h2>
+        <div class="table"><table>
+          <thead><tr><th>#</th><th>target</th><th>date</th><th>duration</th>
+            <th>risk</th><th>vulnerabilities</th><th>status</th></tr></thead>
+          <tbody><tr data-rang="0"><td class="id">camp_20260426_3d2</td><td>172.19.0.3</td><td>Apr 26, 2026</td><td>28.5 min</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td id='v-ligne'>57</td><td><span class="badge statut"><b style="background:#52525b"></b><i>queued</i></span></td></tr><tr data-rang="1"><td class="id">camp_20260419_a1b</td><td>172.19.0.3</td><td>Apr 19, 2026</td><td>32 min</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>49</td><td><span class="badge statut"><b style="background:#52525b"></b><i>queued</i></span></td></tr><tr data-rang="2"><td class="id">camp_20260412_e5f</td><td>172.19.0.3</td><td>Apr 12, 2026</td><td>25.67 min</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>44</td><td><span class="badge statut"><b style="background:#52525b"></b><i>queued</i></span></td></tr><tr data-rang="3"><td class="id">camp_20260405_c9d</td><td>172.19.0.3</td><td>Apr 5, 2026</td><td>22 min</td><td><span class="badge"><b style="background:#f97316"></b>high</span></td><td>38</td><td><span class="badge statut"><b style="background:#52525b"></b><i>queued</i></span></td></tr><tr data-rang="4"><td class="id">camp_20260329_a3b</td><td>172.19.0.3</td><td>Mar 29, 2026</td><td>16.33 min</td><td><span class="badge"><b style="background:#f97316"></b>high</span></td><td>28</td><td><span class="badge statut"><b style="background:#52525b"></b><i>queued</i></span></td></tr><tr data-rang="5"><td class="id">camp_20260322_e7f</td><td>172.19.0.3</td><td>Mar 22, 2026</td><td>12 min</td><td><span class="badge"><b style="background:#eab308"></b>medium</span></td><td>14</td><td><span class="badge statut"><b style="background:#52525b"></b><i>queued</i></span></td></tr></tbody>
+        </table></div></div>
+      <div class="bloc" id="bloc-risquees"><h2>risky targets</h2>
+        <div class="table" id="risquees"><table>
+          <thead><tr><th>#</th><th>target</th><th>stack</th><th>risk</th>
+            <th>open vulnerabilities</th><th>last campaign</th></tr></thead>
+          <tbody><tr class="vu"><td class="id">tgt_5b1adf</td><td>172.19.0.3</td><td class="pile">OWASP Juice Shop v19.2.1, Node.js / Express 4.22.1, Angular 19, Nginx, SQLite / Sequelize, JWT RS256, Socket.IO</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>57</td><td>Apr 26, 2026</td></tr></tbody>
+        </table></div></div>
     </div>
   </div></div>
 <div id="scene">
@@ -401,7 +334,7 @@ const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 110px rgba(0,0,0,.9)';
 const MOTS = [{"t": "Il", "e": 0, "d": 1.7, "r": 0, "b": 11, "s": 0.92}, {"t": "découvre", "e": 0, "d": 1.691, "r": 0.066, "b": 10, "s": 0.928}, {"t": "votre", "e": 0, "d": 1.665, "r": 0.123, "b": 14, "s": 0.936}, {"t": "environnement", "e": 0, "d": 1.624, "r": 0.194, "b": 14, "s": 0.943}, {"t": ":", "e": 0, "d": 1.572, "r": 0.262, "b": 14, "s": 0.949}, {"t": "ce", "e": 0, "d": 1.514, "r": 0.339, "b": 10, "s": 0.954}, {"t": "qui", "e": 0, "d": 1.455, "r": 0.417, "b": 10, "s": 0.957}, {"t": "tourne,", "e": 0, "d": 1.399, "r": 0.48, "b": 14, "s": 0.959}, {"t": "ce", "e": 0, "d": 1.353, "r": 0.557, "b": 14, "s": 0.96}, {"t": "qui", "e": 0, "d": 1.319, "r": 0.615, "b": 11, "s": 0.959}, {"t": "répond,", "e": 0, "d": 1.302, "r": 0.705, "b": 14, "s": 0.956}, {"t": "ce", "e": 0, "d": 1.303, "r": 0.788, "b": 14, "s": 0.952}, {"t": "qui", "e": 0, "d": 1.321, "r": 0.843, "b": 10, "s": 0.947}, {"t": "est", "e": 0, "d": 1.355, "r": 0.929, "b": 10, "s": 0.941}, {"t": "exposé.", "e": 0, "d": 1.402, "r": 0.982, "b": 11, "s": 0.933}, {"t": "Il", "e": 1, "d": 1.458, "r": 0, "b": 11, "s": 0.926}, {"t": "choisit", "e": 1, "d": 1.517, "r": 0.072, "b": 14, "s": 0.918}, {"t": "les", "e": 1, "d": 1.576, "r": 0.132, "b": 15, "s": 0.91}, {"t": "bons", "e": 1, "d": 1.627, "r": 0.197, "b": 14, "s": 0.902}, {"t": "outils,", "e": 1, "d": 1.667, "r": 0.283, "b": 11, "s": 0.896}, {"t": "ceux", "e": 1, "d": 1.692, "r": 0.345, "b": 14, "s": 0.89}, {"t": "qui", "e": 1, "d": 1.7, "r": 0.428, "b": 14, "s": 0.885}, {"t": "correspondent", "e": 1, "d": 1.69, "r": 0.472, "b": 11, "s": 0.882}, {"t": "à", "e": 1, "d": 1.663, "r": 0.56, "b": 14, "s": 0.88}, {"t": "ce", "e": 1, "d": 1.622, "r": 0.627, "b": 12, "s": 0.88}, {"t": "qu'il", "e": 1, "d": 1.569, "r": 0.699, "b": 13, "s": 0.882}, {"t": "vient", "e": 1, "d": 1.511, "r": 0.764, "b": 11, "s": 0.885}, {"t": "de", "e": 1, "d": 1.451, "r": 0.852, "b": 15, "s": 0.889}, {"t": "trouver.", "e": 1, "d": 1.396, "r": 0.921, "b": 10, "s": 0.895}, {"t": "Il", "e": 2, "d": 1.35, "r": 0.003, "b": 14, "s": 0.901}, {"t": "teste", "e": 2, "d": 1.318, "r": 0.07, "b": 12, "s": 0.909}, {"t": "et", "e": 2, "d": 1.302, "r": 0.149, "b": 12, "s": 0.917}, {"t": "prouve", "e": 2, "d": 1.303, "r": 0.214, "b": 10, "s": 0.925}, {"t": "chaque", "e": 2, "d": 1.322, "r": 0.265, "b": 13, "s": 0.932}, {"t": "faille,", "e": 2, "d": 1.357, "r": 0.337, "b": 12, "s": 0.94}, {"t": "au", "e": 2, "d": 1.405, "r": 0.406, "b": 13, "s": 0.946}, {"t": "lieu", "e": 2, "d": 1.461, "r": 0.487, "b": 15, "s": 0.952}, {"t": "de", "e": 2, "d": 1.521, "r": 0.543, "b": 14, "s": 0.956}, {"t": "se", "e": 2, "d": 1.579, "r": 0.633, "b": 12, "s": 0.959}, {"t": "contenter", "e": 2, "d": 1.63, "r": 0.694, "b": 12, "s": 0.96}, {"t": "de", "e": 2, "d": 1.669, "r": 0.774, "b": 14, "s": 0.96}, {"t": "la", "e": 2, "d": 1.693, "r": 0.852, "b": 10, "s": 0.958}, {"t": "signaler.", "e": 2, "d": 1.7, "r": 0.924, "b": 12, "s": 0.954}, {"t": "Il", "e": 3, "d": 1.689, "r": 0, "b": 15, "s": 0.949}, {"t": "restitue", "e": 3, "d": 1.661, "r": 0.053, "b": 15, "s": 0.943}, {"t": "un", "e": 3, "d": 1.619, "r": 0.148, "b": 15, "s": 0.936}, {"t": "rapport", "e": 3, "d": 1.566, "r": 0.213, "b": 15, "s": 0.929}, {"t": "clair,", "e": 3, "d": 1.507, "r": 0.293, "b": 12, "s": 0.921}, {"t": "lisible", "e": 3, "d": 1.448, "r": 0.359, "b": 15, "s": 0.913}, {"t": "par", "e": 3, "d": 1.393, "r": 0.414, "b": 13, "s": 0.905}, {"t": "vos", "e": 3, "d": 1.348, "r": 0.484, "b": 14, "s": 0.898}, {"t": "équipes", "e": 3, "d": 1.316, "r": 0.545, "b": 10, "s": 0.892}, {"t": "comme", "e": 3, "d": 1.301, "r": 0.619, "b": 12, "s": 0.887}, {"t": "par", "e": 3, "d": 1.304, "r": 0.685, "b": 11, "s": 0.883}, {"t": "vos", "e": 3, "d": 1.324, "r": 0.766, "b": 13, "s": 0.881}, {"t": "auditeurs.", "e": 3, "d": 1.36, "r": 0.823, "b": 13, "s": 0.88}];
 const ETAPES = ["Il découvre votre environnement : ce qui tourne, ce qui répond, ce qui est exposé.", "Il choisit les bons outils, ceux qui correspondent à ce qu'il vient de trouver.", "Il teste et prouve chaque faille, au lieu de se contenter de la signaler.", "Il restitue un rapport clair, lisible par vos équipes comme par vos auditeurs."];
-const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "agents": 0, "severites": 0, "table": false, "statut": "queued", "flux": 1}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 6, "agents": 2, "severites": 0, "table": false, "statut": "running", "flux": 2}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 57, "agents": 2, "severites": 1, "table": false, "statut": "running", "flux": 3}, {"projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "agents": 2, "severites": 1, "table": true, "statut": "completed", "flux": 4}];
+const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "severites": 0, "lignes": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 25, "severites": 0, "lignes": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 57, "severites": 1, "lignes": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "severites": 1, "lignes": 6, "table": true, "statut": "completed"}];
 const DUREE = 5200;                      // un temps dure 5,2 secondes
 
 const zone = document.getElementById('temps');
@@ -463,28 +396,41 @@ function poserDash(n) {
   compteur(document.getElementById('v-cibles'), etat.cibles, 900);
   compteur(document.getElementById('v-campagnes'), etat.campagnes, 1100);
   compteur(document.getElementById('v-vulns'), etat.vulns, 1600);
-  document.querySelectorAll('.agent').forEach((a, i) => {
-    a.classList.toggle('vu', i < etat.agents);
+  // les severites ne se remplissent qu'une fois la campagne jouee
+  document.querySelectorAll('.sev-tuile').forEach(t => {
+    const n2 = t.querySelector('.n');
+    compteur(n2, etat.severites ? +n2.dataset.cible : 0, 1400);
+    t.querySelector('.pct').style.opacity = etat.severites ? 1 : 0;
   });
-  document.querySelectorAll('.sev .piste i').forEach((b, i) => {
-    b.style.width = etat.severites ? b.dataset.large + '%' : '0';
+  // les lignes de campagne arrivent une a une, la premiere change de statut
+  document.querySelectorAll('#app tbody tr[data-rang]').forEach((tr, i) => {
+    setTimeout(() => tr.classList.toggle('vu', i < etat.lignes), i * 90);
+    const st = tr.querySelector('.statut');
+    const mot = i === 0 ? etat.statut : 'completed';
+    st.querySelector('i').textContent = mot;
+    st.querySelector('b').style.background =
+      mot === 'completed' ? '#22c55e' : mot === 'running' ? '#eab308'
+                                      : '#52525b';
+    st.querySelector('i').style.color =
+      mot === 'completed' ? '#4ade80' : mot === 'running' ? '#f5d13b'
+                                      : '#9ca3af';
   });
-  document.querySelectorAll('.sev .c').forEach((c, i) => {
-    compteur(c, etat.severites ? +c.dataset.cible : 0, 1400);
-  });
-  document.querySelectorAll('.journal .ev').forEach((e, i) => {
-    // les evenements arrivent l'un apres l'autre, comme dans le produit
-    setTimeout(() => e.classList.toggle('vu', i < etat.flux), i * 160);
-  });
-  document.querySelector('.rapport').classList.toggle('vu', etat.table);
-  const st = document.getElementById('statut');
-  st.textContent = etat.statut;
-  st.style.color = etat.statut === 'completed' ? '#4ade80'
-                 : etat.statut === 'running' ? '#f5d13b' : '#9ca3af';
-  st.previousElementSibling.style.background =
-    etat.statut === 'completed' ? '#22c55e'
-    : etat.statut === 'running' ? '#eab308' : '#52525b';
+  // la campagne qui tourne affiche ce qu'elle a trouve jusque-la
+  compteur(document.getElementById('v-ligne'), etat.vulns, 1600);
+  document.getElementById('bloc-risquees').classList.toggle('vu', etat.table);
 }
+
+// L'ecran est compose a sa taille naturelle puis reduit d'un bloc : la carte
+// prend exactement la hauteur reduite, sans marge morte ni coupure.
+(function ajuster() {
+  const app = document.getElementById('app');
+  const c = document.getElementById('carte');
+  app.style.transform = 'none';
+  const k = 786 / 1280;                  // l'ecran fait 1280 px, la carte 786
+  const h = app.offsetHeight;
+  app.style.transform = 'scale(' + k + ')';
+  c.style.height = Math.round(h * k) + 'px';
+})();
 
 let temps = 0, minuterie = null;
 function jouer(n) {
