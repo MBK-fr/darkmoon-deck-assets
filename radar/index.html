@@ -19,8 +19,8 @@
      `p`. Meme emplacement, meme ordre ; seules la taille et la police
      changent, pour rester dans le registre de la slide 2. */
   #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:flex-end;padding:0 76px 78px;pointer-events:none}
-  .inner{position:relative;width:44rem;max-width:44rem;text-align:left;
+         align-items:center;padding:0 76px;pointer-events:none}
+  .inner{position:relative;width:33rem;max-width:33rem;text-align:left;
          pointer-events:auto}
   .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
                  z-index:-1;
@@ -35,7 +35,7 @@
            display:flex;align-items:center;gap:14px}
   .eyebrow::after{content:"";width:46px;height:1px;
     background:linear-gradient(to right,rgb(220 234 244 / .35),rgb(220 234 244 / 0))}
-  .txt{color:#fff;font-size:1.62rem;line-height:1.62;letter-spacing:.014em;
+  .txt{color:#fff;font-size:1.42rem;line-height:1.62;letter-spacing:.014em;
        font-weight:300;margin:0;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
@@ -64,24 +64,24 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── La scene, sur toute la page ──────────────────────────────────────
-     Retour a la composition qui remplit le cadre : couronnes en SVG, donc
-     des cercles vrais, centrees sous le bas de la slide, et le balayage
-     carre du composant avec sa sequence de rotations.
-     Trois reglages demandes :
-       . le rayon de scan est RESSERRE. Le carre de degrade couvre par
-         construction un quart de tour ; un masque conique le taille a
-         trente degres, avec dix degres de fondu de chaque cote, sans
-         toucher a sa chute radiale ;
-       . le blanc descend de 30 a 18 pour cent, donc l'ombre du faisceau est
-         plus douce ;
-       . vingt-six couronnes au lieu de seize, plus rapprochees. */
-  #radar{position:absolute;inset:0;z-index:2;overflow:hidden;
+  /* ── La carte : le composant `bot-detection` en fond, le dashboard dessus
+     La carte reprend celle du demonstrateur, `rounded-md border
+     border-neutral-800 bg-black`, agrandie a la taille de la slide. Elle
+     contient deux choses : le radar du composant, avec ses couronnes, ses
+     points, son balayage et sa cible, et par-dessus le tableau de bord de
+     `ASCIT31/darkmoon-demo`, porte en HTML et CSS.
+     Le theme du produit est repris tel quel : `--bg-primary #000000`,
+     `--bg-secondary #0a0a0a`, `--bg-tertiary #131313`, les titres en Space
+     Mono capitales, le texte en gris 400, les tuiles en `rounded-lg` avec
+     leur `inset-ring` blanc a 10 pour cent. */
+  #carte{position:absolute;right:52px;top:50%;width:624px;height:438px;
+         transform:translateY(-50%);z-index:2;border-radius:.375rem;
+         border:1px solid #262626;background:#000;overflow:hidden;
          pointer-events:none}
-  #radar .champ{position:absolute;left:0;bottom:0;width:100%;height:100%}
-  #radar .haut{position:relative;height:100%;width:100%}
-  .faisceau{position:absolute;bottom:36px;left:640px;width:1240px;
-    height:1240px;transform-origin:bottom left;pointer-events:none;
+  #radar{position:absolute;inset:0;overflow:hidden}
+  #radar .champ,#radar .haut{position:absolute;inset:0}
+  .faisceau{position:absolute;bottom:20px;left:312px;width:600px;height:600px;
+    transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       var(--faisceau) 5%, transparent 60%);
     -webkit-mask-image:conic-gradient(from 0deg at 0% 100%,
@@ -102,13 +102,63 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  /* Boite a taille fixe : une unite SVG vaut un pixel, les cercles restent
-     ronds. `preserveAspectRatio` par defaut, jamais `none`. */
-  #trace{position:absolute;left:50%;bottom:0;width:1280px;height:720px;
+  #trace{position:absolute;left:50%;bottom:0;width:624px;height:438px;
          transform:translateX(-50%);overflow:visible}
   #trace circle{fill:none;stroke:var(--trait);stroke-width:1;
                 stroke-dasharray:2 2}
   #trace circle.socle{stroke:#3a3a3a;stroke-dasharray:none}
+
+  /* ── Le tableau de bord, porte de l'Angular en HTML et CSS ──────────── */
+  #dash{position:absolute;inset:0;padding:20px 22px;
+        display:flex;flex-direction:column;gap:14px;
+        background:linear-gradient(180deg,rgb(0 0 0 / .82) 0%,
+          rgb(0 0 0 / .62) 46%,rgb(0 0 0 / .78) 100%)}
+  #dash h1{margin:0;font-family:'Space Mono',ui-monospace,monospace;
+           font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+           color:#fff}
+  #dash h2{margin:0 0 8px;font-family:'Space Mono',ui-monospace,monospace;
+           font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+           color:#9ca3af}
+  .tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tuile{position:relative;border-radius:.5rem;background:#131313;
+         padding:10px 12px;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
+  .tuile .lib{font-size:10px;letter-spacing:.06em;text-transform:capitalize;
+              color:#9ca3af}
+  .tuile .val{margin-top:4px;font-size:22px;font-weight:600;color:#fff;
+              font-variant-numeric:tabular-nums;line-height:1}
+  .tuile .pct{margin-left:6px;font-size:10.5px;color:#9ca3af;font-weight:400}
+  .tuile .barre{margin-top:8px;height:2px;border-radius:2px;
+                background:rgb(255 255 255 / .08);overflow:hidden}
+  .tuile .barre i{display:block;height:100%;width:0;border-radius:2px;
+                  transition:width 1.4s cubic-bezier(.22,.61,.36,1) .3s}
+  .crit .val,.crit .lib{color:#ef4444}
+  .haut2 .val,.haut2 .lib{color:#f97316}
+  .moy .val,.moy .lib{color:#eab308}
+  .bas .val,.bas .lib{color:#22c55e}
+  /* le tableau des dernieres campagnes, meme structure que l'Angular */
+  .table{border:1px solid rgb(255 255 255 / .15);border-radius:.5rem;
+         overflow:hidden;background:#131313}
+  .table table{width:100%;border-collapse:collapse;font-size:10.5px}
+  .table th{padding:7px 10px;text-align:left;color:#e5e7eb;font-weight:600;
+            text-transform:capitalize;border-bottom:1px solid rgb(255 255 255 / .15)}
+  .table td{padding:7px 10px;color:#9ca3af;white-space:nowrap;
+            border-top:1px solid rgb(255 255 255 / .1)}
+  .table td.id{color:#fff;font-family:'Space Mono',ui-monospace,monospace}
+  /* seules les lignes du CORPS apparaissent : la regle visait `tr` tout
+     court et masquait aussi l'en-tete */
+  .table tbody tr{opacity:0;transform:translateY(6px);
+                  transition:opacity .7s ease,transform .7s ease}
+  .table tbody tr.vu{opacity:1;transform:none}
+  .badge{display:inline-block;padding:1px 7px;border-radius:9999px;
+         font-size:9.5px;letter-spacing:.04em;text-transform:uppercase}
+  .b-crit{color:#ef4444;background:rgb(239 68 68 / .12);
+          box-shadow:inset 0 0 0 1px rgb(239 68 68 / .35)}
+  .b-haut{color:#f97316;background:rgb(249 115 22 / .12);
+          box-shadow:inset 0 0 0 1px rgb(249 115 22 / .35)}
+  .b-moy{color:#eab308;background:rgb(234 179 8 / .12);
+         box-shadow:inset 0 0 0 1px rgb(234 179 8 / .35)}
+  .b-fini{color:#22c55e;background:rgb(34 197 94 / .12);
+          box-shadow:inset 0 0 0 1px rgb(34 197 94 / .35)}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
@@ -147,15 +197,34 @@
           pointer-events:none;opacity:0}
 </style></head><body>
 <div id="voile"></div>
-<div id="radar">
-  <div class="champ"><div class="haut">
+<div id="carte">
+  <div id="radar"><div class="champ"><div class="haut">
     <div class="faisceau"></div>
-    <svg id="trace" width="1280" height="720" viewBox="0 0 1280 720">
-      <g transform="translate(640,700)"><circle r="1180"/><circle r="1136"/><circle r="1092"/><circle r="1048"/><circle r="1004"/><circle r="960"/><circle r="916"/><circle r="872"/><circle r="828"/><circle r="784"/><circle r="740"/><circle r="696"/><circle r="652"/><circle r="608"/><circle r="564"/><circle r="520"/><circle r="476"/><circle r="432"/><circle r="388"/><circle r="344"/><circle r="300"/><circle r="256"/><circle r="212"/><circle r="168"/><circle r="124"/><circle r="80"/><circle class="socle" r="96"/></g>
+    <svg id="trace" width="624" height="438" viewBox="0 0 624 438">
+      <g transform="translate(312,424)"><circle r="690"/><circle r="656"/><circle r="622"/><circle r="588"/><circle r="554"/><circle r="520"/><circle r="486"/><circle r="452"/><circle r="418"/><circle r="384"/><circle r="350"/><circle r="316"/><circle r="282"/><circle r="248"/><circle r="214"/><circle r="180"/><circle r="146"/><circle r="112"/><circle class="socle" r="54"/></g>
     </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="1237" y="335" width="5" height="5" rx="1" ry="1"/><rect x="1191" y="204" width="5" height="5" rx="1" ry="1"/><rect x="459" y="590" width="5" height="5" rx="1" ry="1"/><rect x="1077" y="-7" width="5" height="5" rx="1" ry="1"/><rect x="603" y="581" width="5" height="5" rx="1" ry="1"/><rect x="867" y="40" width="5" height="5" rx="1" ry="1"/><rect x="885" y="525" width="5" height="5" rx="1" ry="1"/><rect x="513" y="597" width="5" height="5" rx="1" ry="1"/><rect x="918" y="428" width="5" height="5" rx="1" ry="1"/><rect x="1071" y="411" width="5" height="5" rx="1" ry="1"/><rect x="206" y="50" width="5" height="5" rx="1" ry="1"/><rect x="630" y="619" width="5" height="5" rx="1" ry="1"/><rect x="703" y="274" width="5" height="5" rx="1" ry="1"/><rect x="554" y="553" width="5" height="5" rx="1" ry="1"/><rect x="262" y="613" width="5" height="5" rx="1" ry="1"/><rect x="1099" y="578" width="5" height="5" rx="1" ry="1"/><rect x="761" y="676" width="5" height="5" rx="1" ry="1"/><rect x="754" y="104" width="5" height="5" rx="1" ry="1"/><rect x="428" y="426" width="5" height="5" rx="1" ry="1"/><rect x="477" y="670" width="5" height="5" rx="1" ry="1"/><rect x="59" y="399" width="5" height="5" rx="1" ry="1"/><rect x="256" y="634" width="5" height="5" rx="1" ry="1"/><rect x="83" y="278" width="5" height="5" rx="1" ry="1"/><rect x="504" y="111" width="5" height="5" rx="1" ry="1"/><rect x="933" y="529" width="5" height="5" rx="1" ry="1"/><rect x="617" y="626" width="5" height="5" rx="1" ry="1"/><rect x="479" y="505" width="5" height="5" rx="1" ry="1"/><rect x="83" y="466" width="5" height="5" rx="1" ry="1"/><rect x="565" y="142" width="5" height="5" rx="1" ry="1"/><rect x="134" y="368" width="5" height="5" rx="1" ry="1"/><rect x="383" y="405" width="5" height="5" rx="1" ry="1"/><rect x="763" y="382" width="5" height="5" rx="1" ry="1"/><rect x="647" y="492" width="5" height="5" rx="1" ry="1"/><rect x="877" y="342" width="5" height="5" rx="1" ry="1"/><rect x="1035" y="527" width="5" height="5" rx="1" ry="1"/><rect x="49" y="258" width="5" height="5" rx="1" ry="1"/><rect x="1267" y="305" width="5" height="5" rx="1" ry="1"/><rect x="313" y="585" width="5" height="5" rx="1" ry="1"/><rect x="20" y="500" width="5" height="5" rx="1" ry="1"/><rect x="666" y="403" width="5" height="5" rx="1" ry="1"/><rect x="423" y="571" width="5" height="5" rx="1" ry="1"/><rect x="944" y="69" width="5" height="5" rx="1" ry="1"/><rect x="1189" y="562" width="5" height="5" rx="1" ry="1"/><rect x="564" y="672" width="5" height="5" rx="1" ry="1"/><rect x="556" y="552" width="5" height="5" rx="1" ry="1"/><rect x="662" y="538" width="5" height="5" rx="1" ry="1"/><rect x="902" y="253" width="5" height="5" rx="1" ry="1"/><rect x="600" y="533" width="5" height="5" rx="1" ry="1"/><rect x="613" y="623" width="5" height="5" rx="1" ry="1"/></svg>
+    <svg class="grille" width="100%" height="100%"><rect x="210" y="372" width="5" height="5" rx="1" ry="1"/><rect x="426" y="101" width="5" height="5" rx="1" ry="1"/><rect x="633" y="243" width="5" height="5" rx="1" ry="1"/><rect x="201" y="328" width="5" height="5" rx="1" ry="1"/><rect x="591" y="297" width="5" height="5" rx="1" ry="1"/><rect x="479" y="371" width="5" height="5" rx="1" ry="1"/><rect x="27" y="382" width="5" height="5" rx="1" ry="1"/><rect x="648" y="108" width="5" height="5" rx="1" ry="1"/><rect x="596" y="199" width="5" height="5" rx="1" ry="1"/><rect x="212" y="42" width="5" height="5" rx="1" ry="1"/><rect x="210" y="7" width="5" height="5" rx="1" ry="1"/><rect x="232" y="398" width="5" height="5" rx="1" ry="1"/><rect x="269" y="357" width="5" height="5" rx="1" ry="1"/><rect x="481" y="83" width="5" height="5" rx="1" ry="1"/><rect x="497" y="339" width="5" height="5" rx="1" ry="1"/><rect x="429" y="103" width="5" height="5" rx="1" ry="1"/><rect x="187" y="131" width="5" height="5" rx="1" ry="1"/><rect x="401" y="441" width="5" height="5" rx="1" ry="1"/><rect x="553" y="116" width="5" height="5" rx="1" ry="1"/><rect x="551" y="355" width="5" height="5" rx="1" ry="1"/><rect x="495" y="128" width="5" height="5" rx="1" ry="1"/><rect x="426" y="64" width="5" height="5" rx="1" ry="1"/><rect x="336" y="265" width="5" height="5" rx="1" ry="1"/></svg>
     <div class="cible"><div class="onde"></div><div class="battement"></div></div>
-  </div></div>
+  </div></div></div>
+  <div id="dash">
+    <h1>Dashboard</h1>
+    <div>
+      <h2>Statistics</h2>
+      <div class="tuiles"><div class="tuile"><div class="lib">projects</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="lib">targets</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="lib">campaigns</div><div class="val" data-cible="6">0</div></div><div class="tuile"><div class="lib">vulnerabilities</div><div class="val" data-cible="57">0</div></div></div>
+    </div>
+    <div>
+      <h2>Vulnerabilities by severity</h2>
+      <div class="tuiles"><div class="tuile crit"><div class="lib">critical</div><div class="val" data-cible="8">0<span class="pct">14.04 %</span></div><div class="barre"><i style="background:#ef4444" data-large="14.0"></i></div></div><div class="tuile haut2"><div class="lib">high</div><div class="val" data-cible="24">0<span class="pct">42.11 %</span></div><div class="barre"><i style="background:#f97316" data-large="42.1"></i></div></div><div class="tuile moy"><div class="lib">medium</div><div class="val" data-cible="21">0<span class="pct">36.84 %</span></div><div class="barre"><i style="background:#eab308" data-large="36.8"></i></div></div><div class="tuile bas"><div class="lib">low</div><div class="val" data-cible="4">0<span class="pct">7.02 %</span></div><div class="barre"><i style="background:#22c55e" data-large="7.0"></i></div></div></div>
+    </div>
+    <div>
+      <h2>Last campaigns</h2>
+      <div class="table"><table>
+        <thead><tr><th>#</th><th>target</th><th>date</th><th>duration</th>
+          <th>risk</th><th>vulns</th><th>status</th></tr></thead>
+        <tbody><tr><td class="id">3d2f919b</td><td>172.19.0.3</td><td>26 avr. 2026</td><td>28 min</td><td><span class="badge b-crit">critical</span></td><td>57</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">a1b2c3d4</td><td>172.19.0.3</td><td>19 avr. 2026</td><td>32 min</td><td><span class="badge b-crit">critical</span></td><td>49</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">e5f6a7b8</td><td>172.19.0.3</td><td>12 avr. 2026</td><td>26 min</td><td><span class="badge b-crit">critical</span></td><td>44</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">c9d0e1f2</td><td>172.19.0.3</td><td>5 avr. 2026</td><td>22 min</td><td><span class="badge b-haut">high</span></td><td>38</td><td><span class="badge b-fini">completed</span></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
 </div>
 <div id="scene">
   <div class="inner">
@@ -214,7 +283,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[335, 1237], [204, 1191], [590, 459], [-7, 1077], [581, 603], [40, 867], [525, 885], [597, 513], [428, 918], [411, 1071], [50, 206], [619, 630], [274, 703], [553, 554], [613, 262], [578, 1099], [676, 761], [104, 754], [426, 428], [670, 477], [399, 59], [634, 256], [278, 83], [111, 504], [529, 933], [626, 617], [505, 479], [466, 83], [142, 565], [368, 134], [405, 383], [382, 763], [492, 647], [342, 877], [527, 1035], [258, 49], [305, 1267], [585, 313], [500, 20], [403, 666], [571, 423], [69, 944], [562, 1189], [672, 564], [552, 556], [538, 662], [253, 902], [533, 600], [623, 613]];
+const POINTS = [[372, 210], [101, 426], [243, 633], [328, 201], [297, 591], [371, 479], [382, 27], [108, 648], [199, 596], [42, 212], [7, 210], [398, 232], [357, 269], [83, 481], [339, 497], [103, 429], [131, 187], [441, 401], [116, 553], [355, 551], [128, 495], [64, 426], [265, 336]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
@@ -240,13 +309,42 @@ cibles.forEach((cible, n) => {
   setTimeout(() => { viser(); setInterval(viser, 3000); }, n * 1000);
 });
 
+// ── Le tableau de bord : d'abord anime, puis statique ───────────────────
+// Les compteurs montent en cubique inverse, les barres de severite se
+// remplissent, les lignes du tableau apparaissent l'une apres l'autre. Une
+// fois la sequence finie, plus rien ne bouge : c'est l'etat statique, celui
+// qu'on lit pendant la presentation.
+function animerDash() {
+  document.querySelectorAll('#dash .val').forEach((e, i) => {
+    const cible = +e.dataset.cible, pct = e.querySelector('.pct');
+    const t0 = performance.now() + 260 + i * 90, duree = 1250;
+    const pas = (now) => {
+      const t = Math.max(0, Math.min(1, (now - t0) / duree));
+      const v = Math.round(cible * (1 - Math.pow(1 - t, 3)));
+      e.firstChild.nodeValue = v;
+      if (t < 1) requestAnimationFrame(pas);
+    };
+    e.firstChild.nodeValue = 0;
+    requestAnimationFrame(pas);
+  });
+  document.querySelectorAll('#dash .barre i').forEach((e, i) => {
+    e.style.width = '0';
+    setTimeout(() => { e.style.width = e.dataset.large + '%'; }, 300 + i * 90);
+  });
+  document.querySelectorAll('#dash tbody tr').forEach((tr, i) => {
+    tr.classList.remove('vu');
+    setTimeout(() => tr.classList.add('vu'), 700 + i * 160);
+  });
+}
+animerDash();
+
 // ── Ouverture : rideau noir, flou qui se leve ────────────────────────────
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
 // cette slide est sur fond noir : il n'y a pas de decor a faire monter
 const decor = document.getElementById('ether');
-const radar = document.getElementById('radar');
+const radar = document.getElementById('carte');
 const blocs = [...document.querySelectorAll('#scene .inner > *')];
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
 let animations = [], derniereOuverture = 0;
@@ -270,6 +368,7 @@ function ouvrir() {
         fill: 'backwards' }))
   ];
   jouerTexte();
+  animerDash();
 }
 ouvrir();
 
