@@ -12,319 +12,65 @@
             -webkit-font-smoothing:antialiased}
   *{box-sizing:border-box}
 
-  /* ── Le texte va DANS les emplacements du composant ───────────────────
-     Le demonstrateur pose un `h3` puis un `p` en bas a gauche de sa carte,
-     `absolute bottom-5 left-0 w-full px-3`. C'est la que le texte de la
-     slide 6 prend place : le titre du PPTX dans le `h3`, sa phrase dans le
-     `p`. Meme emplacement, meme ordre ; seules la taille et la police
-     changent, pour rester dans le registre de la slide 2. */
-  #scene{position:absolute;inset:0;z-index:3;display:flex;
-         align-items:center;padding:0 76px;pointer-events:none}
-  .inner{position:relative;width:31rem;max-width:31rem;text-align:left;
+  /* ── Le texte : registre magazine, police de la slide 2 ──────────────
+     Meme famille, meme graisse, meme interlettrage et meme apparition mot a
+     mot que la slide 2. Ce qui change est la mise en page : un chapo en
+     petites capitales, une attaque en grand, puis des paragraphes courts,
+     sans puce et sans tiret, chacun se suffisant a lui-meme. */
+  #scene{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
+         padding:0 96px;pointer-events:none}
+  .inner{position:relative;width:44rem;max-width:44rem;text-align:left;
          pointer-events:auto}
-  .inner::before{content:"";position:absolute;inset:-40% -14% -60%;
-                 z-index:-1;
-                 background:radial-gradient(64% 60% at 30% 60%,
-                   rgba(0,0,0,.86) 0%, rgba(0,0,0,.64) 42%,
-                   rgba(0,0,0,.28) 70%, rgba(0,0,0,0) 100%)}
-  /* Le pas typographique : chaque niveau a sa taille, sa graisse et son
-     interlettrage, et l'ecart vertical suit la hierarchie plutot que d'etre
-     constant. C'est ce qui manquait pour que le bloc se tienne. */
-  .eyebrow{font-size:10.5px;letter-spacing:.46em;text-transform:uppercase;
-           color:rgb(220 234 244 / .5);margin-bottom:26px;
-           display:flex;align-items:center;gap:14px}
-  .eyebrow::after{content:"";width:46px;height:1px;
-    background:linear-gradient(to right,rgb(220 234 244 / .35),rgb(220 234 244 / 0))}
-  .txt{color:#fff;font-size:1.42rem;line-height:1.62;letter-spacing:.014em;
-       font-weight:300;margin:0;
+  .inner::before{content:"";position:absolute;inset:-28% -16%;z-index:-1;
+                 background:radial-gradient(62% 58% at 34% 50%,
+                   rgba(0,0,0,.82) 0%, rgba(0,0,0,.58) 44%,
+                   rgba(0,0,0,.24) 72%, rgba(0,0,0,0) 100%)}
+  .par{margin:0;color:#fff;font-weight:300;
        font-family:'Avenir Next','Avenir',system-ui,sans-serif;
        perspective:900px}
-  .m{display:inline-block;margin-right:.35em;
+  .par.chapo{font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+             color:rgb(220 234 244 / .55);margin-bottom:22px}
+  .par.attaque{font-size:2.35rem;line-height:1.24;letter-spacing:-.01em;
+               margin-bottom:26px}
+  .par.corps{font-size:1.12rem;line-height:1.72;letter-spacing:.012em;
+             color:rgb(255 255 255 / .78);margin-bottom:14px;max-width:44ch}
+  .par.corps:last-child{margin-bottom:0}
+  .m{display:inline-block;margin-right:.32em;
      transition-property:opacity,filter,transform,text-shadow;
      transition-timing-function:cubic-bezier(.25,.46,.45,.94);
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
-  /* Les trois piliers du PPTX, en colonnes separees par un filet, comme une
-     table editoriale : le chiffre en exposant, le titre, la ligne. */
-  .sous{margin:20px 0 0;font-size:17px;line-height:1.66;font-weight:300;
-        color:rgb(255 255 255 / .7);max-width:52ch;letter-spacing:.004em}
-  .piliers{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);
-           gap:0;max-width:47rem}
-  .pilier{padding:2px 34px;border-left:1px solid rgb(220 234 244 / .12)}
-  .pilier:first-child{padding-left:0;border-left:0}
-  /* le chiffre est traite comme un folio : grand, clair, tres discret */
-  .pilier .n{font-size:23px;font-weight:200;line-height:1;
-             color:rgb(220 234 244 / .28);letter-spacing:.02em}
-  .pilier .t{margin-top:12px;font-size:15px;color:#fff;font-weight:400;
-             letter-spacing:.012em}
-  .pilier .d{margin-top:8px;font-size:13.5px;line-height:1.68;
-             color:rgb(255 255 255 / .58)}
-  .pied{position:absolute;left:76px;right:76px;bottom:26px;display:flex;
+  .pied{position:absolute;left:96px;right:96px;bottom:26px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  #rideau{position:fixed;inset:0;z-index:20;background:#000;
+          pointer-events:none;opacity:0}
 
-  /* ── L'application, reproduite d'apres son CSS ────────────────────────
-     Le tableau de bord n'est plus une evocation : c'est la copie de l'ecran
-     de `ASCIT31/darkmoon-demo`, avec sa barre laterale en
-     `bg-[var(--bg-secondary)]` cerclee de `ring-white/10`, ses liens a icone
-     lucide, ses tuiles en `rounded-lg bg-[var(--bg-tertiary)]` avec
-     `inset-ring inset-ring-white/10`, l'icone posee en absolu et le texte
-     decale de `ml-16`, ses titres en Space Mono capitales, sa table
-     `divide-white/15` et ses pastilles `rounded-full px-2 py-1 text-xs`.
-     L'ecran est compose a 1100 x 800, sa taille naturelle, puis mis a
-     l'echelle d'un bloc : les proportions restent celles du produit. */
-  #carte{position:absolute;right:46px;top:50%;width:648px;height:548px;
-         transform:translateY(-50%);z-index:2;border-radius:14px;
-         overflow:hidden;pointer-events:none;background:#000;
-         box-shadow:0 30px 90px rgb(0 0 0 / .9), 0 6px 20px rgb(0 0 0 / .8)}
-  /* L'ecran est rendu a SA TAILLE, sans reduction : reduit de 40 pour cent,
-     le produit devenait une vignette illisible. On prend son palier etroit,
-     celui sous 1024 px, ou sa barre laterale cede la place a une barre du
-     haut — c'est prevu par son propre CSS, `lg:hidden` sur le tiroir et
-     `lg:pl-64` sur le contenu. */
-  #app{position:absolute;inset:0;display:flex;flex-direction:column;
-       background:#000;color:#9ca3af;
-       font-family:ui-sans-serif,system-ui,sans-serif}
-  #barre{display:flex;align-items:center;gap:14px;padding:14px 22px;
-         background:#0a0a0a;color:#9ca3af;
-         box-shadow:inset 0 -1px 0 rgb(255 255 255 / .1)}
-  #barre .logo{display:flex;align-items:center;gap:9px;
-               font-family:'Space Mono',ui-monospace,monospace;font-size:14px;
-               letter-spacing:.16em;color:#fff}
-  #barre .logo b{width:9px;height:9px;background:#fff;border-radius:2px}
-  #barre .qui{margin-left:auto;width:28px;height:28px;border-radius:9999px;
-              background:rgb(255 255 255 / .06);display:flex;
-              align-items:center;justify-content:center;font-size:11px;
-              color:#e5e7eb;
-              box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
-  #cote{display:none}
-  .anciencote{width:216px;flex:none;background:#0a0a0a;padding:0 22px 8px;
-        box-shadow:inset -1px 0 0 rgb(255 255 255 / .1);
-        display:flex;flex-direction:column;gap:18px}
-  #cote .logo{height:64px;display:flex;align-items:center;gap:9px;
-              font-family:'Space Mono',ui-monospace,monospace;font-size:15px;
-              letter-spacing:.16em;color:#fff}
-  #cote .logo b{width:9px;height:9px;background:#fff;border-radius:2px}
-  #cote nav{display:flex;flex-direction:column;gap:4px;margin:0 -8px}
-  #cote a{display:flex;align-items:center;gap:12px;padding:8px;
-          border-radius:6px;font-size:13px;font-weight:600;color:#9ca3af;
-          text-transform:capitalize}
-  #cote a.actif{background:rgb(255 255 255 / .05);color:#fff}
-  #cote .titre{margin-top:14px;font-size:11px;font-weight:600;color:#9ca3af}
-  #cote .projet{display:flex;align-items:center;gap:12px;padding:8px;
-                font-size:13px;font-weight:600;color:#9ca3af}
-  #cote .projet span{width:24px;height:24px;border-radius:8px;
-    border:1px solid rgb(255 255 255 / .1);background:rgb(255 255 255 / .05);
-    display:flex;align-items:center;justify-content:center;font-size:10px;
-    text-transform:uppercase}
-  /* le contenu */
-  #contenu{flex:1;padding:20px 24px;overflow:hidden;min-height:0;
-           display:flex;flex-direction:column}
-  #contenu h1{margin:0 0 14px;font-family:'Space Mono',ui-monospace,monospace;
-              font-size:26px;text-transform:uppercase;color:#fff}
-  #contenu h2{margin:0 0 9px;font-family:'Space Mono',ui-monospace,monospace;
-              font-size:15px;text-transform:uppercase;color:#fff}
-  .bloc{margin-bottom:14px}
-  .bloc.grand{flex:1;display:flex;flex-direction:column;min-height:0}
-  .tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .tuile{position:relative;border-radius:8px;background:#131313;
-         padding:11px 12px;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
-  .tuile .ic{position:absolute;display:flex;align-items:center;
-             justify-content:center;padding:8px;color:#fff}
-  .tuile .lib{margin-left:52px;font-size:12px;font-weight:500;color:#9ca3af;
-              text-transform:capitalize}
-  .tuile .val{margin-left:52px;display:flex;align-items:baseline;
-              font-size:24px;font-weight:600;color:#fff;line-height:1.2;
-              font-variant-numeric:tabular-nums}
-  .tuile .pct{margin-left:7px;font-size:11px;color:#9ca3af;font-weight:400}
-  /* la table des campagnes */
-  .table{border-radius:8px;overflow:hidden;
-         box-shadow:inset 0 0 0 1px rgb(255 255 255 / .15);background:#131313}
-  .table table{width:100%;border-collapse:collapse;font-size:14px}
-  .table th{padding:11px 14px;text-align:left;font-weight:600;color:#e5e7eb;
-            text-transform:capitalize;
-            box-shadow:inset 0 -1px 0 rgb(255 255 255 / .15)}
-  .table td{padding:10px 14px;color:#9ca3af;white-space:nowrap;
-            box-shadow:inset 0 1px 0 rgb(255 255 255 / .1)}
-  .table td.id{color:#fff}
-  .table tbody tr{opacity:0;transform:translateY(6px);
-                  transition:opacity .7s ease,transform .7s ease}
-  .table tbody tr.vu{opacity:1;transform:none}
-  .badge{display:inline-flex;align-items:center;gap:6px;border-radius:9999px;
-         padding:4px 8px;font-size:12px;font-weight:500;color:#e5e7eb;
-         box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);
-         text-transform:uppercase}
-  .badge b{width:6px;height:6px;border-radius:9999px}
-  /* la vignette du scan, dans le meme habillage que les tuiles */
-  /* Le scan est l'element PRINCIPAL de l'ecran : il prend la hauteur, et son
-     fond est le noir de l'application, `--bg-primary`, pas le gris des
-     tuiles. Le reste du chassis ne change pas : meme rayon, meme
-     `inset-ring` blanc a 10 pour cent que les autres cartes. */
-  .scan{position:relative;border-radius:8px;background:#000;
-        box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);flex:1;min-height:0;
-        overflow:hidden}
-  .scan .lib{position:absolute;top:12px;left:16px;z-index:2;font-size:14px;
-             font-weight:500;color:#9ca3af;text-transform:capitalize}
-  /* la legende se range a droite, avant l'indicateur : au centre elle
-     chevauchait le nom de la cible */
-  .scan .legende{position:absolute;top:14px;right:96px;z-index:2;display:flex;
-                 gap:14px;font-size:12px;color:rgb(255 255 255 / .6)}
-  .scan .legende .s{display:flex;align-items:center;gap:6px;
-                    text-transform:capitalize}
-  .scan .legende b{width:6px;height:6px;border-radius:9999px}
-  .scan .legende i{font-style:normal;color:#fff;
-                   font-variant-numeric:tabular-nums}
-  .scan .vivant{position:absolute;top:14px;right:16px;z-index:2;
-                display:flex;align-items:center;gap:7px;font-size:12px;
-                color:#9ca3af}
-  .scan .vivant i{width:6px;height:6px;border-radius:9999px;background:#22c55e;
-                  box-shadow:0 0 8px rgb(34 197 94 / .9);
-                  animation:pouls 2.2s ease-in-out infinite}
-  @keyframes pouls{0%,100%{opacity:1}50%{opacity:.4}}
-  #radar{position:absolute;inset:0}
-  #radar .champ,#radar .haut{position:absolute;inset:0}
-  /* l'arete du faisceau : le fil de lumiere en tete du balayage, ce qui
-     distingue un radar d'un cone gris */
-  .arete{position:absolute;bottom:4px;left:50%;width:1px;height:388px;
-    transform-origin:bottom center;pointer-events:none;
-    background:linear-gradient(to top,rgb(255 255 255 / .5),
-      rgb(255 255 255 / .1) 55%, transparent 100%);
-    animation:arete 18s ease-in-out infinite}
-  @keyframes arete{
-    0%{transform:rotate(35deg)}   11%{transform:rotate(50deg)}
-    22%{transform:rotate(40deg)}  33%{transform:rotate(45deg)}
-    44%{transform:rotate(35deg)}  55%{transform:rotate(40deg)}
-    66%{transform:rotate(45deg)}  77%{transform:rotate(40deg)}
-    88%{transform:rotate(45deg)}  100%{transform:rotate(35deg)}}
-  /* l'etiquette qui suit la cible, dans le style des pastilles du produit */
-  .etiquette{position:absolute;z-index:3;display:flex;align-items:center;
-    gap:7px;padding:5px 10px;border-radius:9999px;font-size:12px;
-    color:#e5e7eb;background:rgb(0 0 0 / .84);white-space:nowrap;opacity:0;
-    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .12),
-               0 6px 18px rgb(0 0 0 / .8);
-    transition:top .9s cubic-bezier(.22,1.2,.36,1),
-               left .9s cubic-bezier(.22,1.2,.36,1),opacity .4s ease}
-  .etiquette b{width:6px;height:6px;border-radius:9999px;flex:none}
-  /* le flux d'evenements, en Space Mono comme le reste du produit */
-  .flux{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:12px 16px;
-        display:flex;flex-direction:column;gap:4px;
-        font-family:'Space Mono',ui-monospace,monospace;font-size:12px;
-        background:linear-gradient(to top,rgb(0 0 0 / .92) 40%,
-          rgb(0 0 0 / 0))}
-  .flux div{display:flex;gap:10px;align-items:baseline;opacity:0;
-            transform:translateY(4px);
-            transition:opacity .5s ease,transform .5s ease}
-  .flux div.vu{opacity:1;transform:none}
-  .flux .t{color:rgb(255 255 255 / .32)}
-  .flux .m{color:rgb(255 255 255 / .72)}
-  .faisceau{position:absolute;bottom:0;left:50%;width:700px;height:700px;
-    transform-origin:bottom left;pointer-events:none;
-    background:radial-gradient(circle at 0% 100%,
-      var(--faisceau) 5%, transparent 60%);
-    -webkit-mask-image:conic-gradient(from 0deg at 0% 100%,
-      transparent 0deg, rgb(0 0 0 / .4) 14deg, #000 26deg, #000 48deg,
-      rgb(0 0 0 / .4) 62deg, transparent 76deg);
-    mask-image:conic-gradient(from 0deg at 0% 100%,
-      transparent 0deg, rgb(0 0 0 / .4) 14deg, #000 26deg, #000 48deg,
-      rgb(0 0 0 / .4) 62deg, transparent 76deg);
-    animation:balayage 18s ease-in-out infinite}
-  @keyframes balayage{
-    0%{opacity:.7;transform:rotate(-55deg)}
-    11%{opacity:1;transform:rotate(-40deg)}
-    22%{opacity:.7;transform:rotate(-50deg)}
-    33%{opacity:1;transform:rotate(-45deg)}
-    44%{opacity:.7;transform:rotate(-55deg)}
-    55%{opacity:1;transform:rotate(-50deg)}
-    66%{opacity:.7;transform:rotate(-45deg)}
-    77%{opacity:1;transform:rotate(-50deg)}
-    88%{opacity:.7;transform:rotate(-45deg)}
-    100%{opacity:.7;transform:rotate(-55deg)}}
-  #trace{position:absolute;left:50%;bottom:0;width:820px;height:392px;
-         transform:translateX(-50%);overflow:visible}
-  #trace circle{fill:none;stroke:var(--trait);stroke-width:1;
-                stroke-dasharray:2 2}
-  #trace circle.socle{stroke:#3a3a3a;stroke-dasharray:none}
-  .grille{position:absolute;left:0;top:0;width:100%;height:100%;
-          pointer-events:none;
-          animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
-  .grille rect{fill:var(--point)}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  /* Neon : le point reste petit et sature, et c'est le halo qui porte, en
-     trois portees. Deux teintes alternent, le rouge du composant et un
-     orange plus chaud, pour qu'on distingue les cibles entre elles. */
-  /* la cible, aux valeurs du composant */
-  .cible{position:absolute;width:6.5px;height:6.5px;border-radius:1px;
-    background:#ef4444;border-top:1px solid #f87171;
-    transform:translate(-.5px,-.5px);
-    box-shadow:0 0 10px 4px rgba(239,68,68,.9);
-    transition:top .9s cubic-bezier(.22,1.2,.36,1),
-               left .9s cubic-bezier(.22,1.2,.36,1)}
-  .cible .onde,.cible .battement{position:absolute;left:-6px;top:-6px;
-    width:270%;height:300%;border-radius:9999px;border:1px solid #ef4444}
-  .cible .onde{animation:onde 1.2s ease-out 1.3s both}
-  .cible .battement{transform:scale(1.3);
-    box-shadow:0 0 20px 4px rgba(239,68,68,.6);
-    animation:battement 1s ease-in-out 1.3s both}
-  @keyframes onde{from{transform:scale(1);opacity:.7}
-                  50%{opacity:1}
-                  to{transform:scale(1.7);opacity:0}}
-  @keyframes battement{0%,100%{transform:scale(1.3)}
-                       50%{transform:scale(1.56)}}
-  /* Le disque du composant est `bg-black` : opaque, il faisait une tache
-     sombre au milieu du decor maintenant que la carte a disparu. Il ne garde
-     que son contour, le fond passe au travers. */
-  /* Fond noir, comme demande. Une vignette a peine marquee evite l'aplat
-     parfaitement plat, qui sonne creux sur un ecran de projection. */
-  /* Noir plein, sans vignette : le composant est sur `bg-black`, rien de
-     plus, et la moindre nappe se voyait a la projection. */
-  #voile{position:absolute;inset:0;z-index:0;background:#000}
+  /* ── Le fond : composant `bloim-animation-background` ─────────────────
+     Le composant de @serjobas n'est ni du CSS ni un canvas maison : c'est
+     une scene Unicorn Studio, `projectId 9tVO0xGS8DIar1DF4Sqc`, rendue par
+     `unicornstudio.js` en 1.4.29, exactement comme dans son bundle. Elle est
+     donc appelee telle quelle, sans reecriture.
+     Un fond de secours en degrade est pose dessous : si le contexte WebGL
+     manque, la slide reste tenue au lieu d'etre vide. */
+  #bloim{position:fixed;inset:0;z-index:0}
+  #secours{position:fixed;inset:0;z-index:-1;background:
+    radial-gradient(120% 90% at 22% 18%, rgb(26 36 64 / .55) 0%,
+      rgb(0 0 0 / 0) 60%),
+    radial-gradient(90% 80% at 82% 82%, rgb(44 24 52 / .5) 0%,
+      rgb(0 0 0 / 0) 62%), #000}
+
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
 </style></head><body>
-<div id="voile"></div>
-<div id="carte">
-  <div id="app">
-    <div id="barre">
-      <svg   class="lucide lucide-menu"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M4 5h16" />   <path d="M4 12h16" />   <path d="M4 19h16" /> </svg>
-      <div class="logo"><b></b>DARKMOON</div>
-      <div class="qui">MB</div>
-    </div>
-    <div id="cote">
-      <div class="logo"><b></b>DARKMOON</div>
-      <nav><a class="actif"><svg   class="lucide lucide-layout-dashboard"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect width="7" height="9" x="3" y="3" rx="1" />   <rect width="7" height="5" x="14" y="3" rx="1" />   <rect width="7" height="9" x="14" y="12" rx="1" />   <rect width="7" height="5" x="3" y="16" rx="1" /> </svg><span>dashboard</span></a><a class=""><svg   class="lucide lucide-rocket"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />   <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />   <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />   <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" /> </svg><span>new campaign</span></a><a class=""><svg   class="lucide lucide-calendar-clock"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M16 14v2.2l1.6 1" />   <path d="M16 2v3" />   <path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338" />   <path d="M3 9h5.859" />   <path d="M8 2v3" />   <circle cx="16" cy="16" r="6" /> </svg><span>scheduler</span></a><a class=""><svg   class="lucide lucide-history"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />   <path d="M3 3v5h5" />   <path d="M12 7v5l4 2" /> </svg><span>history</span></a><a class=""><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg><span>projects</span></a></nav>
-      <div class="titre">Your projects</div>
-      <div class="projet"><span>J</span>juice shop</div>
-    </div>
-    <div id="contenu">
-      <h1>Dashboard</h1>
-      <div class="bloc"><h2>statistics</h2>
-        <div class="tuiles"><div class="tuile"><div class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></div><div class="lib">projects</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-target"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" />   <circle cx="12" cy="12" r="6" />   <circle cx="12" cy="12" r="2" /> </svg></div><div class="lib">targets</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-layers"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />   <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />   <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg></div><div class="lib">campaigns</div><div class="val" data-cible="6">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-search-x"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m13.5 8.5-5 5" />   <path d="m8.5 8.5 5 5" />   <circle cx="11" cy="11" r="8" />   <path d="m21 21-4.3-4.3" /> </svg></div><div class="lib">vulnerabilities</div><div class="val" data-cible="57">0</div></div></div></div>
-      <div class="bloc grand"><h2>live scan</h2>
-        <div class="scan">
-          <span class="lib">172.19.0.3</span>
-          <span class="legende"><span class="s"><b style="background:#ef4444"></b>critical<i class="val" data-cible="8">0</i></span><span class="s"><b style="background:#f97316"></b>high<i class="val" data-cible="24">0</i></span><span class="s"><b style="background:#eab308"></b>medium<i class="val" data-cible="21">0</i></span><span class="s"><b style="background:#22c55e"></b>low<i class="val" data-cible="4">0</i></span></span>
-          <span class="vivant"><i></i>running</span>
-          <div id="radar"><div class="champ"><div class="haut">
-            <div class="faisceau"></div>
-            <svg id="trace" width="820" height="392" viewBox="0 0 820 392">
-              <g transform="translate(410,388)"><circle r="760"/><circle r="718"/><circle r="676"/><circle r="634"/><circle r="592"/><circle r="550"/><circle r="508"/><circle r="466"/><circle r="424"/><circle r="382"/><circle r="340"/><circle r="298"/><circle r="256"/><circle r="214"/><circle r="172"/><circle r="130"/><circle r="88"/><circle class="socle" r="58"/></g>
-            </svg>
-            <svg class="grille" width="100%" height="100%"><rect x="296" y="57" width="5" height="5" rx="1" ry="1"/><rect x="131" y="246" width="5" height="5" rx="1" ry="1"/><rect x="413" y="328" width="5" height="5" rx="1" ry="1"/><rect x="247" y="299" width="5" height="5" rx="1" ry="1"/><rect x="518" y="298" width="5" height="5" rx="1" ry="1"/><rect x="333" y="219" width="5" height="5" rx="1" ry="1"/><rect x="465" y="257" width="5" height="5" rx="1" ry="1"/><rect x="157" y="207" width="5" height="5" rx="1" ry="1"/><rect x="276" y="340" width="5" height="5" rx="1" ry="1"/><rect x="660" y="212" width="5" height="5" rx="1" ry="1"/><rect x="763" y="131" width="5" height="5" rx="1" ry="1"/><rect x="323" y="226" width="5" height="5" rx="1" ry="1"/><rect x="295" y="103" width="5" height="5" rx="1" ry="1"/><rect x="14" y="205" width="5" height="5" rx="1" ry="1"/><rect x="719" y="224" width="5" height="5" rx="1" ry="1"/><rect x="630" y="226" width="5" height="5" rx="1" ry="1"/><rect x="445" y="347" width="5" height="5" rx="1" ry="1"/><rect x="715" y="83" width="5" height="5" rx="1" ry="1"/></svg>
-            <div class="cible"><div class="onde"></div>
-              <div class="battement"></div></div>
-            <div class="arete"></div>
-            <div class="etiquette"><b></b><span></span></div>
-            <div class="flux"><div><span class="t">16:24:41</span><span class="m">JWT RSA Public Key Exposed</span></div><div><span class="t">16:25:06</span><span class="m">FTP Directory Listing Exposed</span></div><div><span class="t">16:25:28</span><span class="m">Verbose Error Pages with Stack Traces</span></div></div>
-          </div></div></div>
-        </div></div>
-    </div>
-  </div>
-</div>
+<div id="secours"></div>
+<div id="bloim" data-us-project="9tVO0xGS8DIar1DF4Sqc" data-us-scale="1"
+     data-us-dpi="1.5" data-us-fps="60" data-us-production="1"></div>
+<script src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js"></script>
+<script>window.UnicornStudio && UnicornStudio.init();</script>
 <div id="scene">
-  <div class="inner">
-    <p class="txt" id="p"></p>
-  </div>
+  <div class="inner" id="texte"><p class="par chapo"></p><p class="par attaque"></p><p class="par corps"></p><p class="par corps"></p><p class="par corps"></p><p class="par corps"></p></div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>06 / 14</span></div>
 
@@ -333,17 +79,19 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "La", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "solution :", "d": 2.487, "r": 0.075, "b": 12, "s": 0.91}, {"t": "Darkmoon", "d": 2.448, "r": 0.134, "b": 13, "s": 0.919}, {"t": "teste", "d": 2.386, "r": 0.223, "b": 12, "s": 0.928}, {"t": "vos", "d": 2.309, "r": 0.323, "b": 15, "s": 0.936}, {"t": "systèmes", "d": 2.221, "r": 0.351, "b": 18, "s": 0.942}, {"t": "en", "d": 2.132, "r": 0.442, "b": 15, "s": 0.947}, {"t": "continu,", "d": 2.049, "r": 0.497, "b": 18, "s": 0.949}, {"t": "tout", "d": 1.979, "r": 0.566, "b": 13, "s": 0.95}, {"t": "seul.", "d": 1.929, "r": 0.682, "b": 12, "s": 0.949}, {"t": "Vous", "d": 1.903, "r": 0.734, "b": 18, "s": 0.945}, {"t": "confiez", "d": 1.904, "r": 0.777, "b": 15, "s": 0.94}, {"t": "une", "d": 1.931, "r": 0.847, "b": 14, "s": 0.934}, {"t": "cible.", "d": 1.982, "r": 0.93, "b": 14, "s": 0.926}, {"t": "Il", "d": 2.053, "r": 1.012, "b": 16, "s": 0.917}, {"t": "explore,", "d": 2.137, "r": 1.082, "b": 14, "s": 0.907}, {"t": "trouve", "d": 2.226, "r": 1.129, "b": 15, "s": 0.897}, {"t": "les", "d": 2.313, "r": 1.212, "b": 13, "s": 0.887}, {"t": "failles,", "d": 2.39, "r": 1.291, "b": 15, "s": 0.878}, {"t": "les", "d": 2.45, "r": 1.357, "b": 18, "s": 0.869}, {"t": "prouve,", "d": 2.488, "r": 1.44, "b": 19, "s": 0.862}, {"t": "et", "d": 2.5, "r": 1.499, "b": 19, "s": 0.856}, {"t": "livre", "d": 2.485, "r": 1.557, "b": 15, "s": 0.852}, {"t": "un", "d": 2.445, "r": 1.647, "b": 15, "s": 0.85}, {"t": "rapport", "d": 2.383, "r": 1.68, "b": 16, "s": 0.85}, {"t": "clair.", "d": 2.304, "r": 1.771, "b": 17, "s": 0.852}, {"t": "En", "d": 2.216, "r": 1.85, "b": 16, "s": 0.856}, {"t": "continu", "d": 2.127, "r": 1.913, "b": 13, "s": 0.861}, {"t": ":", "d": 2.044, "r": 1.957, "b": 18, "s": 0.868}, {"t": "à", "d": 1.975, "r": 2.027, "b": 17, "s": 0.877}, {"t": "chaque", "d": 1.927, "r": 2.095, "b": 19, "s": 0.886}, {"t": "évolution,", "d": 1.902, "r": 2.177, "b": 13, "s": 0.896}, {"t": "pas", "d": 1.905, "r": 2.262, "b": 17, "s": 0.906}, {"t": "une", "d": 1.933, "r": 2.309, "b": 17, "s": 0.916}, {"t": "fois", "d": 1.986, "r": 2.39, "b": 19, "s": 0.925}, {"t": "par", "d": 2.057, "r": 2.432, "b": 13, "s": 0.933}, {"t": "an.", "d": 2.142, "r": 2.544, "b": 19, "s": 0.94}, {"t": "Avec", "d": 2.231, "r": 2.599, "b": 13, "s": 0.945}, {"t": "preuves", "d": 2.318, "r": 2.636, "b": 16, "s": 0.948}, {"t": ":", "d": 2.394, "r": 2.733, "b": 19, "s": 0.95}, {"t": "chaque", "d": 2.453, "r": 2.783, "b": 18, "s": 0.949}, {"t": "faille", "d": 2.489, "r": 2.88, "b": 17, "s": 0.947}, {"t": "est", "d": 2.5, "r": 2.905, "b": 19, "s": 0.943}, {"t": "démontrée,", "d": 2.483, "r": 2.989, "b": 13, "s": 0.937}, {"t": "pas", "d": 2.442, "r": 3.064, "b": 15, "s": 0.929}, {"t": "signalée.", "d": 2.378, "r": 3.146, "b": 14, "s": 0.921}, {"t": "Sous", "d": 2.299, "r": 3.212, "b": 18, "s": 0.911}, {"t": "contrôle", "d": 2.211, "r": 3.262, "b": 19, "s": 0.901}, {"t": ":", "d": 2.122, "r": 3.314, "b": 19, "s": 0.891}, {"t": "vos", "d": 2.04, "r": 3.398, "b": 16, "s": 0.882}, {"t": "données", "d": 1.972, "r": 3.489, "b": 18, "s": 0.873}, {"t": "restent", "d": 1.925, "r": 3.556, "b": 16, "s": 0.865}, {"t": "chez", "d": 1.902, "r": 3.615, "b": 17, "s": 0.859}, {"t": "vous.", "d": 1.906, "r": 3.682, "b": 18, "s": 0.854}];
-const pTexte = document.getElementById('p');
+const MOTS = [{"t": "La", "z": 0, "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "solution", "z": 0, "d": 2.487, "r": 0.075, "b": 12, "s": 0.91}, {"t": "Darkmoon", "z": 1, "d": 2.448, "r": 0.134, "b": 13, "s": 0.919}, {"t": "teste", "z": 1, "d": 2.386, "r": 0.223, "b": 12, "s": 0.928}, {"t": "vos", "z": 1, "d": 2.309, "r": 0.323, "b": 15, "s": 0.936}, {"t": "systèmes", "z": 1, "d": 2.221, "r": 0.351, "b": 18, "s": 0.942}, {"t": "en", "z": 1, "d": 2.132, "r": 0.442, "b": 15, "s": 0.947}, {"t": "continu,", "z": 1, "d": 2.049, "r": 0.497, "b": 18, "s": 0.949}, {"t": "tout", "z": 1, "d": 1.979, "r": 0.566, "b": 13, "s": 0.95}, {"t": "seul.", "z": 1, "d": 1.929, "r": 0.682, "b": 12, "s": 0.949}, {"t": "Vous", "z": 2, "d": 1.903, "r": 0.734, "b": 18, "s": 0.945}, {"t": "confiez", "z": 2, "d": 1.904, "r": 0.777, "b": 15, "s": 0.94}, {"t": "une", "z": 2, "d": 1.931, "r": 0.847, "b": 14, "s": 0.934}, {"t": "cible.", "z": 2, "d": 1.982, "r": 0.93, "b": 14, "s": 0.926}, {"t": "Il", "z": 2, "d": 2.053, "r": 1.012, "b": 16, "s": 0.917}, {"t": "explore,", "z": 2, "d": 2.137, "r": 1.082, "b": 14, "s": 0.907}, {"t": "trouve", "z": 2, "d": 2.226, "r": 1.129, "b": 15, "s": 0.897}, {"t": "les", "z": 2, "d": 2.313, "r": 1.212, "b": 13, "s": 0.887}, {"t": "failles,", "z": 2, "d": 2.39, "r": 1.291, "b": 15, "s": 0.878}, {"t": "les", "z": 2, "d": 2.45, "r": 1.357, "b": 18, "s": 0.869}, {"t": "prouve,", "z": 2, "d": 2.488, "r": 1.44, "b": 19, "s": 0.862}, {"t": "et", "z": 2, "d": 2.5, "r": 1.499, "b": 19, "s": 0.856}, {"t": "livre", "z": 2, "d": 2.485, "r": 1.557, "b": 15, "s": 0.852}, {"t": "un", "z": 2, "d": 2.445, "r": 1.647, "b": 15, "s": 0.85}, {"t": "rapport", "z": 2, "d": 2.383, "r": 1.68, "b": 16, "s": 0.85}, {"t": "clair.", "z": 2, "d": 2.304, "r": 1.771, "b": 17, "s": 0.852}, {"t": "En", "z": 3, "d": 2.216, "r": 1.85, "b": 16, "s": 0.856}, {"t": "continu", "z": 3, "d": 2.127, "r": 1.913, "b": 13, "s": 0.861}, {"t": ":", "z": 3, "d": 2.044, "r": 1.957, "b": 18, "s": 0.868}, {"t": "à", "z": 3, "d": 1.975, "r": 2.027, "b": 17, "s": 0.877}, {"t": "chaque", "z": 3, "d": 1.927, "r": 2.095, "b": 19, "s": 0.886}, {"t": "évolution,", "z": 3, "d": 1.902, "r": 2.177, "b": 13, "s": 0.896}, {"t": "pas", "z": 3, "d": 1.905, "r": 2.262, "b": 17, "s": 0.906}, {"t": "une", "z": 3, "d": 1.933, "r": 2.309, "b": 17, "s": 0.916}, {"t": "fois", "z": 3, "d": 1.986, "r": 2.39, "b": 19, "s": 0.925}, {"t": "par", "z": 3, "d": 2.057, "r": 2.432, "b": 13, "s": 0.933}, {"t": "an.", "z": 3, "d": 2.142, "r": 2.544, "b": 19, "s": 0.94}, {"t": "Avec", "z": 4, "d": 2.231, "r": 2.599, "b": 13, "s": 0.945}, {"t": "preuves", "z": 4, "d": 2.318, "r": 2.636, "b": 16, "s": 0.948}, {"t": ":", "z": 4, "d": 2.394, "r": 2.733, "b": 19, "s": 0.95}, {"t": "chaque", "z": 4, "d": 2.453, "r": 2.783, "b": 18, "s": 0.949}, {"t": "faille", "z": 4, "d": 2.489, "r": 2.88, "b": 17, "s": 0.947}, {"t": "est", "z": 4, "d": 2.5, "r": 2.905, "b": 19, "s": 0.943}, {"t": "démontrée,", "z": 4, "d": 2.483, "r": 2.989, "b": 13, "s": 0.937}, {"t": "pas", "z": 4, "d": 2.442, "r": 3.064, "b": 15, "s": 0.929}, {"t": "signalée.", "z": 4, "d": 2.378, "r": 3.146, "b": 14, "s": 0.921}, {"t": "Sous", "z": 5, "d": 2.299, "r": 3.212, "b": 18, "s": 0.911}, {"t": "contrôle", "z": 5, "d": 2.211, "r": 3.262, "b": 19, "s": 0.901}, {"t": ":", "z": 5, "d": 2.122, "r": 3.314, "b": 19, "s": 0.891}, {"t": "vos", "z": 5, "d": 2.04, "r": 3.398, "b": 16, "s": 0.882}, {"t": "données", "z": 5, "d": 1.972, "r": 3.489, "b": 18, "s": 0.873}, {"t": "restent", "z": 5, "d": 1.925, "r": 3.556, "b": 16, "s": 0.865}, {"t": "chez", "z": 5, "d": 1.902, "r": 3.615, "b": 17, "s": 0.859}, {"t": "vous.", "z": 5, "d": 1.906, "r": 3.682, "b": 18, "s": 0.854}];
+// Le texte est en plusieurs paragraphes : chaque mot va dans le sien, et
+// l'apparition suit l'ordre de lecture, du chapo a la derniere ligne.
+const zones = [...document.querySelectorAll('#texte .par')];
 MOTS.forEach(w => {
   const e = document.createElement('span');
   e.className = 'm';
   e.textContent = w.t;
   e.style.transitionDuration = w.d + 's';
   e.style.transitionDelay = w.r + 's';
-  pTexte.appendChild(e);
+  zones[w.z].appendChild(e);
 });
-const spans = [...pTexte.children];
+const spans = zones.flatMap(z => [...z.children]);
 function repos() {
   spans.forEach((e, i) => {
     e.classList.remove('pose');
@@ -374,90 +122,13 @@ function jouerTexte() {
 }
 jouerTexte();
 
-// ── Le point rouge saute d'un point a l'autre toutes les 3 secondes ──────
-// Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
-// damping 70` : une courbe de Bezier legerement elastique en rend l'allure
-// sans embarquer la bibliotheque.
-const POINTS = [[57, 296], [246, 131], [328, 413], [299, 247], [298, 518], [219, 333], [257, 465], [207, 157], [340, 276], [212, 660], [131, 763], [226, 323], [103, 295], [205, 14], [224, 719], [226, 630], [347, 445], [83, 715]];
-// Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
-// seconde chacune : elles ne tombent jamais sur le meme point ni au meme
-// instant.
-// Une seule cible mouvante, comme le composant : ce sont les petits carres
-// qui portent la couleur, pas des cibles supplementaires.
-const cibles = [...document.querySelectorAll('.cible')];
-cibles.forEach((cible, n) => {
-  let k = 0;
-  const etiquette = document.querySelector('.etiquette');
-  const TROUVAILLES = [["critical", "Admin Account Weak Password"], ["high", "Wildcard CORS Policy"], ["critical", "JWT RSA Public Key Exposed"], ["high", "FTP Directory Listing Exposed"], ["medium", "Verbose Error Pages with Stack Traces"], ["critical", "Open Redirect via Allowlist Bypass"], ["high", "User Enumeration via Admin API"], ["medium", "Prometheus Metrics Endpoint Exposed"]];
-  const TONS = {critical: '#ef4444', high: '#f97316', medium: '#eab308'};
-  const viser = () => {
-    const [top, left] = POINTS[k];
-    cible.style.top = top + 'px';
-    cible.style.left = left + 'px';
-    if (etiquette) {
-      const [niveau, titre] = TROUVAILLES[k % TROUVAILLES.length];
-      etiquette.querySelector('b').style.background = TONS[niveau];
-      etiquette.querySelector('span').textContent = titre;
-      // elle se pose du cote ou il reste de la place
-      const aDroite = left < 420;
-      etiquette.style.top = (top - 11) + 'px';
-      etiquette.style.left = aDroite ? (left + 18) + 'px' : 'auto';
-      etiquette.style.right = aDroite ? 'auto' : (820 - left + 18) + 'px';
-      etiquette.style.opacity = 1;
-    }
-    // les anneaux sont rejoues a chaque saut, comme la cle React du
-    // composant qui change avec l'index
-    cible.querySelectorAll('.onde,.battement').forEach(e => {
-      const a = e.style.animation;
-      e.style.animation = 'none'; void e.offsetWidth;
-      e.style.animation = a || '';
-    });
-    k = (k + 1) % POINTS.length;
-  };
-  viser();
-  setTimeout(() => { viser(); setInterval(viser, 3000); }, n * 1000);
-});
-
-// ── Le tableau de bord : d'abord anime, puis statique ───────────────────
-// Les compteurs montent en cubique inverse, les barres de severite se
-// remplissent, les lignes du tableau apparaissent l'une apres l'autre. Une
-// fois la sequence finie, plus rien ne bouge : c'est l'etat statique, celui
-// qu'on lit pendant la presentation.
-function animerDash() {
-  document.querySelectorAll('#app .val').forEach((e, i) => {
-    const cible = +e.dataset.cible, pct = e.querySelector('.pct');
-    const t0 = performance.now() + 260 + i * 90, duree = 1250;
-    const pas = (now) => {
-      const t = Math.max(0, Math.min(1, (now - t0) / duree));
-      const v = Math.round(cible * (1 - Math.pow(1 - t, 3)));
-      e.firstChild.nodeValue = v;
-      if (t < 1) requestAnimationFrame(pas);
-    };
-    e.firstChild.nodeValue = 0;
-    requestAnimationFrame(pas);
-  });
-  document.querySelectorAll('#app .piste i').forEach((e, i) => {
-    e.style.width = '0';
-    setTimeout(() => { e.style.width = e.dataset.large + '%'; }, 300 + i * 90);
-  });
-  document.querySelectorAll('.flux div').forEach((e, i) => {
-    e.classList.remove('vu');
-    setTimeout(() => e.classList.add('vu'), 900 + i * 240);
-  });
-  document.querySelectorAll('#app tbody tr').forEach((tr, i) => {
-    tr.classList.remove('vu');
-    setTimeout(() => tr.classList.add('vu'), 700 + i * 160);
-  });
-}
-animerDash();
-
 // ── Ouverture : rideau noir, flou qui se leve ────────────────────────────
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
 // cette slide est sur fond noir : il n'y a pas de decor a faire monter
 const decor = document.getElementById('ether');
-const radar = document.getElementById('carte');
+const fond = document.getElementById('bloim');
 const blocs = [...document.querySelectorAll('#scene .inner > *')];
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
 let animations = [], derniereOuverture = 0;
@@ -470,10 +141,8 @@ function ouvrir() {
       { duration: 2200, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
-    radar.animate([
-      { opacity: 0, filter: 'blur(24px)', transform: 'scale(.94)' },
-      { opacity: 1, filter: 'blur(0px)', transform: 'none' }],
-      { duration: 2200, delay: 300, easing: COURBE, fill: 'backwards' }),
+    fond.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' }),
     ...blocs.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(16px)', filter: 'blur(12px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
@@ -481,7 +150,6 @@ function ouvrir() {
         fill: 'backwards' }))
   ];
   jouerTexte();
-  animerDash();
 }
 ouvrir();
 
