@@ -139,8 +139,12 @@
          text-transform:uppercase}
   .badge b{width:6px;height:6px;border-radius:9999px}
   /* la vignette du scan, dans le meme habillage que les tuiles */
-  .scan{position:relative;border-radius:8px;background:#131313;
-        box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);height:150px;
+  /* Le scan est l'element PRINCIPAL de l'ecran : il prend la hauteur, et son
+     fond est le noir de l'application, `--bg-primary`, pas le gris des
+     tuiles. Le reste du chassis ne change pas : meme rayon, meme
+     `inset-ring` blanc a 10 pour cent que les autres cartes. */
+  .scan{position:relative;border-radius:8px;background:#000;
+        box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);height:392px;
         overflow:hidden}
   .scan .lib{position:absolute;top:12px;left:16px;z-index:2;font-size:14px;
              font-weight:500;color:#9ca3af;text-transform:capitalize}
@@ -153,7 +157,7 @@
   @keyframes pouls{0%,100%{opacity:1}50%{opacity:.4}}
   #radar{position:absolute;inset:0}
   #radar .champ,#radar .haut{position:absolute;inset:0}
-  .faisceau{position:absolute;bottom:0;left:50%;width:420px;height:420px;
+  .faisceau{position:absolute;bottom:0;left:50%;width:700px;height:700px;
     transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       var(--faisceau) 5%, transparent 60%);
@@ -175,7 +179,7 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  #trace{position:absolute;left:50%;bottom:0;width:820px;height:150px;
+  #trace{position:absolute;left:50%;bottom:0;width:820px;height:392px;
          transform:translateX(-50%);overflow:visible}
   #trace circle{fill:none;stroke:var(--trait);stroke-width:1;
                 stroke-dasharray:2 2}
@@ -230,28 +234,22 @@
       <h1>Dashboard</h1>
       <div class="bloc"><h2>statistics</h2>
         <div class="tuiles"><div class="tuile"><div class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></div><div class="lib">projects</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-target"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" />   <circle cx="12" cy="12" r="6" />   <circle cx="12" cy="12" r="2" /> </svg></div><div class="lib">targets</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-layers"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />   <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />   <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg></div><div class="lib">campaigns</div><div class="val" data-cible="6">0</div></div><div class="tuile"><div class="ic"><svg   class="lucide lucide-search-x"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="m13.5 8.5-5 5" />   <path d="m8.5 8.5 5 5" />   <circle cx="11" cy="11" r="8" />   <path d="m21 21-4.3-4.3" /> </svg></div><div class="lib">vulnerabilities</div><div class="val" data-cible="57">0</div></div></div></div>
-      <div class="bloc"><h2>vulnerabilities by severity</h2>
-        <div class="tuiles"><div class="tuile"><div class="ic" style="color:#ef4444"><svg   class="lucide lucide-hexagon"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#ef4444"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /> </svg></div><div class="lib">critical</div><div class="val" style="color:#ef4444" data-cible="8">0<span class="pct">14.04 %</span></div></div><div class="tuile"><div class="ic" style="color:#f97316"><svg   class="lucide lucide-square"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#f97316"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect width="18" height="18" x="3" y="3" rx="2" /> </svg></div><div class="lib">high</div><div class="val" style="color:#f97316" data-cible="24">0<span class="pct">42.11 %</span></div></div><div class="tuile"><div class="ic" style="color:#eab308"><svg   class="lucide lucide-triangle"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#eab308"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /> </svg></div><div class="lib">medium</div><div class="val" style="color:#eab308" data-cible="21">0<span class="pct">36.84 %</span></div></div><div class="tuile"><div class="ic" style="color:#22c55e"><svg   class="lucide lucide-circle"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#22c55e"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" /> </svg></div><div class="lib">low</div><div class="val" style="color:#22c55e" data-cible="4">0<span class="pct">7.02 %</span></div></div></div></div>
-      <div class="bloc"><h2>last campaigns</h2>
-        <div class="table"><table>
-          <thead><tr><th>#</th><th>target</th><th>date</th><th>duration</th>
-            <th>risk</th><th>vulnerabilities</th><th>status</th></tr></thead>
-          <tbody><tr><td class="id">3d2f919b</td><td>172.19.0.3</td><td>26 avr. 2026</td><td>28 min</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>57</td><td><span class="badge"><b style="background:#22c55e"></b>completed</span></td></tr><tr><td class="id">a1b2c3d4</td><td>172.19.0.3</td><td>19 avr. 2026</td><td>32 min</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>49</td><td><span class="badge"><b style="background:#22c55e"></b>completed</span></td></tr><tr><td class="id">e5f6a7b8</td><td>172.19.0.3</td><td>12 avr. 2026</td><td>26 min</td><td><span class="badge"><b style="background:#ef4444"></b>critical</span></td><td>44</td><td><span class="badge"><b style="background:#22c55e"></b>completed</span></td></tr></tbody>
-        </table></div></div>
       <div class="bloc"><h2>live scan</h2>
         <div class="scan">
           <span class="lib">172.19.0.3 · headless browser</span>
           <span class="vivant"><i></i>running</span>
           <div id="radar"><div class="champ"><div class="haut">
             <div class="faisceau"></div>
-            <svg id="trace" width="820" height="150" viewBox="0 0 820 150">
-              <g transform="translate(410,146)"><circle r="440"/><circle r="406"/><circle r="372"/><circle r="338"/><circle r="304"/><circle r="270"/><circle r="236"/><circle r="202"/><circle r="168"/><circle r="134"/><circle r="100"/><circle r="66"/><circle class="socle" r="40"/></g>
+            <svg id="trace" width="820" height="392" viewBox="0 0 820 392">
+              <g transform="translate(410,388)"><circle r="760"/><circle r="718"/><circle r="676"/><circle r="634"/><circle r="592"/><circle r="550"/><circle r="508"/><circle r="466"/><circle r="424"/><circle r="382"/><circle r="340"/><circle r="298"/><circle r="256"/><circle r="214"/><circle r="172"/><circle r="130"/><circle r="88"/><circle class="socle" r="58"/></g>
             </svg>
-            <svg class="grille" width="100%" height="100%"><rect x="274" y="102" width="5" height="5" rx="1" ry="1"/><rect x="213" y="137" width="5" height="5" rx="1" ry="1"/><rect x="420" y="136" width="5" height="5" rx="1" ry="1"/><rect x="460" y="35" width="5" height="5" rx="1" ry="1"/><rect x="378" y="135" width="5" height="5" rx="1" ry="1"/><rect x="393" y="135" width="5" height="5" rx="1" ry="1"/><rect x="258" y="119" width="5" height="5" rx="1" ry="1"/><rect x="510" y="102" width="5" height="5" rx="1" ry="1"/><rect x="428" y="130" width="5" height="5" rx="1" ry="1"/><rect x="537" y="136" width="5" height="5" rx="1" ry="1"/><rect x="656" y="67" width="5" height="5" rx="1" ry="1"/><rect x="703" y="97" width="5" height="5" rx="1" ry="1"/><rect x="113" y="97" width="5" height="5" rx="1" ry="1"/><rect x="226" y="103" width="5" height="5" rx="1" ry="1"/><rect x="214" y="61" width="5" height="5" rx="1" ry="1"/></svg>
+            <svg class="grille" width="100%" height="100%"><rect x="296" y="57" width="5" height="5" rx="1" ry="1"/><rect x="131" y="246" width="5" height="5" rx="1" ry="1"/><rect x="413" y="328" width="5" height="5" rx="1" ry="1"/><rect x="247" y="299" width="5" height="5" rx="1" ry="1"/><rect x="518" y="298" width="5" height="5" rx="1" ry="1"/><rect x="333" y="219" width="5" height="5" rx="1" ry="1"/><rect x="465" y="257" width="5" height="5" rx="1" ry="1"/><rect x="157" y="207" width="5" height="5" rx="1" ry="1"/><rect x="276" y="340" width="5" height="5" rx="1" ry="1"/><rect x="660" y="212" width="5" height="5" rx="1" ry="1"/><rect x="763" y="131" width="5" height="5" rx="1" ry="1"/><rect x="323" y="226" width="5" height="5" rx="1" ry="1"/><rect x="295" y="103" width="5" height="5" rx="1" ry="1"/><rect x="14" y="205" width="5" height="5" rx="1" ry="1"/><rect x="719" y="224" width="5" height="5" rx="1" ry="1"/><rect x="630" y="226" width="5" height="5" rx="1" ry="1"/><rect x="445" y="347" width="5" height="5" rx="1" ry="1"/><rect x="715" y="83" width="5" height="5" rx="1" ry="1"/></svg>
             <div class="cible"><div class="onde"></div>
               <div class="battement"></div></div>
           </div></div></div>
         </div></div>
+      <div class="bloc"><h2>vulnerabilities by severity</h2>
+        <div class="tuiles"><div class="tuile"><div class="ic" style="color:#ef4444"><svg   class="lucide lucide-hexagon"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#ef4444"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /> </svg></div><div class="lib">critical</div><div class="val" style="color:#ef4444" data-cible="8">0<span class="pct">14.04 %</span></div></div><div class="tuile"><div class="ic" style="color:#f97316"><svg   class="lucide lucide-square"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#f97316"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect width="18" height="18" x="3" y="3" rx="2" /> </svg></div><div class="lib">high</div><div class="val" style="color:#f97316" data-cible="24">0<span class="pct">42.11 %</span></div></div><div class="tuile"><div class="ic" style="color:#eab308"><svg   class="lucide lucide-triangle"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#eab308"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /> </svg></div><div class="lib">medium</div><div class="val" style="color:#eab308" data-cible="21">0<span class="pct">36.84 %</span></div></div><div class="tuile"><div class="ic" style="color:#22c55e"><svg   class="lucide lucide-circle"   xmlns="http://www.w3.org/2000/svg"   width="32"   height="32"   viewBox="0 0 24 24"   fill="none"   stroke="#22c55e"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <circle cx="12" cy="12" r="10" /> </svg></div><div class="lib">low</div><div class="val" style="color:#22c55e" data-cible="4">0<span class="pct">7.02 %</span></div></div></div></div>
     </div>
   </div>
 </div>
@@ -312,7 +310,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[102, 274], [137, 213], [136, 420], [35, 460], [135, 378], [135, 393], [119, 258], [102, 510], [130, 428], [136, 537], [67, 656], [97, 703], [97, 113], [103, 226], [61, 214]];
+const POINTS = [[57, 296], [246, 131], [328, 413], [299, 247], [298, 518], [219, 333], [257, 465], [207, 157], [340, 276], [212, 660], [131, 763], [226, 323], [103, 295], [205, 14], [224, 719], [226, 630], [347, 445], [83, 715]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
