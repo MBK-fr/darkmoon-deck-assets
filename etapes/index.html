@@ -17,27 +17,16 @@
      letter-spacing:.008em;color:#fff;
      text-shadow:0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95),
                  0 8px 40px rgba(0,0,0,.9)}
-  /* le pas des etapes : le numero, le verbe, le complement */
-  .temps{margin-top:34px;min-height:132px}
-  .num{font-size:11px;letter-spacing:.3em;color:rgb(220 234 244 / .5);
-       font-variant-numeric:tabular-nums}
-  .verbe{margin-top:10px;font-size:2.05rem;font-weight:300;line-height:1.18;
-         letter-spacing:-.004em;color:#fff;perspective:900px}
-  .suite{margin-top:6px;font-size:1.3rem;font-weight:300;line-height:1.35;
-         color:rgb(255 255 255 / .74);perspective:900px}
+  /* le temps courant : un paragraphe, une seule taille, rien d'autre */
+  .temps{margin:30px 0 0;min-height:118px;font-size:1.22rem;font-weight:300;
+         line-height:1.62;letter-spacing:.012em;color:#fff;max-width:34ch;
+         perspective:900px}
   .m{display:inline-block;margin-right:.3em;
      transition-property:opacity,filter,transform,text-shadow;
      transition-timing-function:cubic-bezier(.25,.46,.45,.94);
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
-  /* la reglette des quatre temps */
-  .jalons{margin-top:26px;display:flex;gap:8px;width:220px}
-  .jalon{flex:1;height:2px;background:rgb(255 255 255 / .14);overflow:hidden}
-  .jalon i{display:block;height:100%;width:0;background:rgb(220 234 244 / .9);
-           box-shadow:0 0 10px rgb(150 190 255 / .7)}
-  .jalon.actif i{width:100%;transition:width 4s linear}
-  .jalon.fait i{width:100%}
   /* les trois promesses, posees sous les temps */
   .promesses{margin-top:30px;display:flex;flex-direction:column;gap:11px}
   .promesse .t{font-size:12.5px;color:#fff;letter-spacing:.01em}
@@ -54,16 +43,16 @@
      carte fait 632 px. On resserre les gouttieres et les corps, sans toucher
      ni a sa structure ni a ses couleurs. Ces regles viennent APRES les
      siennes, donc elles gagnent. */
-  #contenu{padding:16px 18px}
-  #contenu h1{font-size:22px;margin-bottom:10px}
-  #contenu h2{font-size:13px;margin-bottom:8px}
+  #contenu{padding:12px 16px}
+  #contenu h1{font-size:19px;margin-bottom:8px}
+  #contenu h2{font-size:12px;margin-bottom:7px}
   .tuiles{gap:9px}
-  .tuile{padding:9px 10px}
+  .tuile{padding:7px 9px}
   .tuile .ic{padding:6px}
-  .tuile .ic svg{width:24px;height:24px}
+  .tuile .ic svg{width:21px;height:21px}
   .tuile .lib{margin-left:40px;font-size:10.5px}
-  .tuile .val{margin-left:40px;font-size:20px}
-  .bloc{margin-bottom:12px}
+  .tuile .val{margin-left:38px;font-size:17px}
+  .bloc{margin-bottom:9px}
   .table table{font-size:10.5px}
   .table th{padding:8px 10px}
   .table td{padding:7px 10px}
@@ -253,33 +242,53 @@
   /* Reglages d'echelle : le tableau de bord du produit est dessine pour un
      ecran, la carte fait 632 px. On resserre les gouttieres et les corps,
      sans toucher a sa structure ni a ses couleurs. */
-  #contenu{padding:16px 18px}
-  #contenu h1{font-size:22px;margin-bottom:10px}
-  #contenu h2{font-size:13px;margin-bottom:8px}
+  #contenu{padding:12px 16px}
+  #contenu h1{font-size:19px;margin-bottom:8px}
+  #contenu h2{font-size:12px;margin-bottom:7px}
   .tuiles{gap:9px}
-  .tuile{padding:9px 10px}
+  .tuile{padding:7px 9px}
   .tuile .ic{padding:6px}
-  .tuile .ic svg{width:24px;height:24px}
+  .tuile .ic svg{width:21px;height:21px}
   .tuile .lib{margin-left:40px;font-size:10.5px}
-  .tuile .val{margin-left:40px;font-size:20px}
-  .bloc{margin-bottom:12px}
+  .tuile .val{margin-left:38px;font-size:17px}
+  .bloc{margin-bottom:9px}
   .table table{font-size:10.5px}
   .table th{padding:8px 10px}
   .table td{padding:7px 10px}
   .badge{font-size:9.5px;padding:2px 7px}
   /* ── Ce que les etapes allument dans le tableau de bord ──────────────── */
-  #carte{position:absolute;right:64px;top:50%;width:632px;height:496px;
+  #carte{position:absolute;right:64px;top:50%;width:632px;height:508px;
          transform:translateY(-50%);z-index:2;border-radius:14px;
          overflow:hidden;pointer-events:none;background:#000;
          box-shadow:0 30px 90px rgb(0 0 0 / .9), 0 6px 20px rgb(0 0 0 / .8)}
-  .agent{display:flex;align-items:center;gap:9px;padding:7px 0;
-         font-size:13px;color:#9ca3af;opacity:.28;
+  .agents{margin-top:10px}
+  .agent{display:flex;align-items:center;gap:9px;padding:2px 0;
+         font-size:12.5px;color:#9ca3af;opacity:.28;
          transition:opacity .6s ease,color .6s ease}
+  .agent .nom{font-family:'Space Mono',ui-monospace,monospace}
+  .agent .niv{font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+              color:rgb(255 255 255 / .35)}
+  .agent .sig{margin-left:auto;font-size:11px;
+              color:rgb(255 255 255 / .45);font-variant-numeric:tabular-nums}
+  /* Le journal du produit, son `stream-viewer`. La classe s'appelle
+     `journal` et non `flux` : le CSS repris du radar declare deja un `.flux`
+     en position absolue, qui ecrasait celui-ci et faisait chevaucher les
+     lignes avec les severites. */
+  .journal{margin-top:8px;display:flex;flex-direction:column;gap:2px;
+           font-family:'Space Mono',ui-monospace,monospace;font-size:11px;
+           position:static}
+  .journal .ev{display:flex;gap:9px;align-items:baseline;opacity:0;
+               transform:translateY(4px);
+               transition:opacity .5s ease,transform .5s ease}
+  .journal .ev.vu{opacity:1;transform:none}
+  .journal .tag{min-width:58px;text-transform:uppercase;letter-spacing:.08em;
+                font-size:9.5px}
+  .journal .txt{color:rgb(255 255 255 / .68)}
   .agent.vu{opacity:1;color:#e5e7eb}
   .agent b{width:7px;height:7px;border-radius:9999px;flex:none;
            background:#3f3f46;transition:background .6s ease,box-shadow .6s ease}
   .agent.vu b{background:#22c55e;box-shadow:0 0 9px rgb(34 197 94 / .8)}
-  .sev{display:flex;align-items:center;gap:10px;padding:4px 0}
+  .sev{display:flex;align-items:center;gap:10px;padding:2px 0}
   .sev .n{width:70px;font-size:12px;text-transform:capitalize}
   .sev .piste{flex:1;height:3px;background:rgb(255 255 255 / .07);
               border-radius:3px;overflow:hidden}
@@ -289,7 +298,7 @@
           font-variant-numeric:tabular-nums}
   /* Le rapport : la ligne que le produit ecrit a la fin de la campagne,
      `report_path` dans ses donnees. Elle n'apparait qu'au quatrieme temps. */
-  .rapport{margin-top:14px;display:flex;align-items:center;gap:10px;
+  .rapport{margin-top:11px;display:flex;align-items:center;gap:10px;
            padding:9px 11px;border-radius:8px;background:#131313;
            box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1);
            font-size:11.5px;color:#9ca3af;opacity:0;transform:translateY(6px);
@@ -364,7 +373,8 @@
                         background:#52525b;display:inline-block"></b>
               <span id="statut">queued</span></span>
           </div>
-          <div style="margin-top:10px"><div class="agent"><b></b>nodejs</div><div class="agent"><b></b>headless-browser</div></div>
+          <div class="agents"><div class="agent"><b></b><span class="nom">nodejs</span><span class="niv">level 1</span><span class="sig">25 findings</span></div><div class="agent"><b></b><span class="nom">headless-browser</span><span class="niv">level 2</span><span class="sig">32 findings</span></div></div>
+          <div class="journal"><div class="ev"><span class="tag" style="color:#9ca3af">recon</span><span class="txt">14 subdomains resolved</span></div><div class="ev"><span class="tag" style="color:#9ca3af">web</span><span class="txt">katana · 248 endpoints</span></div><div class="ev"><span class="tag" style="color:#ef4444">critical</span><span class="txt">Admin Account Weak Password</span></div><div class="ev"><span class="tag" style="color:#f97316">high</span><span class="txt">Wildcard CORS Policy</span></div></div>
           <div style="margin-top:12px"><div class="sev"><span class="n" style="color:#ef4444">critical</span><span class="piste"><i style="background:#ef4444" data-large="14.0"></i></span><span class="c" data-cible="8">0</span></div><div class="sev"><span class="n" style="color:#f97316">high</span><span class="piste"><i style="background:#f97316" data-large="42.1"></i></span><span class="c" data-cible="24">0</span></div><div class="sev"><span class="n" style="color:#eab308">medium</span><span class="piste"><i style="background:#eab308" data-large="36.8"></i></span><span class="c" data-cible="21">0</span></div><div class="sev"><span class="n" style="color:#22c55e">low</span><span class="piste"><i style="background:#22c55e" data-large="7.0"></i></span><span class="c" data-cible="4">0</span></div></div>
           <div class="rapport">
             <span class="ic"><svg   class="lucide lucide-folder-closed"   xmlns="http://www.w3.org/2000/svg"   width="18"   height="18"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />   <path d="M2 10h20" /> </svg></span>
@@ -378,12 +388,7 @@
   <div id="gauche">
     <div class="eyebrow">LA SOLUTION · EN DÉTAIL</div>
     <h1>Modulaire, adapté à votre environnement.</h1>
-    <div class="temps">
-      <div class="num" id="num">01</div>
-      <div class="verbe" id="verbe"></div>
-      <div class="suite" id="suite"></div>
-    </div>
-    <div class="jalons"><span class="jalon"><i></i></span><span class="jalon"><i></i></span><span class="jalon"><i></i></span><span class="jalon"><i></i></span></div>
+    <p class="temps" id="temps"></p>
     <div class="chapeau">Flexible et modulaire</div>
     <div class="promesses"><div class="promesse"><div class="t">S'adapte à chaque terrain</div><div class="d">Web, cloud, AD, Kubernetes, réseau, il active ce qu'il faut.</div></div><div class="promesse"><div class="t">Se déploie où vous voulez</div><div class="d">Chez vous, dans votre cloud, ou en service géré.</div></div><div class="promesse"><div class="t">Agnostique côté IA</div><div class="d">Claude (Anthropic) ou une IA souveraine locale. Un proxy masque vos données sensibles si l'IA est externe.</div></div></div>
   </div>
@@ -395,18 +400,15 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "Il", "e": 0, "d": 1.7, "r": 0, "b": 11, "s": 0.92}, {"t": "découvre", "e": 0, "d": 1.691, "r": 0.066, "b": 10, "s": 0.928}, {"t": "votre", "e": 0, "d": 1.665, "r": 0.123, "b": 14, "s": 0.936}, {"t": "environnement", "e": 0, "d": 1.624, "r": 0.194, "b": 14, "s": 0.943}, {"t": "Il", "e": 1, "d": 1.572, "r": 0, "b": 14, "s": 0.949}, {"t": "choisit", "e": 1, "d": 1.514, "r": 0.059, "b": 10, "s": 0.954}, {"t": "les", "e": 1, "d": 1.455, "r": 0.137, "b": 10, "s": 0.957}, {"t": "bons", "e": 1, "d": 1.399, "r": 0.2, "b": 14, "s": 0.959}, {"t": "outils", "e": 1, "d": 1.353, "r": 0.277, "b": 14, "s": 0.96}, {"t": "Il", "e": 2, "d": 1.319, "r": 0, "b": 11, "s": 0.959}, {"t": "teste", "e": 2, "d": 1.302, "r": 0.075, "b": 14, "s": 0.956}, {"t": "et", "e": 2, "d": 1.303, "r": 0.158, "b": 14, "s": 0.952}, {"t": "prouve", "e": 2, "d": 1.321, "r": 0.213, "b": 10, "s": 0.947}, {"t": "chaque", "e": 2, "d": 1.355, "r": 0.299, "b": 10, "s": 0.941}, {"t": "faille", "e": 2, "d": 1.402, "r": 0.352, "b": 11, "s": 0.933}, {"t": "Il", "e": 3, "d": 1.458, "r": 0, "b": 11, "s": 0.926}, {"t": "restitue", "e": 3, "d": 1.517, "r": 0.072, "b": 14, "s": 0.918}, {"t": "un", "e": 3, "d": 1.576, "r": 0.132, "b": 15, "s": 0.91}, {"t": "rapport", "e": 3, "d": 1.627, "r": 0.197, "b": 14, "s": 0.902}, {"t": "clair", "e": 3, "d": 1.667, "r": 0.283, "b": 11, "s": 0.896}];
-const ETAPES = [["01", "Il découvre", "votre environnement"], ["02", "Il choisit", "les bons outils"], ["03", "Il teste", "et prouve chaque faille"], ["04", "Il restitue", "un rapport clair"]];
-const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "agents": 0, "severites": 0, "table": false, "statut": "queued"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 6, "agents": 2, "severites": 0, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 57, "agents": 2, "severites": 1, "table": false, "statut": "running"}, {"projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "agents": 2, "severites": 1, "table": true, "statut": "completed"}];
+const MOTS = [{"t": "Il", "e": 0, "d": 1.7, "r": 0, "b": 11, "s": 0.92}, {"t": "découvre", "e": 0, "d": 1.691, "r": 0.066, "b": 10, "s": 0.928}, {"t": "votre", "e": 0, "d": 1.665, "r": 0.123, "b": 14, "s": 0.936}, {"t": "environnement", "e": 0, "d": 1.624, "r": 0.194, "b": 14, "s": 0.943}, {"t": ":", "e": 0, "d": 1.572, "r": 0.262, "b": 14, "s": 0.949}, {"t": "ce", "e": 0, "d": 1.514, "r": 0.339, "b": 10, "s": 0.954}, {"t": "qui", "e": 0, "d": 1.455, "r": 0.417, "b": 10, "s": 0.957}, {"t": "tourne,", "e": 0, "d": 1.399, "r": 0.48, "b": 14, "s": 0.959}, {"t": "ce", "e": 0, "d": 1.353, "r": 0.557, "b": 14, "s": 0.96}, {"t": "qui", "e": 0, "d": 1.319, "r": 0.615, "b": 11, "s": 0.959}, {"t": "répond,", "e": 0, "d": 1.302, "r": 0.705, "b": 14, "s": 0.956}, {"t": "ce", "e": 0, "d": 1.303, "r": 0.788, "b": 14, "s": 0.952}, {"t": "qui", "e": 0, "d": 1.321, "r": 0.843, "b": 10, "s": 0.947}, {"t": "est", "e": 0, "d": 1.355, "r": 0.929, "b": 10, "s": 0.941}, {"t": "exposé.", "e": 0, "d": 1.402, "r": 0.982, "b": 11, "s": 0.933}, {"t": "Il", "e": 1, "d": 1.458, "r": 0, "b": 11, "s": 0.926}, {"t": "choisit", "e": 1, "d": 1.517, "r": 0.072, "b": 14, "s": 0.918}, {"t": "les", "e": 1, "d": 1.576, "r": 0.132, "b": 15, "s": 0.91}, {"t": "bons", "e": 1, "d": 1.627, "r": 0.197, "b": 14, "s": 0.902}, {"t": "outils,", "e": 1, "d": 1.667, "r": 0.283, "b": 11, "s": 0.896}, {"t": "ceux", "e": 1, "d": 1.692, "r": 0.345, "b": 14, "s": 0.89}, {"t": "qui", "e": 1, "d": 1.7, "r": 0.428, "b": 14, "s": 0.885}, {"t": "correspondent", "e": 1, "d": 1.69, "r": 0.472, "b": 11, "s": 0.882}, {"t": "à", "e": 1, "d": 1.663, "r": 0.56, "b": 14, "s": 0.88}, {"t": "ce", "e": 1, "d": 1.622, "r": 0.627, "b": 12, "s": 0.88}, {"t": "qu'il", "e": 1, "d": 1.569, "r": 0.699, "b": 13, "s": 0.882}, {"t": "vient", "e": 1, "d": 1.511, "r": 0.764, "b": 11, "s": 0.885}, {"t": "de", "e": 1, "d": 1.451, "r": 0.852, "b": 15, "s": 0.889}, {"t": "trouver.", "e": 1, "d": 1.396, "r": 0.921, "b": 10, "s": 0.895}, {"t": "Il", "e": 2, "d": 1.35, "r": 0.003, "b": 14, "s": 0.901}, {"t": "teste", "e": 2, "d": 1.318, "r": 0.07, "b": 12, "s": 0.909}, {"t": "et", "e": 2, "d": 1.302, "r": 0.149, "b": 12, "s": 0.917}, {"t": "prouve", "e": 2, "d": 1.303, "r": 0.214, "b": 10, "s": 0.925}, {"t": "chaque", "e": 2, "d": 1.322, "r": 0.265, "b": 13, "s": 0.932}, {"t": "faille,", "e": 2, "d": 1.357, "r": 0.337, "b": 12, "s": 0.94}, {"t": "au", "e": 2, "d": 1.405, "r": 0.406, "b": 13, "s": 0.946}, {"t": "lieu", "e": 2, "d": 1.461, "r": 0.487, "b": 15, "s": 0.952}, {"t": "de", "e": 2, "d": 1.521, "r": 0.543, "b": 14, "s": 0.956}, {"t": "se", "e": 2, "d": 1.579, "r": 0.633, "b": 12, "s": 0.959}, {"t": "contenter", "e": 2, "d": 1.63, "r": 0.694, "b": 12, "s": 0.96}, {"t": "de", "e": 2, "d": 1.669, "r": 0.774, "b": 14, "s": 0.96}, {"t": "la", "e": 2, "d": 1.693, "r": 0.852, "b": 10, "s": 0.958}, {"t": "signaler.", "e": 2, "d": 1.7, "r": 0.924, "b": 12, "s": 0.954}, {"t": "Il", "e": 3, "d": 1.689, "r": 0, "b": 15, "s": 0.949}, {"t": "restitue", "e": 3, "d": 1.661, "r": 0.053, "b": 15, "s": 0.943}, {"t": "un", "e": 3, "d": 1.619, "r": 0.148, "b": 15, "s": 0.936}, {"t": "rapport", "e": 3, "d": 1.566, "r": 0.213, "b": 15, "s": 0.929}, {"t": "clair,", "e": 3, "d": 1.507, "r": 0.293, "b": 12, "s": 0.921}, {"t": "lisible", "e": 3, "d": 1.448, "r": 0.359, "b": 15, "s": 0.913}, {"t": "par", "e": 3, "d": 1.393, "r": 0.414, "b": 13, "s": 0.905}, {"t": "vos", "e": 3, "d": 1.348, "r": 0.484, "b": 14, "s": 0.898}, {"t": "équipes", "e": 3, "d": 1.316, "r": 0.545, "b": 10, "s": 0.892}, {"t": "comme", "e": 3, "d": 1.301, "r": 0.619, "b": 12, "s": 0.887}, {"t": "par", "e": 3, "d": 1.304, "r": 0.685, "b": 11, "s": 0.883}, {"t": "vos", "e": 3, "d": 1.324, "r": 0.766, "b": 13, "s": 0.881}, {"t": "auditeurs.", "e": 3, "d": 1.36, "r": 0.823, "b": 13, "s": 0.88}];
+const ETAPES = ["Il découvre votre environnement : ce qui tourne, ce qui répond, ce qui est exposé.", "Il choisit les bons outils, ceux qui correspondent à ce qu'il vient de trouver.", "Il teste et prouve chaque faille, au lieu de se contenter de la signaler.", "Il restitue un rapport clair, lisible par vos équipes comme par vos auditeurs."];
+const ETATS = [{"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 0, "agents": 0, "severites": 0, "table": false, "statut": "queued", "flux": 1}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 6, "agents": 2, "severites": 0, "table": false, "statut": "running", "flux": 2}, {"projets": 1, "cibles": 1, "campagnes": 1, "vulns": 57, "agents": 2, "severites": 1, "table": false, "statut": "running", "flux": 3}, {"projets": 1, "cibles": 1, "campagnes": 6, "vulns": 57, "agents": 2, "severites": 1, "table": true, "statut": "completed", "flux": 4}];
 const DUREE = 5200;                      // un temps dure 5,2 secondes
 
-const zoneVerbe = document.getElementById('verbe');
-const zoneSuite = document.getElementById('suite');
-const zoneNum = document.getElementById('num');
+const zone = document.getElementById('temps');
 
 function poserMots(n) {
-  zoneVerbe.textContent = '';
-  zoneSuite.textContent = '';
+  zone.textContent = '';
   const spans = [];
   MOTS.filter(w => w.e === n).forEach((w, i) => {
     const e = document.createElement('span');
@@ -414,9 +416,7 @@ function poserMots(n) {
     e.textContent = w.t;
     e.style.transitionDuration = w.d + 's';
     e.style.transitionDelay = w.r + 's';
-    // les mots du verbe d'abord, puis ceux du complement
-    const cible = i < ETAPES[n][1].split(' ').length ? zoneVerbe : zoneSuite;
-    cible.appendChild(e);
+    zone.appendChild(e);
     spans.push({e, w});
   });
   spans.forEach(({e, w}) => {
@@ -473,6 +473,10 @@ function poserDash(n) {
   document.querySelectorAll('.sev .c').forEach((c, i) => {
     compteur(c, etat.severites ? +c.dataset.cible : 0, 1400);
   });
+  document.querySelectorAll('.journal .ev').forEach((e, i) => {
+    // les evenements arrivent l'un apres l'autre, comme dans le produit
+    setTimeout(() => e.classList.toggle('vu', i < etat.flux), i * 160);
+  });
   document.querySelector('.rapport').classList.toggle('vu', etat.table);
   const st = document.getElementById('statut');
   st.textContent = etat.statut;
@@ -486,15 +490,8 @@ function poserDash(n) {
 let temps = 0, minuterie = null;
 function jouer(n) {
   temps = n;
-  zoneNum.textContent = ETAPES[n][0];
   poserMots(n);
   poserDash(n);
-  document.querySelectorAll('.jalon').forEach((j, i) => {
-    j.classList.toggle('fait', i < n);
-    j.classList.remove('actif');
-    if (i === n) requestAnimationFrame(() => j.classList.add('actif'));
-    if (i > n) j.querySelector('i').style.width = '0';
-  });
 }
 
 function derouler() {
