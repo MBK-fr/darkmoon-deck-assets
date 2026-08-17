@@ -64,23 +64,70 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* ── La carte : le composant `bot-detection` en fond, le dashboard dessus
-     La carte reprend celle du demonstrateur, `rounded-md border
-     border-neutral-800 bg-black`, agrandie a la taille de la slide. Elle
-     contient deux choses : le radar du composant, avec ses couronnes, ses
-     points, son balayage et sa cible, et par-dessus le tableau de bord de
-     `ASCIT31/darkmoon-demo`, porte en HTML et CSS.
-     Le theme du produit est repris tel quel : `--bg-primary #000000`,
-     `--bg-secondary #0a0a0a`, `--bg-tertiary #131313`, les titres en Space
-     Mono capitales, le texte en gris 400, les tuiles en `rounded-lg` avec
-     leur `inset-ring` blanc a 10 pour cent. */
-  #carte{position:absolute;right:52px;top:50%;width:624px;height:438px;
-         transform:translateY(-50%);z-index:2;border-radius:.375rem;
-         border:1px solid #262626;background:#000;overflow:hidden;
-         pointer-events:none}
-  #radar{position:absolute;inset:0;overflow:hidden}
+  /* ── Le tableau de bord, et le radar DEDANS ──────────────────────────
+     Le composant n'est plus un fond sur lequel on pose des tuiles : il
+     devient une vignette du tableau de bord, au meme titre que les stats,
+     les severites et les campagnes. C'est la vue que le produit donnerait
+     d'un scan en cours.
+     Plus une seule bordure d'un pixel : les surfaces se detachent par des
+     degrades et des ombres, comme le reste du deck. */
+  #carte{position:absolute;right:52px;top:50%;width:632px;height:452px;
+         transform:translateY(-50%);z-index:2;border-radius:18px;
+         padding:20px 22px;overflow:hidden;pointer-events:none;
+         background:linear-gradient(155deg,#0e1119 0%,#090b11 46%,#06070b 100%);
+         box-shadow:0 30px 80px rgb(0 0 0 / .85),
+                    0 6px 22px rgb(0 0 0 / .7),
+                    inset 0 1px 0 rgb(255 255 255 / .06),
+                    inset 0 0 60px rgb(80 120 190 / .05)}
+  #dash{display:flex;flex-direction:column;height:100%;gap:14px}
+  .entete{display:flex;align-items:baseline;gap:12px}
+  .entete h1{margin:0;font-family:'Space Mono',ui-monospace,monospace;
+             font-size:14px;letter-spacing:.14em;text-transform:uppercase;
+             color:#fff}
+  .vivant{margin-left:auto;display:flex;align-items:center;gap:7px;
+          font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+          color:rgb(220 234 244 / .6)}
+  .vivant i{width:6px;height:6px;border-radius:9999px;background:#22c55e;
+            box-shadow:0 0 8px rgb(34 197 94 / .9);
+            animation:pouls 2.2s ease-in-out infinite}
+  @keyframes pouls{0%,100%{opacity:1;transform:scale(1)}
+                   50%{opacity:.45;transform:scale(.82)}}
+  /* les surfaces : un degrade et une arete de lumiere, aucun filet */
+  .tuile,.panneau,.table{border-radius:12px;
+    background:linear-gradient(165deg,rgb(255 255 255 / .055) 0%,
+      rgb(255 255 255 / .022) 42%, rgb(255 255 255 / .012) 100%);
+    box-shadow:inset 0 1px 0 rgb(255 255 255 / .08),
+               0 10px 26px rgb(0 0 0 / .5)}
+  .tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tuile{padding:10px 12px}
+  .tuile .lib{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+              color:rgb(255 255 255 / .45)}
+  .tuile .val{margin-top:6px;font-size:24px;font-weight:500;color:#fff;
+              font-variant-numeric:tabular-nums;line-height:1;
+              letter-spacing:-.01em}
+  .colonnes{flex:1;display:grid;grid-template-columns:1fr 232px;gap:12px;
+            min-height:0}
+  .panneau{padding:12px 14px;display:flex;flex-direction:column;min-height:0}
+  .panneau h2{margin:0 0 10px;font-family:'Space Mono',ui-monospace,monospace;
+              font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+              color:rgb(255 255 255 / .42)}
+  /* les severites : une ligne par niveau, barre remplie a l'arrivee */
+  .sev{display:flex;align-items:center;gap:10px;padding:5px 0}
+  .sev .n{width:74px;font-size:11.5px;letter-spacing:.02em}
+  .sev .piste{flex:1;height:4px;border-radius:4px;
+              background:rgb(255 255 255 / .06);overflow:hidden}
+  .sev .piste i{display:block;height:100%;width:0;border-radius:4px;
+                transition:width 1.5s cubic-bezier(.22,.61,.36,1) .35s}
+  .sev .c{width:52px;text-align:right;font-size:11.5px;color:#fff;
+          font-variant-numeric:tabular-nums}
+  .sev .p{width:52px;text-align:right;font-size:10.5px;
+          color:rgb(255 255 255 / .4);font-variant-numeric:tabular-nums}
+  /* la vignette du radar : le composant, cadre comme les autres surfaces */
+  #radar{position:relative;flex:1;border-radius:9px;overflow:hidden;
+         background:radial-gradient(120% 90% at 50% 100%,
+           rgb(18 26 42 / .9) 0%, rgb(6 8 13 / .95) 60%)}
   #radar .champ,#radar .haut{position:absolute;inset:0}
-  .faisceau{position:absolute;bottom:20px;left:312px;width:600px;height:600px;
+  .faisceau{position:absolute;bottom:0;left:50%;width:300px;height:300px;
     transform-origin:bottom left;pointer-events:none;
     background:radial-gradient(circle at 0% 100%,
       var(--faisceau) 5%, transparent 60%);
@@ -102,63 +149,31 @@
     77%{opacity:1;transform:rotate(-50deg)}
     88%{opacity:.7;transform:rotate(-45deg)}
     100%{opacity:.7;transform:rotate(-55deg)}}
-  #trace{position:absolute;left:50%;bottom:0;width:624px;height:438px;
+  #trace{position:absolute;left:50%;bottom:0;width:232px;height:190px;
          transform:translateX(-50%);overflow:visible}
   #trace circle{fill:none;stroke:var(--trait);stroke-width:1;
                 stroke-dasharray:2 2}
   #trace circle.socle{stroke:#3a3a3a;stroke-dasharray:none}
-
-  /* ── Le tableau de bord, porte de l'Angular en HTML et CSS ──────────── */
-  #dash{position:absolute;inset:0;padding:20px 22px;
-        display:flex;flex-direction:column;gap:14px;
-        background:linear-gradient(180deg,rgb(0 0 0 / .82) 0%,
-          rgb(0 0 0 / .62) 46%,rgb(0 0 0 / .78) 100%)}
-  #dash h1{margin:0;font-family:'Space Mono',ui-monospace,monospace;
-           font-size:15px;letter-spacing:.06em;text-transform:uppercase;
-           color:#fff}
-  #dash h2{margin:0 0 8px;font-family:'Space Mono',ui-monospace,monospace;
-           font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
-           color:#9ca3af}
-  .tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .tuile{position:relative;border-radius:.5rem;background:#131313;
-         padding:10px 12px;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
-  .tuile .lib{font-size:10px;letter-spacing:.06em;text-transform:capitalize;
-              color:#9ca3af}
-  .tuile .val{margin-top:4px;font-size:22px;font-weight:600;color:#fff;
-              font-variant-numeric:tabular-nums;line-height:1}
-  .tuile .pct{margin-left:6px;font-size:10.5px;color:#9ca3af;font-weight:400}
-  .tuile .barre{margin-top:8px;height:2px;border-radius:2px;
-                background:rgb(255 255 255 / .08);overflow:hidden}
-  .tuile .barre i{display:block;height:100%;width:0;border-radius:2px;
-                  transition:width 1.4s cubic-bezier(.22,.61,.36,1) .3s}
-  .crit .val,.crit .lib{color:#ef4444}
-  .haut2 .val,.haut2 .lib{color:#f97316}
-  .moy .val,.moy .lib{color:#eab308}
-  .bas .val,.bas .lib{color:#22c55e}
-  /* le tableau des dernieres campagnes, meme structure que l'Angular */
-  .table{border:1px solid rgb(255 255 255 / .15);border-radius:.5rem;
-         overflow:hidden;background:#131313}
-  .table table{width:100%;border-collapse:collapse;font-size:10.5px}
-  .table th{padding:7px 10px;text-align:left;color:#e5e7eb;font-weight:600;
-            text-transform:capitalize;border-bottom:1px solid rgb(255 255 255 / .15)}
-  .table td{padding:7px 10px;color:#9ca3af;white-space:nowrap;
-            border-top:1px solid rgb(255 255 255 / .1)}
+  /* le tableau, sans filet lui non plus */
+  .table{padding:0;overflow:hidden}
+  .table table{width:100%;border-collapse:collapse;font-size:10px}
+  .table th{padding:8px 12px;text-align:left;font-weight:500;
+            letter-spacing:.14em;text-transform:uppercase;
+            color:rgb(255 255 255 / .38);
+            background:rgb(255 255 255 / .03)}
+  .table td{padding:7px 12px;color:rgb(255 255 255 / .62);
+            white-space:nowrap;
+            box-shadow:inset 0 1px 0 rgb(255 255 255 / .04)}
   .table td.id{color:#fff;font-family:'Space Mono',ui-monospace,monospace}
-  /* seules les lignes du CORPS apparaissent : la regle visait `tr` tout
-     court et masquait aussi l'en-tete */
   .table tbody tr{opacity:0;transform:translateY(6px);
                   transition:opacity .7s ease,transform .7s ease}
   .table tbody tr.vu{opacity:1;transform:none}
-  .badge{display:inline-block;padding:1px 7px;border-radius:9999px;
-         font-size:9.5px;letter-spacing:.04em;text-transform:uppercase}
-  .b-crit{color:#ef4444;background:rgb(239 68 68 / .12);
-          box-shadow:inset 0 0 0 1px rgb(239 68 68 / .35)}
-  .b-haut{color:#f97316;background:rgb(249 115 22 / .12);
-          box-shadow:inset 0 0 0 1px rgb(249 115 22 / .35)}
-  .b-moy{color:#eab308;background:rgb(234 179 8 / .12);
-         box-shadow:inset 0 0 0 1px rgb(234 179 8 / .35)}
-  .b-fini{color:#22c55e;background:rgb(34 197 94 / .12);
-          box-shadow:inset 0 0 0 1px rgb(34 197 94 / .35)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:9999px;
+         font-size:9px;letter-spacing:.1em;text-transform:uppercase}
+  .b-crit{color:#ff6b6b;background:rgb(239 68 68 / .14)}
+  .b-haut{color:#ffa04d;background:rgb(249 115 22 / .14)}
+  .b-moy{color:#f5d13b;background:rgb(234 179 8 / .14)}
+  .b-fini{color:#4ade80;background:rgb(34 197 94 / .13)}
   .grille{position:absolute;left:0;top:0;width:100%;height:100%;
           pointer-events:none;
           animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
@@ -198,32 +213,33 @@
 </style></head><body>
 <div id="voile"></div>
 <div id="carte">
-  <div id="radar"><div class="champ"><div class="haut">
-    <div class="faisceau"></div>
-    <svg id="trace" width="624" height="438" viewBox="0 0 624 438">
-      <g transform="translate(312,424)"><circle r="690"/><circle r="656"/><circle r="622"/><circle r="588"/><circle r="554"/><circle r="520"/><circle r="486"/><circle r="452"/><circle r="418"/><circle r="384"/><circle r="350"/><circle r="316"/><circle r="282"/><circle r="248"/><circle r="214"/><circle r="180"/><circle r="146"/><circle r="112"/><circle class="socle" r="54"/></g>
-    </svg>
-    <svg class="grille" width="100%" height="100%"><rect x="210" y="372" width="5" height="5" rx="1" ry="1"/><rect x="426" y="101" width="5" height="5" rx="1" ry="1"/><rect x="633" y="243" width="5" height="5" rx="1" ry="1"/><rect x="201" y="328" width="5" height="5" rx="1" ry="1"/><rect x="591" y="297" width="5" height="5" rx="1" ry="1"/><rect x="479" y="371" width="5" height="5" rx="1" ry="1"/><rect x="27" y="382" width="5" height="5" rx="1" ry="1"/><rect x="648" y="108" width="5" height="5" rx="1" ry="1"/><rect x="596" y="199" width="5" height="5" rx="1" ry="1"/><rect x="212" y="42" width="5" height="5" rx="1" ry="1"/><rect x="210" y="7" width="5" height="5" rx="1" ry="1"/><rect x="232" y="398" width="5" height="5" rx="1" ry="1"/><rect x="269" y="357" width="5" height="5" rx="1" ry="1"/><rect x="481" y="83" width="5" height="5" rx="1" ry="1"/><rect x="497" y="339" width="5" height="5" rx="1" ry="1"/><rect x="429" y="103" width="5" height="5" rx="1" ry="1"/><rect x="187" y="131" width="5" height="5" rx="1" ry="1"/><rect x="401" y="441" width="5" height="5" rx="1" ry="1"/><rect x="553" y="116" width="5" height="5" rx="1" ry="1"/><rect x="551" y="355" width="5" height="5" rx="1" ry="1"/><rect x="495" y="128" width="5" height="5" rx="1" ry="1"/><rect x="426" y="64" width="5" height="5" rx="1" ry="1"/><rect x="336" y="265" width="5" height="5" rx="1" ry="1"/></svg>
-    <div class="cible"><div class="onde"></div><div class="battement"></div></div>
-  </div></div></div>
   <div id="dash">
-    <h1>Dashboard</h1>
-    <div>
-      <h2>Statistics</h2>
-      <div class="tuiles"><div class="tuile"><div class="lib">projects</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="lib">targets</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="lib">campaigns</div><div class="val" data-cible="6">0</div></div><div class="tuile"><div class="lib">vulnerabilities</div><div class="val" data-cible="57">0</div></div></div>
+    <div class="entete"><h1>Dashboard</h1>
+      <span class="vivant"><i></i>scan en cours</span></div>
+    <div class="tuiles"><div class="tuile"><div class="lib">projects</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="lib">targets</div><div class="val" data-cible="1">0</div></div><div class="tuile"><div class="lib">campaigns</div><div class="val" data-cible="6">0</div></div><div class="tuile"><div class="lib">vulnerabilities</div><div class="val" data-cible="57">0</div></div></div>
+    <div class="colonnes">
+      <div class="panneau">
+        <h2>Vulnerabilities by severity</h2>
+        <div class="sev"><span class="n" style="color:#ef4444">Critical</span><span class="piste"><i style="background:#ef4444" data-large="14.0"></i></span><span class="c val" data-cible="8">0</span><span class="p">14.0 %</span></div><div class="sev"><span class="n" style="color:#f97316">High</span><span class="piste"><i style="background:#f97316" data-large="42.1"></i></span><span class="c val" data-cible="24">0</span><span class="p">42.1 %</span></div><div class="sev"><span class="n" style="color:#eab308">Medium</span><span class="piste"><i style="background:#eab308" data-large="36.8"></i></span><span class="c val" data-cible="21">0</span><span class="p">36.8 %</span></div><div class="sev"><span class="n" style="color:#22c55e">Low</span><span class="piste"><i style="background:#22c55e" data-large="7.0"></i></span><span class="c val" data-cible="4">0</span><span class="p">7.0 %</span></div>
+      </div>
+      <div class="panneau">
+        <h2>Live scan</h2>
+        <div id="radar"><div class="champ"><div class="haut">
+          <div class="faisceau"></div>
+          <svg id="trace" width="232" height="190" viewBox="0 0 232 190">
+            <g transform="translate(116,186)"><circle r="264"/><circle r="242"/><circle r="220"/><circle r="198"/><circle r="176"/><circle r="154"/><circle r="132"/><circle r="110"/><circle r="88"/><circle r="66"/><circle r="44"/><circle class="socle" r="26"/></g>
+          </svg>
+          <svg class="grille" width="100%" height="100%"><rect x="14" y="37" width="5" height="5" rx="1" ry="1"/><rect x="47" y="165" width="5" height="5" rx="1" ry="1"/><rect x="156" y="56" width="5" height="5" rx="1" ry="1"/><rect x="95" y="168" width="5" height="5" rx="1" ry="1"/><rect x="80" y="7" width="5" height="5" rx="1" ry="1"/><rect x="58" y="149" width="5" height="5" rx="1" ry="1"/><rect x="101" y="139" width="5" height="5" rx="1" ry="1"/><rect x="81" y="149" width="5" height="5" rx="1" ry="1"/><rect x="97" y="95" width="5" height="5" rx="1" ry="1"/><rect x="159" y="162" width="5" height="5" rx="1" ry="1"/><rect x="228" y="77" width="5" height="5" rx="1" ry="1"/><rect x="27" y="159" width="5" height="5" rx="1" ry="1"/><rect x="68" y="38" width="5" height="5" rx="1" ry="1"/><rect x="4" y="48" width="5" height="5" rx="1" ry="1"/></svg>
+          <div class="cible"><div class="onde"></div>
+            <div class="battement"></div></div>
+        </div></div></div>
+      </div>
     </div>
-    <div>
-      <h2>Vulnerabilities by severity</h2>
-      <div class="tuiles"><div class="tuile crit"><div class="lib">critical</div><div class="val" data-cible="8">0<span class="pct">14.04 %</span></div><div class="barre"><i style="background:#ef4444" data-large="14.0"></i></div></div><div class="tuile haut2"><div class="lib">high</div><div class="val" data-cible="24">0<span class="pct">42.11 %</span></div><div class="barre"><i style="background:#f97316" data-large="42.1"></i></div></div><div class="tuile moy"><div class="lib">medium</div><div class="val" data-cible="21">0<span class="pct">36.84 %</span></div><div class="barre"><i style="background:#eab308" data-large="36.8"></i></div></div><div class="tuile bas"><div class="lib">low</div><div class="val" data-cible="4">0<span class="pct">7.02 %</span></div><div class="barre"><i style="background:#22c55e" data-large="7.0"></i></div></div></div>
-    </div>
-    <div>
-      <h2>Last campaigns</h2>
-      <div class="table"><table>
-        <thead><tr><th>#</th><th>target</th><th>date</th><th>duration</th>
-          <th>risk</th><th>vulns</th><th>status</th></tr></thead>
-        <tbody><tr><td class="id">3d2f919b</td><td>172.19.0.3</td><td>26 avr. 2026</td><td>28 min</td><td><span class="badge b-crit">critical</span></td><td>57</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">a1b2c3d4</td><td>172.19.0.3</td><td>19 avr. 2026</td><td>32 min</td><td><span class="badge b-crit">critical</span></td><td>49</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">e5f6a7b8</td><td>172.19.0.3</td><td>12 avr. 2026</td><td>26 min</td><td><span class="badge b-crit">critical</span></td><td>44</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">c9d0e1f2</td><td>172.19.0.3</td><td>5 avr. 2026</td><td>22 min</td><td><span class="badge b-haut">high</span></td><td>38</td><td><span class="badge b-fini">completed</span></td></tr></tbody>
-      </table></div>
-    </div>
+    <div class="table"><table>
+      <thead><tr><th>#</th><th>target</th><th>date</th><th>duration</th>
+        <th>risk</th><th>vulns</th><th>status</th></tr></thead>
+      <tbody><tr><td class="id">3d2f919b</td><td>172.19.0.3</td><td>26 avr. 2026</td><td>28 min</td><td><span class="badge b-crit">critical</span></td><td>57</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">a1b2c3d4</td><td>172.19.0.3</td><td>19 avr. 2026</td><td>32 min</td><td><span class="badge b-crit">critical</span></td><td>49</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">e5f6a7b8</td><td>172.19.0.3</td><td>12 avr. 2026</td><td>26 min</td><td><span class="badge b-crit">critical</span></td><td>44</td><td><span class="badge b-fini">completed</span></td></tr><tr><td class="id">c9d0e1f2</td><td>172.19.0.3</td><td>5 avr. 2026</td><td>22 min</td><td><span class="badge b-haut">high</span></td><td>38</td><td><span class="badge b-fini">completed</span></td></tr></tbody>
+    </table></div>
   </div>
 </div>
 <div id="scene">
@@ -283,7 +299,7 @@ jouerTexte();
 // Le composant s'appuie sur un ressort framer-motion, `stiffness 300,
 // damping 70` : une courbe de Bezier legerement elastique en rend l'allure
 // sans embarquer la bibliotheque.
-const POINTS = [[372, 210], [101, 426], [243, 633], [328, 201], [297, 591], [371, 479], [382, 27], [108, 648], [199, 596], [42, 212], [7, 210], [398, 232], [357, 269], [83, 481], [339, 497], [103, 429], [131, 187], [441, 401], [116, 553], [355, 551], [128, 495], [64, 426], [265, 336]];
+const POINTS = [[37, 14], [165, 47], [56, 156], [168, 95], [7, 80], [149, 58], [139, 101], [149, 81], [95, 97], [162, 159], [77, 228], [159, 27], [38, 68], [48, 4]];
 // Trois cibles au lieu d'une, decalees d'un tiers du tour de liste et d'une
 // seconde chacune : elles ne tombent jamais sur le meme point ni au meme
 // instant.
@@ -327,7 +343,7 @@ function animerDash() {
     e.firstChild.nodeValue = 0;
     requestAnimationFrame(pas);
   });
-  document.querySelectorAll('#dash .barre i').forEach((e, i) => {
+  document.querySelectorAll('#dash .piste i').forEach((e, i) => {
     e.style.width = '0';
     setTimeout(() => { e.style.width = e.dataset.large + '%'; }, 300 + i * 90);
   });
