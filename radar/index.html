@@ -53,6 +53,47 @@
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
 
+  /* ── Le texte : registre magazine, police de la slide 2 ──────────────
+     Meme famille, meme graisse, meme interlettrage et meme apparition mot a
+     mot que la slide 2. Ce qui change est la mise en page : un chapo en
+     petites capitales, une attaque en grand, puis des paragraphes courts,
+     sans puce et sans tiret, chacun se suffisant a lui-meme. */
+  #scene{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
+         justify-content:center;padding:0 96px;pointer-events:none}
+  .inner{position:relative;width:62rem;max-width:62rem;text-align:center;
+         pointer-events:auto}
+  /* Plus de bloc derriere le texte : son degre radial etait borne par une
+     boite, et cette boite se voyait comme un rectangle a faible opacite. La
+     lisibilite est portee par les mots eux-memes, avec la pile d'ombres de
+     la slide 2 — cinq couches, parce qu'une ombre CSS ne depasse pas
+     l'opacite 1 et que c'est en les superposant qu'on obtient un noir dense
+     autour des lettres. */
+  .par{margin:0;color:#fff;font-weight:300;
+       font-family:'Avenir Next','Avenir',system-ui,sans-serif;
+       perspective:900px}
+  .par.corps{font-size:1.66rem;line-height:1.62;letter-spacing:.016em;
+             color:#fff;margin:0;max-width:none}
+  /* Les trois mots-cles en neon, dans la couleur du fond : la scene bloim
+     tourne autour de 230 a 250 degres, un indigo violace, releve sur son
+     image de presentation. Le mot reste peu lumineux, c'est le halo qui
+     porte, comme sur un vrai tube. */
+  .m.cle{color:#9bb8ff;
+         text-shadow:0 0 6px rgb(107 156 255 / .95),
+                     0 0 18px rgb(77 126 255 / .7),
+                     0 0 42px rgb(60 104 220 / .45),
+                     0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95)}
+  .m{display:inline-block;margin-right:.32em;
+     transition-property:opacity,filter,transform,text-shadow;
+     transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+     will-change:filter,transform,opacity;transform-style:preserve-3d;
+     backface-visibility:hidden}
+  .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
+  .pied{position:absolute;left:96px;right:96px;bottom:26px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  #rideau{position:fixed;inset:0;z-index:20;background:#000;
+          pointer-events:none;opacity:0}
+
   /* ── Le fond : composant `bloim-animation-background` ─────────────────
      Le composant de @serjobas n'est ni du CSS ni un canvas maison : c'est
      une scene Unicorn Studio, `projectId 9tVO0xGS8DIar1DF4Sqc`, rendue par
@@ -127,11 +168,6 @@
   </div>
   <div class="grain"></div>
 </div>
-<div id="secours"></div>
-<div id="bloim" data-us-project="9tVO0xGS8DIar1DF4Sqc" data-us-scale="1"
-     data-us-dpi="1.5" data-us-fps="60" data-us-production="1"></div>
-<script src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js"></script>
-<script>window.UnicornStudio && UnicornStudio.init();</script>
 <div id="scene">
   <div class="inner" id="texte"><p class="par corps"></p></div>
 </div>
@@ -194,7 +230,6 @@ rideau.id = 'rideau';
 document.body.appendChild(rideau);
 // cette slide est sur fond noir : il n'y a pas de decor a faire monter
 const decor = document.getElementById('ether');
-const fond = document.getElementById('bloim');
 const blocs = [...document.querySelectorAll('#scene .inner > *')];
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
 let animations = [], derniereOuverture = 0;
@@ -207,8 +242,6 @@ function ouvrir() {
       { duration: 2200, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
-    fond.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
     ...blocs.map((e, i) => e.animate([
