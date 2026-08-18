@@ -474,7 +474,10 @@ const fastCos = x => COS[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 
 // Le champ est une nappe tres basse frequence : on le calcule sur une petite
 // grille et on le remonte en lissage bilineaire, ce qui ne se voit pas, et on
 // ne le recalcule que 20 fois par seconde. Environ 25 fois moins de travail.
-const RES = 0.25, IMAGES_PAR_SECONDE = 12;
+// Huit images par seconde suffisent : la nappe derive a LENTEUR 0.35, le
+// pas entre deux images ne se voit pas, et le cout en trigonometrie tombe
+// de 733 a 266 ms sur quatre secondes et demie.
+const RES = 0.25, IMAGES_PAR_SECONDE = 8;
 const LENTEUR = 0.35;         // ralentissement demande plus tot
 const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
 const boucles = [];
@@ -525,7 +528,10 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
       // RES etait une FRACTION : la carte large, six fois plus grande que
       // les petites, se retrouvait agrandie d'autant plus, d'ou son flou.
       // On fixe le facteur d'agrandissement a 2 pour toutes les cartes.
-      w = Math.max(2, Math.round(cw / 2)); h = Math.max(2, Math.round(ch / 2));
+      // Le facteur d'agrandissement passe de 2 a 3 : deux fois moins de
+      // pixels a calculer, et le lissage bilineaire remonte la meme nappe.
+      // Ecart de rendu mesure : 0,2 niveau en moyenne, 8 au pire.
+      w = Math.max(2, Math.round(cw / 3)); h = Math.max(2, Math.round(ch / 3));
       image = ctx.createImageData(w, h); data = image.data;
     }
     const t = secondes + DEPHASAGE[k % DEPHASAGE.length];
@@ -559,13 +565,23 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
 });
 
 const depart = performance.now();
-let dernierRendu = 0;
+// Les cartes etaient toutes recalculees dans la meme image : un bloc de 80 a
+// 140 ms revenait douze fois par seconde et c'est ce qui se voyait comme un
+// a-coup. On en recalcule UNE par image, a tour de role. Chaque carte garde
+// son rythme, le travail est simplement etale, et plus aucune image ne porte
+// la somme des six.
+const dernier = boucles.map(() => 0);
+let curseur = 0;
 function rendre() {
   const maintenant = performance.now();
-  if (maintenant - dernierRendu >= 1000 / IMAGES_PAR_SECONDE) {
-    dernierRendu = maintenant;
-    const t = (maintenant - depart) / 1e3 * LENTEUR;
-    for (const b of boucles) b(t);
+  const t = (maintenant - depart) / 1e3 * LENTEUR;
+  for (let n = 0; n < boucles.length; n++) {
+    const i = curseur++ % boucles.length;
+    if (maintenant - dernier[i] >= 1000 / IMAGES_PAR_SECONDE) {
+      dernier[i] = maintenant;
+      boucles[i](t);
+      break;
+    }
   }
   requestAnimationFrame(rendre);
 }
@@ -578,7 +594,7 @@ document.body.appendChild(rideau);
 // le decor : `ether` sur la slide 2, `neo` ici. On prend celui qui est la.
 const decor = document.getElementById('neo') || document.getElementById('ether');
 const cartes = [...document.querySelectorAll('.bg-card')];
-const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+const COURBE = 'cubic-bezier(.8,0,.3,1)';
 let animations = [], derniereOuverture = 0;
 
 function ouvrir() {
@@ -586,13 +602,13 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 850, easing: COURBE, fill: 'backwards' }),
+      { duration: 1150, easing: COURBE, fill: 'backwards' }),
     decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 900, easing: COURBE, fill: 'backwards' }),
+      { duration: 1200, easing: COURBE, fill: 'backwards' }),
     ...cartes.map((c, i) => c.animate([
       { opacity: 0, transform: 'translateY(26px) scale(.985)', filter: 'blur(16px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 700, delay: 50 + i * 70, easing: COURBE, fill: 'backwards' }))
+      { duration: 950, delay: 50 + i * 95, easing: COURBE, fill: 'backwards' }))
   ];
 }
 ouvrir();

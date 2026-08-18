@@ -45,7 +45,7 @@
        perspective:900px}
   .m{display:inline-block;margin-right:.35em;
      transition-property:opacity,filter,transform,text-shadow;
-     transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+     transition-timing-function:cubic-bezier(.8,0,.3,1);
      will-change:filter,transform,opacity;transform-style:preserve-3d;
      backface-visibility:hidden}
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
@@ -140,9 +140,8 @@
 // ombre CSS ne depasse pas l'opacite 1, et le retour au flux normal une fois
 // le mot pose, pour ne pas le laisser dans un calque composite.
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
-           + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
-           + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "La", "d": 0.7, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 0.696, "r": 0.024, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 0.683, "r": 0.034, "b": 13, "s": 0.919}, {"t": "explose.", "d": 0.662, "r": 0.075, "b": 12, "s": 0.928}, {"t": "Les", "d": 0.636, "r": 0.128, "b": 15, "s": 0.936}, {"t": "outils", "d": 0.607, "r": 0.11, "b": 18, "s": 0.942}, {"t": "IA", "d": 0.577, "r": 0.154, "b": 15, "s": 0.947}, {"t": "du", "d": 0.55, "r": 0.163, "b": 18, "s": 0.949}, {"t": "marché", "d": 0.526, "r": 0.186, "b": 13, "s": 0.95}, {"t": "s'arrêtent", "d": 0.51, "r": 0.255, "b": 12, "s": 0.949}, {"t": "au", "d": 0.501, "r": 0.261, "b": 18, "s": 0.945}, {"t": "web.", "d": 0.501, "r": 0.259, "b": 15, "s": 0.94}, {"t": "Le", "d": 0.51, "r": 0.284, "b": 14, "s": 0.934}, {"t": "reste", "d": 0.527, "r": 0.32, "b": 14, "s": 0.926}, {"t": ":", "d": 0.551, "r": 0.357, "b": 16, "s": 0.917}, {"t": "angle", "d": 0.579, "r": 0.382, "b": 14, "s": 0.907}, {"t": "mort.", "d": 0.609, "r": 0.384, "b": 15, "s": 0.897}, {"t": "Tous", "d": 0.638, "r": 0.421, "b": 13, "s": 0.887}, {"t": "les", "d": 0.663, "r": 0.455, "b": 15, "s": 0.878}, {"t": "scopes", "d": 0.683, "r": 0.476, "b": 18, "s": 0.869}, {"t": "couverts", "d": 0.696, "r": 0.514, "b": 19, "s": 0.862}, {"t": "par", "d": 0.7, "r": 0.528, "b": 19, "s": 0.856}, {"t": "Darkmoon :", "d": 0.695, "r": 0.541, "b": 15, "s": 0.852}, {"t": "Applications", "d": 0.682, "r": 0.587, "b": 15, "s": 0.85}, {"t": "web,", "d": 0.661, "r": 0.575, "b": 16, "s": 0.85}, {"t": "API,", "d": 0.635, "r": 0.621, "b": 17, "s": 0.852}, {"t": "Active", "d": 0.605, "r": 0.655, "b": 16, "s": 0.856}, {"t": "Directory,", "d": 0.576, "r": 0.673, "b": 13, "s": 0.861}, {"t": "Kubernetes,", "d": 0.548, "r": 0.672, "b": 18, "s": 0.868}, {"t": "Cloud,", "d": 0.525, "r": 0.698, "b": 17, "s": 0.877}, {"t": "Réseaux", "d": 0.509, "r": 0.721, "b": 19, "s": 0.886}, {"t": "internes,", "d": 0.501, "r": 0.758, "b": 13, "s": 0.896}, {"t": "Systèmes", "d": 0.502, "r": 0.799, "b": 17, "s": 0.906}, {"t": "legacy,", "d": 0.511, "r": 0.801, "b": 17, "s": 0.916}, {"t": "CMS,", "d": 0.529, "r": 0.838, "b": 19, "s": 0.925}, {"t": "e-commerce.", "d": 0.552, "r": 0.835, "b": 13, "s": 0.933}];
+           + '0 0 44px rgba(0,0,0,.98)';
+const MOTS = [{"t": "La", "d": 0.99, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 0.984, "r": 0.038, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 0.966, "r": 0.062, "b": 13, "s": 0.919}, {"t": "explose.", "d": 0.937, "r": 0.117, "b": 12, "s": 0.928}, {"t": "Les", "d": 0.901, "r": 0.184, "b": 15, "s": 0.936}, {"t": "outils", "d": 0.86, "r": 0.18, "b": 18, "s": 0.942}, {"t": "IA", "d": 0.818, "r": 0.238, "b": 15, "s": 0.947}, {"t": "du", "d": 0.779, "r": 0.261, "b": 18, "s": 0.949}, {"t": "marché", "d": 0.747, "r": 0.298, "b": 13, "s": 0.95}, {"t": "s'arrêtent", "d": 0.723, "r": 0.381, "b": 12, "s": 0.949}, {"t": "au", "d": 0.711, "r": 0.401, "b": 18, "s": 0.945}, {"t": "web.", "d": 0.712, "r": 0.413, "b": 15, "s": 0.94}, {"t": "Le", "d": 0.724, "r": 0.452, "b": 14, "s": 0.934}, {"t": "reste", "d": 0.748, "r": 0.502, "b": 14, "s": 0.926}, {"t": ":", "d": 0.781, "r": 0.553, "b": 16, "s": 0.917}, {"t": "angle", "d": 0.82, "r": 0.592, "b": 14, "s": 0.907}, {"t": "mort.", "d": 0.862, "r": 0.608, "b": 15, "s": 0.897}, {"t": "Tous", "d": 0.903, "r": 0.659, "b": 13, "s": 0.887}, {"t": "les", "d": 0.939, "r": 0.707, "b": 15, "s": 0.878}, {"t": "scopes", "d": 0.967, "r": 0.742, "b": 18, "s": 0.869}, {"t": "couverts", "d": 0.984, "r": 0.794, "b": 19, "s": 0.862}, {"t": "par", "d": 0.99, "r": 0.822, "b": 19, "s": 0.856}, {"t": "Darkmoon :", "d": 0.983, "r": 0.849, "b": 15, "s": 0.852}, {"t": "Applications", "d": 0.964, "r": 0.909, "b": 15, "s": 0.85}, {"t": "web,", "d": 0.935, "r": 0.911, "b": 16, "s": 0.85}, {"t": "API,", "d": 0.899, "r": 0.971, "b": 17, "s": 0.852}, {"t": "Active", "d": 0.858, "r": 1.019, "b": 16, "s": 0.856}, {"t": "Directory,", "d": 0.816, "r": 1.051, "b": 13, "s": 0.861}, {"t": "Kubernetes,", "d": 0.777, "r": 1.064, "b": 18, "s": 0.868}, {"t": "Cloud,", "d": 0.745, "r": 1.104, "b": 17, "s": 0.877}, {"t": "Réseaux", "d": 0.722, "r": 1.141, "b": 19, "s": 0.886}, {"t": "internes,", "d": 0.711, "r": 1.192, "b": 13, "s": 0.896}, {"t": "Systèmes", "d": 0.712, "r": 1.247, "b": 17, "s": 0.906}, {"t": "legacy,", "d": 0.726, "r": 1.263, "b": 17, "s": 0.916}, {"t": "CMS,", "d": 0.75, "r": 1.314, "b": 19, "s": 0.925}, {"t": "e-commerce.", "d": 0.783, "r": 1.325, "b": 13, "s": 0.933}];
 const pTexte = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');
@@ -249,7 +248,7 @@ const decor = document.getElementById('ether');
 const bloc = document.getElementById('orbites');
 const texte = [...document.querySelectorAll('#scene > * > *, #scene > *')]
   .filter(e => e.id !== 'scene');
-const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+const COURBE = 'cubic-bezier(.8,0,.3,1)';
 let animations = [], derniereOuverture = 0;
 
 function ouvrir() {
@@ -257,19 +256,19 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 800, easing: COURBE, fill: 'backwards' }),
+      { duration: 1080, easing: COURBE, fill: 'backwards' }),
     decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 900, easing: COURBE, fill: 'backwards' }),
+      { duration: 1200, easing: COURBE, fill: 'backwards' }),
     bloc.animate([
       { opacity: 0, filter: 'blur(26px)',
         transform: 'translateX(-50%) scale(.92)' },
       { opacity: 1, filter: 'blur(0px)',
         transform: 'translateX(-50%) scale(1)' }],
-      { duration: 870, delay: 100, easing: COURBE, fill: 'backwards' }),
+      { duration: 1170, delay: 100, easing: COURBE, fill: 'backwards' }),
     ...texte.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(18px)', filter: 'blur(14px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 650, delay: 60 + i * 65, easing: COURBE,
+      { duration: 880, delay: 60 + i * 88, easing: COURBE,
         fill: 'backwards' }))
   ];
 }

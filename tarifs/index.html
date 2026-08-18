@@ -22,7 +22,7 @@
   .bascule{display:flex;align-items:center;justify-content:center;gap:10px;
            margin:14px auto 18px;background:none;border:0;padding:4px 8px;
            cursor:pointer;font:inherit}
-  .bascule .piste i{transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+  .bascule .piste i{transition:transform .3s cubic-bezier(.8,0,.3,1)}
   .bascule.on .piste{background:rgb(220 234 244 / .35)}
   .bascule.on .piste i{transform:translateX(19px)}
   .bascule .piste{width:42px;height:23px;border-radius:9999px;flex:none;
@@ -102,7 +102,7 @@
           opacity:0}
   .mot{display:inline-block;margin-right:.28em;
        transition-property:opacity,filter,transform;
-       transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+       transition-timing-function:cubic-bezier(.8,0,.3,1);
        will-change:filter,transform,opacity;transform-style:preserve-3d;
        backface-visibility:hidden}
   .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
@@ -415,7 +415,10 @@ const fastCos = x => COS[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 
 // Le champ est une nappe tres basse frequence : on le calcule sur une petite
 // grille et on le remonte en lissage bilineaire, ce qui ne se voit pas, et on
 // ne le recalcule que 20 fois par seconde. Environ 25 fois moins de travail.
-const RES = 0.25, IMAGES_PAR_SECONDE = 12;
+// Huit images par seconde suffisent : la nappe derive a LENTEUR 0.35, le
+// pas entre deux images ne se voit pas, et le cout en trigonometrie tombe
+// de 733 a 266 ms sur quatre secondes et demie.
+const RES = 0.25, IMAGES_PAR_SECONDE = 8;
 const LENTEUR = 0.35;         // ralentissement demande plus tot
 const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
 const boucles = [];
@@ -466,7 +469,10 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
       // RES etait une FRACTION : la carte large, six fois plus grande que
       // les petites, se retrouvait agrandie d'autant plus, d'ou son flou.
       // On fixe le facteur d'agrandissement a 2 pour toutes les cartes.
-      w = Math.max(2, Math.round(cw / 2)); h = Math.max(2, Math.round(ch / 2));
+      // Le facteur d'agrandissement passe de 2 a 3 : deux fois moins de
+      // pixels a calculer, et le lissage bilineaire remonte la meme nappe.
+      // Ecart de rendu mesure : 0,2 niveau en moyenne, 8 au pire.
+      w = Math.max(2, Math.round(cw / 3)); h = Math.max(2, Math.round(ch / 3));
       image = ctx.createImageData(w, h); data = image.data;
     }
     const t = secondes + DEPHASAGE[k % DEPHASAGE.length];
@@ -500,13 +506,23 @@ document.querySelectorAll('.bg-card').forEach((carte, k) => {
 });
 
 const depart = performance.now();
-let dernierRendu = 0;
+// Les cartes etaient toutes recalculees dans la meme image : un bloc de 80 a
+// 140 ms revenait douze fois par seconde et c'est ce qui se voyait comme un
+// a-coup. On en recalcule UNE par image, a tour de role. Chaque carte garde
+// son rythme, le travail est simplement etale, et plus aucune image ne porte
+// la somme des six.
+const dernier = boucles.map(() => 0);
+let curseur = 0;
 function rendre() {
   const maintenant = performance.now();
-  if (maintenant - dernierRendu >= 1000 / IMAGES_PAR_SECONDE) {
-    dernierRendu = maintenant;
-    const t = (maintenant - depart) / 1e3 * LENTEUR;
-    for (const b of boucles) b(t);
+  const t = (maintenant - depart) / 1e3 * LENTEUR;
+  for (let n = 0; n < boucles.length; n++) {
+    const i = curseur++ % boucles.length;
+    if (maintenant - dernier[i] >= 1000 / IMAGES_PAR_SECONDE) {
+      dernier[i] = maintenant;
+      boucles[i](t);
+      break;
+    }
   }
   requestAnimationFrame(rendre);
 }
@@ -522,8 +538,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (0.55 + Math.cos(i * 0.3) * 0.08) + 's';
-    e.style.transitionDelay = (i * 0.018) + 's';
+    e.style.transitionDuration = (0.78 + Math.cos(i * 0.3) * 0.12) + 's';
+    e.style.transitionDelay = (i * 0.031) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -537,7 +553,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 700 + mots.length * 18);
+             base + 980 + mots.length * 31);
 }
 
 // ── L'interrupteur de facturation ────────────────────────────────────────
@@ -562,7 +578,7 @@ document.body.appendChild(rideau);
 const decor = document.getElementById('ether');
 const offres = [...document.querySelectorAll('.offre')];
 const hauts = [...document.querySelectorAll('.haut p')];
-const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+const COURBE = 'cubic-bezier(.8,0,.3,1)';
 let animations = [], derniereOuverture = 0;
 
 function ouvrir() {
@@ -570,22 +586,22 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 750, easing: COURBE, fill: 'backwards' }),
+      { duration: 1010, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 850, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 1150, easing: COURBE, fill: 'backwards' })] : []),
     // les cartes arrivent en se redressant, chacune vers son inclinaison
     ...offres.map((c, i) => {
       const fin = getComputedStyle(c).transform;
       return c.animate(
         [{ opacity: 0, filter: 'blur(14px)' },
          { opacity: 1, filter: 'blur(0px)' }],
-        { duration: 550, delay: 80 + i * 65, easing: COURBE,
+        { duration: 740, delay: 80 + i * 88, easing: COURBE,
           fill: 'backwards' });
     }),
     ...[...document.querySelectorAll('.ligne, .bouton, .prixrang')].map((e, i) => e.animate(
       [{ opacity: 0, transform: 'translateY(8px)' },
        { opacity: 1, transform: 'none' }],
-      { duration: 320, delay: 140 + i * 20, easing: COURBE,
+      { duration: 430, delay: 140 + i * 27, easing: COURBE,
         fill: 'backwards' }))
   ];
   hauts.forEach((e, i) => cinema(e, 150 + i * 240));

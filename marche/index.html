@@ -22,7 +22,7 @@
   /* le moteur de la slide 2 : chaque mot arrive de son propre flou */
   .mot{display:inline-block;margin-right:.28em;
        transition-property:opacity,filter,transform;
-       transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+       transition-timing-function:cubic-bezier(.8,0,.3,1);
        will-change:filter,transform,opacity;transform-style:preserve-3d;
        backface-visibility:hidden}
   .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
@@ -104,8 +104,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (0.55 + Math.cos(i * 0.3) * 0.08) + 's';
-    e.style.transitionDelay = (i * 0.018) + 's';
+    e.style.transitionDuration = (0.78 + Math.cos(i * 0.3) * 0.12) + 's';
+    e.style.transitionDelay = (i * 0.031) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -119,7 +119,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 700 + mots.length * 18);
+             base + 980 + mots.length * 31);
 }
 
 const rideau = document.createElement('div');
@@ -135,8 +135,8 @@ traits.forEach(t => {
   const L = t.getTotalLength();
   t.style.strokeDasharray = L;
 });
-const COURBE = 'cubic-bezier(.22,.61,.36,1)';
-const STAG = 45;                      // le `staggerDelay` du composant
+const COURBE = 'cubic-bezier(.8,0,.3,1)';
+const STAG = 62;                      // le `staggerDelay` du composant
 let animations = [], derniereOuverture = 0;
 
 function ouvrir() {
@@ -144,29 +144,29 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 750, easing: COURBE, fill: 'backwards' }),
+      { duration: 1010, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 850, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 1150, easing: COURBE, fill: 'backwards' })] : []),
 
     ...cartes.map((c, i) => c.animate(
       [{ opacity: 0, transform: 'translateY(26px) scale(.985)',
          filter: 'blur(14px)' },
        { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 550, delay: 80 + i * 70, easing: COURBE,
+      { duration: 740, delay: 80 + i * 95, easing: COURBE,
         fill: 'backwards' })),
     // l'entonnoir : un etage a la fois, comme le composant
     ...etages.map((g, i) => g.animate(
       [{ transform: 'scaleX(0)' }, { transform: 'none' }],
-      { duration: 300, delay: 320 + i * STAG, easing: COURBE,
+      { duration: 400, delay: 320 + i * STAG, easing: COURBE,
         fill: 'backwards' })),
     ...etiq.map((e, i) => e.animate(
       [{ opacity: 0 }, { opacity: 1 }],
-      { duration: 200, delay: 400 + i * STAG, easing: 'ease-out',
+      { duration: 270, delay: 400 + i * STAG, easing: 'ease-out',
         fill: 'backwards' })),
     // la courbe se trace, puis la lueur s'allume
     ...traits.map((t, i) => t.animate(
       [{ strokeDashoffset: t.getTotalLength() }, { strokeDashoffset: 0 }],
-      { duration: 650, delay: 110 + i * 80, easing: COURBE,
+      { duration: 880, delay: 110 + i * 108, easing: COURBE,
         fill: 'backwards' }))
   ];
   // les textes, dans l'ordre de lecture : le haut, puis les deux cartes
