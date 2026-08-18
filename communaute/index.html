@@ -57,7 +57,7 @@
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:0;
-                 background-image:url('../ether/silk.webp?r=2');
+                 background-image:url('../ether/silk.webp?r=3');
                  background-size:cover;background-position:center;
                  background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
@@ -129,8 +129,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (0.78 + Math.cos(i * 0.3) * 0.12) + 's';
-    e.style.transitionDelay = (i * 0.031) + 's';
+    e.style.transitionDuration = (1.05 + Math.cos(i * 0.3) * 0.16) + 's';
+    e.style.transitionDelay = (i * 0.041) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -144,7 +144,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => parts.forEach(e => e.classList.add('pose')),
-             base + 980 + mots.length * 31);
+             base + 1320 + mots.length * 41);
 }
 
 // ── Ouverture ────────────────────────────────────────────────────────────
@@ -161,11 +161,11 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 1010, easing: COURBE, fill: 'backwards' }),
+      { duration: 1360, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1150, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 1550, easing: COURBE, fill: 'backwards' })] : []),
     cadre.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1080, delay: 150, easing: COURBE, fill: 'backwards' }),
+      { duration: 1460, delay: 150, easing: COURBE, fill: 'backwards' }),
   ];
   textes.forEach((e, i) => cinema(e, 150 + i * 260));
 }

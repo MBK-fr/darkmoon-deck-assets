@@ -110,7 +110,7 @@
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:0;
-                 background-image:url('../ether/silk.webp?r=2');
+                 background-image:url('../ether/silk.webp?r=3');
                  background-size:cover;background-position:center;
                  background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
@@ -538,8 +538,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (0.78 + Math.cos(i * 0.3) * 0.12) + 's';
-    e.style.transitionDelay = (i * 0.031) + 's';
+    e.style.transitionDuration = (1.05 + Math.cos(i * 0.3) * 0.16) + 's';
+    e.style.transitionDelay = (i * 0.041) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -553,7 +553,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 980 + mots.length * 31);
+             base + 1320 + mots.length * 41);
 }
 
 // ── L'interrupteur de facturation ────────────────────────────────────────
@@ -586,22 +586,22 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 1010, easing: COURBE, fill: 'backwards' }),
+      { duration: 1360, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1150, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 1550, easing: COURBE, fill: 'backwards' })] : []),
     // les cartes arrivent en se redressant, chacune vers son inclinaison
     ...offres.map((c, i) => {
       const fin = getComputedStyle(c).transform;
       return c.animate(
         [{ opacity: 0, filter: 'blur(14px)' },
          { opacity: 1, filter: 'blur(0px)' }],
-        { duration: 740, delay: 80 + i * 88, easing: COURBE,
+        { duration: 1000, delay: 80 + i * 116, easing: COURBE,
           fill: 'backwards' });
     }),
     ...[...document.querySelectorAll('.ligne, .bouton, .prixrang')].map((e, i) => e.animate(
       [{ opacity: 0, transform: 'translateY(8px)' },
        { opacity: 1, transform: 'none' }],
-      { duration: 430, delay: 140 + i * 27, easing: COURBE,
+      { duration: 580, delay: 140 + i * 36, easing: COURBE,
         fill: 'backwards' }))
   ];
   hauts.forEach((e, i) => cinema(e, 150 + i * 240));

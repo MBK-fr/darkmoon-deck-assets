@@ -85,7 +85,7 @@
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:0;
-                 background-image:url('../ether/silk.webp?r=2');
+                 background-image:url('../ether/silk.webp?r=3');
                  background-size:cover;background-position:center;
                  background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
@@ -158,8 +158,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (0.78 + Math.cos(i * 0.3) * 0.12) + 's';
-    e.style.transitionDelay = (i * 0.031) + 's';
+    e.style.transitionDuration = (1.05 + Math.cos(i * 0.3) * 0.16) + 's';
+    e.style.transitionDelay = (i * 0.041) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -173,7 +173,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 980 + mots.length * 31);
+             base + 1320 + mots.length * 41);
 }
 
 // ── Ouverture : le rideau se leve, la scene arrive en fondu ──────────────
@@ -189,18 +189,18 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 1080, easing: COURBE, fill: 'backwards' }),
+      { duration: 1460, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1200, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 1620, easing: COURBE, fill: 'backwards' })] : []),
     ...vignettes.map((v, i) => v.animate([
       { opacity: 0, transform: 'translateY(18px) scale(.97)' },
       { opacity: 1, transform: 'none' }],
-      { duration: 740, delay: 45 + i * 68, easing: COURBE,
+      { duration: 1000, delay: 45 + i * 90, easing: COURBE,
         fill: 'backwards' })),
     ...lignes.map((l, i) => l.animate([
       { opacity: 0, transform: 'translateX(14px)' },
       { opacity: 1, transform: 'none' }],
-      { duration: 680, delay: 80 + i * 61, easing: COURBE,
+      { duration: 920, delay: 80 + i * 80, easing: COURBE,
         fill: 'backwards' }))
   ];
   cinema(document.querySelector('.intro'), 180);
