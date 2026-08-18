@@ -51,6 +51,13 @@
   .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  /* Le pied porte les deux logos et plus de texte : Darkmoon avec son mot,
+     puis le logotype ASC-IT, separes par un filet. */
+  .pied .marque{display:flex;align-items:center;gap:12px}
+  .pied .lg-dm{height:17px;width:auto;display:block;opacity:.9}
+  .pied .lg-asc{height:12px;width:auto;display:block;opacity:.62}
+  .pied .tiret{width:1px;height:12px;background:rgb(255 255 255 / .22);
+               display:block}
   #rideau{position:fixed;inset:0;z-index:20;background:#000;
           pointer-events:none;opacity:0}
   /* ── L'application, reproduite d'apres son CSS ────────────────────────
@@ -540,7 +547,7 @@
     </div>
   </div>
 </div>
-<div class="pied"><span>DARKMOON · ASC-IT</span><span>07 / 14</span></div>
+<div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>06 / 12</span></div>
 
 <script>
 // ── Le texte : moteur de la slide 2, joue etape par etape ────────────────

@@ -38,6 +38,13 @@
   .pied{position:absolute;left:72px;right:72px;bottom:22px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  /* Le pied porte les deux logos et plus de texte : Darkmoon avec son mot,
+     puis le logotype ASC-IT, separes par un filet. */
+  .pied .marque{display:flex;align-items:center;gap:12px}
+  .pied .lg-dm{height:17px;width:auto;display:block;opacity:.9}
+  .pied .lg-asc{height:12px;width:auto;display:block;opacity:.62}
+  .pied .tiret{width:1px;height:12px;background:rgb(255 255 255 / .22);
+               display:block}
   #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
           opacity:0}
   .mot{display:inline-block;margin-right:.28em;
@@ -93,7 +100,7 @@
 </div>
 <div id="cadre"><div id="plan"><div id="piste"></div></div></div>
 <div id="texte"><p>Communauté et adoption. Une communauté depuis plus de 10 ans, de la communauté open source à l'offre Pro, puis aux entreprises et MSSP.</p></div>
-<div class="pied"><span>DARKMOON · ASC-IT</span><span>13 / 14</span></div>
+<div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>12 / 12</span></div>
 
 <script>
 // ── Le marquee en perspective, porte du composant ────────────────────────

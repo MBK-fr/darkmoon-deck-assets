@@ -22,6 +22,13 @@
   .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  /* Le pied porte les deux logos et plus de texte : Darkmoon avec son mot,
+     puis le logotype ASC-IT, separes par un filet. */
+  .pied .marque{display:flex;align-items:center;gap:12px}
+  .pied .lg-dm{height:17px;width:auto;display:block;opacity:.9}
+  .pied .lg-asc{height:12px;width:auto;display:block;opacity:.62}
+  .pied .tiret{width:1px;height:12px;background:rgb(255 255 255 / .22);
+               display:block}
 
   /* ── Le composant `team-showcase`, porté classe par classe ───────────── */
   .team{display:flex;align-items:flex-start;gap:56px;user-select:none;
@@ -126,7 +133,7 @@
     <div class="liste"><div class="ligne" data-i="0"><div class="haut"><span class="pastille"></span><span class="nom">Aurélien STRICH</span></div><p class="role">Architecte logiciel, chef de projet</p></div><div class="ligne" data-i="1"><div class="haut"><span class="pastille"></span><span class="nom">Mehdi BOUTAYEB</span></div><p class="role">Directeur des systèmes et de la cybersécurité</p></div><div class="ligne" data-i="2"><div class="haut"><span class="pastille"></span><span class="nom">Vincent MAHAUX</span></div><p class="role">Directeur commercial, consultant cybersécurité</p></div><div class="ligne" data-i="3"><div class="haut"><span class="pastille"></span><span class="nom">Florian CARDINAL</span></div><p class="role">Développeur fullstack, lead tech</p></div><div class="ligne" data-i="4"><div class="haut"><span class="pastille"></span><span class="nom">Teva LEGARES</span></div><p class="role">Administrateur système, réseau et sécurité</p></div></div>
   </div>
 </div>
-<div class="pied"><span>DARKMOON · ASC-IT</span><span>09 / 14</span></div>
+<div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>08 / 12</span></div>
 <script>
 // La slide fait 1280 x 720 ; la scene est composee a sa largeur naturelle
 // puis mise a l'echelle d'un bloc, comme sur les autres slides.
