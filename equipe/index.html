@@ -1,0 +1,210 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<title>Darkmoon, l'équipe</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+  #scene{position:absolute;top:50%;left:50%;transform-origin:50% 50%;
+         z-index:1;padding:0 72px}
+
+  /* ── L'en-tête, dans la typographie du deck ──────────────────────────── */
+  .oeil{margin:0 0 14px;font-size:11px;letter-spacing:.18em;
+        text-transform:uppercase;color:rgb(255 255 255 / .42)}
+  h1{margin:0;font-size:2.7rem;font-weight:300;line-height:1.12;
+     letter-spacing:-.012em;color:#fff}
+  .chapeau{margin:16px 0 0;font-size:1.06rem;font-weight:300;line-height:1.6;
+           color:rgb(255 255 255 / .72);max-width:70ch}
+  .maison{margin:6px 0 0;font-size:.92rem;font-weight:400;
+          color:rgb(255 255 255 / .45)}
+  .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+
+  /* ── Le composant `team-showcase`, porté classe par classe ───────────── */
+  .team{display:flex;align-items:flex-start;gap:56px;user-select:none;
+        width:100%;max-width:1024px;margin:34px auto 0;padding:0 24px}
+  .mosaique{display:flex;gap:12px;flex-shrink:0}
+  .col{display:flex;flex-direction:column;gap:12px}
+  .vignette{overflow:hidden;border-radius:12px;cursor:pointer;flex-shrink:0;
+            opacity:1;transition:opacity .4s ease}
+  .vignette img{width:100%;height:100%;object-fit:cover;display:block;
+                filter:grayscale(1) brightness(.77);
+                transition:filter .5s ease}
+  .team.vise .vignette{opacity:.6}
+  .team.vise .vignette.actif{opacity:1}
+  .vignette.actif img{filter:grayscale(0) brightness(1)}
+
+  .liste{display:flex;flex-direction:column;gap:20px;padding-top:8px;flex:1}
+  .ligne{cursor:pointer;opacity:1;transition:opacity .3s ease}
+  .team.vise .ligne{opacity:.5}
+  .team.vise .ligne.actif{opacity:1}
+  .ligne .haut{display:flex;align-items:center;gap:10px}
+  .ligne .pastille{width:16px;height:12px;border-radius:5px;flex-shrink:0;
+    background:rgb(255 255 255 / .25);
+    transition:background .3s ease,width .3s ease}
+  .ligne.actif .pastille{width:20px;background:#fff}
+  .ligne .nom{font-size:18px;font-weight:600;line-height:1;
+              letter-spacing:-.011em;color:rgb(255 255 255 / .8);
+              transition:color .3s ease}
+  .ligne.actif .nom{color:#fff}
+  .ligne .role{margin:6px 0 0;padding-left:27px;font-size:10px;
+    font-weight:500;text-transform:uppercase;letter-spacing:.2em;
+    color:rgb(255 255 255 / .5)}
+
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+</style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
+<div id="scene">
+  <p class="oeil">L'ÉQUIPE</p>
+  <h1>Des pentesters de métier, 10 ans de terrain.</h1>
+  <p class="chapeau">Créateur de Dark Moon, open source depuis 2013. Pentester de métier.</p>
+  <p class="maison">ASC-IT, éditeur, Toulouse, Made in France.</p>
+  <div class="team">
+    <div class="mosaique"><div class="col" style="margin-top:0px"><div class="vignette" data-i="0" style="width:155px;height:165px"><img src="aurelien.avif" alt="Aurélien STRICH"></div><div class="vignette" data-i="3" style="width:155px;height:165px"><img src="florian.avif" alt="Florian CARDINAL"></div></div><div class="col" style="margin-top:68px"><div class="vignette" data-i="1" style="width:172px;height:182px"><img src="mehdi.avif" alt="Mehdi BOUTAYEB"></div><div class="vignette" data-i="4" style="width:172px;height:182px"><img src="teva.avif" alt="Teva LEGARES"></div></div><div class="col" style="margin-top:32px"><div class="vignette" data-i="2" style="width:162px;height:172px"><img src="vincent.avif" alt="Vincent MAHAUX"></div></div></div>
+    <div class="liste"><div class="ligne" data-i="0"><div class="haut"><span class="pastille"></span><span class="nom">Aurélien STRICH</span></div><p class="role">Architecte logiciel, chef de projet</p></div><div class="ligne" data-i="1"><div class="haut"><span class="pastille"></span><span class="nom">Mehdi BOUTAYEB</span></div><p class="role">Directeur des systèmes et de la cybersécurité</p></div><div class="ligne" data-i="2"><div class="haut"><span class="pastille"></span><span class="nom">Vincent MAHAUX</span></div><p class="role">Directeur commercial, consultant cybersécurité</p></div><div class="ligne" data-i="3"><div class="haut"><span class="pastille"></span><span class="nom">Florian CARDINAL</span></div><p class="role">Développeur fullstack, lead tech</p></div><div class="ligne" data-i="4"><div class="haut"><span class="pastille"></span><span class="nom">Teva LEGARES</span></div><p class="role">Administrateur système, réseau et sécurité</p></div></div>
+  </div>
+</div>
+<div class="pied"><span>DARKMOON · ASC-IT</span><span>09 / 14</span></div>
+<script>
+// La slide fait 1280 x 720 ; la scene est composee a sa largeur naturelle
+// puis mise a l'echelle d'un bloc, comme sur les autres slides.
+const L = 1280, scene = document.getElementById('scene');
+scene.style.width = L + 'px';
+function caler() {
+  scene.style.transform = 'none';
+  const h = scene.getBoundingClientRect().height;
+  const k = Math.min(window.innerWidth / L, (window.innerHeight - 128) / h, 1);
+  scene.style.transform = 'translate(-50%,-50%) scale(' + k + ')';
+}
+caler();
+window.addEventListener('resize', caler);
+</script>
+
+<script>
+// ── Les etats du composant, joues tout seuls ─────────────────────────────
+// Le composant met en couleur la vignette survolee et estompe les autres.
+// Sur une slide personne ne survole : on fait tourner l'etat, un membre
+// toutes les 2,6 secondes, et le survol reprend la main quand il a lieu.
+const team = document.querySelector('.team');
+const vignettes = [...document.querySelectorAll('.vignette')];
+const lignes = [...document.querySelectorAll('.ligne')];
+const N = vignettes.length;
+let courant = -1, minuterie = null, fige = false;
+
+function viser(i) {
+  courant = i;
+  team.classList.toggle('vise', i >= 0);
+  // la mosaique est rangee par colonnes : on compare le numero du membre,
+  // pas la position dans le DOM
+  vignettes.forEach(v => v.classList.toggle('actif', +v.dataset.i === i));
+  lignes.forEach(l => l.classList.toggle('actif', +l.dataset.i === i));
+}
+function tourner() {
+  clearInterval(minuterie);
+  minuterie = setInterval(() => {
+    if (!fige) viser((courant + 1) % N);
+  }, 2600);
+}
+[...vignettes, ...lignes].forEach(el => {
+  const i = +el.dataset.i;
+  el.addEventListener('mouseenter', () => { fige = true; viser(i); });
+  el.addEventListener('mouseleave', () => { fige = false; });
+});
+
+// ── Ouverture : le rideau se leve, la scene arrive en fondu ──────────────
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const decor = document.getElementById('ether');
+const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+let animations = [], derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  animations.forEach(a => a.cancel());
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2200, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
+    ...vignettes.map((v, i) => v.animate([
+      { opacity: 0, transform: 'translateY(18px) scale(.97)' },
+      { opacity: 1, transform: 'none' }],
+      { duration: 1500, delay: 280 + i * 130, easing: COURBE,
+        fill: 'backwards' })),
+    ...lignes.map((l, i) => l.animate([
+      { opacity: 0, transform: 'translateX(14px)' },
+      { opacity: 1, transform: 'none' }],
+      { duration: 1300, delay: 520 + i * 110, easing: COURBE,
+        fill: 'backwards' }))
+  ];
+  viser(-1);
+  setTimeout(() => { if (!fige) viser(0); }, 1600);
+  tourner();
+}
+ouvrir();
+
+// Rejouer au retour sur la slide : le lecteur translate les slides voisines
+// hors du cadre, il ne les masque pas. Le signal fiable est la reprise d'une
+// cadence pleine apres un trou.
+let precedent = performance.now(), reprise = false, rapides = 0;
+(function veille() {
+  const t = performance.now(), dt = t - precedent;
+  precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
+  requestAnimationFrame(veille);
+})();
+</script>
+
+</body></html>
