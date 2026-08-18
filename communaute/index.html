@@ -29,24 +29,11 @@
            linear-gradient(180deg,transparent 0%,#000 25%,#000 75%,
                            transparent 100%)}
 
-  /* ── Le texte du deck, par-dessus ────────────────────────────────────── */
-  #texte{position:absolute;left:72px;top:64px;z-index:4;max-width:760px}
-  #texte p{margin:0;white-space:nowrap;
+  /* ── Le seul texte de la slide : une phrase, petite et discrète ──────── */
+  #texte{position:absolute;left:72px;top:62px;z-index:4}
+  #texte p{margin:0;white-space:nowrap;font-size:1rem;font-weight:300;
+           letter-spacing:.004em;color:rgb(255 255 255 / .72);
            text-shadow:0 0 14px rgba(0,0,0,.95), 0 6px 34px rgba(0,0,0,.9)}
-  .titre{font-size:2rem;font-weight:300;line-height:1.35;
-         letter-spacing:-.014em;color:rgb(255 255 255 / .96)}
-  .oeil{margin-bottom:12px;font-size:.95rem;font-weight:300;
-        letter-spacing:.16em;text-transform:uppercase;
-        color:rgb(220 234 244 / .55)}
-
-  /* le chemin d'adoption, en bas */
-  #chemin{position:absolute;left:72px;right:72px;bottom:64px;z-index:4;
-          display:flex;align-items:center;gap:18px}
-  #chemin .etape{padding:9px 18px;border-radius:9999px;font-size:1rem;
-    font-weight:300;color:#fff;background:rgb(10 12 16 / .72);
-    box-shadow:inset 0 0 0 1px rgb(220 234 244 / .16),
-               0 10px 30px rgb(0 0 0 / .5);white-space:nowrap}
-  #chemin .fleche{font-size:1.2rem;color:rgb(220 234 244 / .6)}
 
   .pied{position:absolute;left:72px;right:72px;bottom:22px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
@@ -105,11 +92,7 @@
   <div class="grain"></div>
 </div>
 <div id="cadre"><div id="plan"><div id="piste"></div></div></div>
-<div id="texte">
-  <p class="oeil">COMMUNAUTÉ & ADOPTION</p>
-  <p class="titre">Une communauté depuis plus de 10 ans.</p>
-</div>
-<div id="chemin"><span class="etape">Communauté open source</span><span class="fleche">&rarr;</span><span class="etape">Offre Pro</span><span class="fleche">&rarr;</span><span class="etape">Entreprise & MSSP</span></div>
+<div id="texte"><p>Communauté et adoption. Une communauté depuis plus de 10 ans, de la communauté open source à l'offre Pro, puis aux entreprises et MSSP.</p></div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>13 / 14</span></div>
 
 <script>
@@ -193,7 +176,6 @@ rideau.id = 'rideau';
 document.body.appendChild(rideau);
 const decor = document.getElementById('ether');
 const textes = [...document.querySelectorAll('#texte p')];
-const etapes = [...document.querySelectorAll('#chemin > *')];
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
 let animations = [], derniereOuverture = 0;
 
@@ -207,11 +189,6 @@ function ouvrir() {
       { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
     cadre.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2200, delay: 400, easing: COURBE, fill: 'backwards' }),
-    ...etapes.map((e, i) => e.animate(
-      [{ opacity: 0, transform: 'translateY(12px)' },
-       { opacity: 1, transform: 'none' }],
-      { duration: 900, delay: 1200 + i * 140, easing: COURBE,
-        fill: 'backwards' }))
   ];
   textes.forEach((e, i) => cinema(e, 150 + i * 260));
 }
