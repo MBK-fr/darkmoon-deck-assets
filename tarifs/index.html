@@ -22,7 +22,7 @@
   .bascule{display:flex;align-items:center;justify-content:center;gap:10px;
            margin:14px auto 18px;background:none;border:0;padding:4px 8px;
            cursor:pointer;font:inherit}
-  .bascule .piste i{transition:transform .3s cubic-bezier(.8,0,.3,1)}
+  .bascule .piste i{transition:transform .3s cubic-bezier(.6,.04,.22,1)}
   .bascule.on .piste{background:rgb(220 234 244 / .35)}
   .bascule.on .piste i{transform:translateX(19px)}
   .bascule .piste{width:42px;height:23px;border-radius:9999px;flex:none;
@@ -102,7 +102,7 @@
           opacity:0}
   .mot{display:inline-block;margin-right:.28em;
        transition-property:opacity,filter,transform;
-       transition-timing-function:cubic-bezier(.8,0,.3,1);
+       transition-timing-function:cubic-bezier(.6,.04,.22,1);
        will-change:filter,transform,opacity;transform-style:preserve-3d;
        backface-visibility:hidden}
   .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
@@ -538,8 +538,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (1.05 + Math.cos(i * 0.3) * 0.16) + 's';
-    e.style.transitionDelay = (i * 0.041) + 's';
+    e.style.transitionDuration = (1.8 + Math.cos(i * 0.3) * 0.24) + 's';
+    e.style.transitionDelay = (i * 0.062) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -553,7 +553,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 1320 + mots.length * 41);
+             base + 2200 + mots.length * 62);
 }
 
 // ── L'interrupteur de facturation ────────────────────────────────────────
@@ -578,7 +578,7 @@ document.body.appendChild(rideau);
 const decor = document.getElementById('ether');
 const offres = [...document.querySelectorAll('.offre')];
 const hauts = [...document.querySelectorAll('.haut p')];
-const COURBE = 'cubic-bezier(.8,0,.3,1)';
+const COURBE = 'cubic-bezier(.6,.04,.22,1)';
 let animations = [], derniereOuverture = 0;
 
 function ouvrir() {
@@ -586,22 +586,22 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 1360, easing: COURBE, fill: 'backwards' }),
+      { duration: 2180, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1550, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 2480, easing: COURBE, fill: 'backwards' })] : []),
     // les cartes arrivent en se redressant, chacune vers son inclinaison
     ...offres.map((c, i) => {
       const fin = getComputedStyle(c).transform;
       return c.animate(
         [{ opacity: 0, filter: 'blur(14px)' },
          { opacity: 1, filter: 'blur(0px)' }],
-        { duration: 1000, delay: 80 + i * 116, easing: COURBE,
+        { duration: 1600, delay: 80 + i * 174, easing: COURBE,
           fill: 'backwards' });
     }),
     ...[...document.querySelectorAll('.ligne, .bouton, .prixrang')].map((e, i) => e.animate(
       [{ opacity: 0, transform: 'translateY(8px)' },
        { opacity: 1, transform: 'none' }],
-      { duration: 580, delay: 140 + i * 36, easing: COURBE,
+      { duration: 930, delay: 140 + i * 54, easing: COURBE,
         fill: 'backwards' }))
   ];
   hauts.forEach((e, i) => cinema(e, 150 + i * 240));
