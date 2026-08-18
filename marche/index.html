@@ -6,7 +6,7 @@
             font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
             -webkit-font-smoothing:antialiased}
   #scene{position:absolute;inset:0;z-index:2;padding:56px 104px 64px;
-         display:flex;flex-direction:column;align-items:center}
+         display:flex;flex-direction:column;align-items:stretch}
   /* Une seule écriture : même corps, même graisse, même couleur, partout.
      La hiérarchie ne vient plus de la typographie mais de la place. */
   #scene, #scene *{font-family:inherit;font-size:1.18rem;font-weight:300;
@@ -15,9 +15,10 @@
   /* Aucun texte ne passe à la ligne : ni le haut, ni les titres. */
   .intro,.diff,.titre,.periode{white-space:nowrap}
   /* Les lignes du haut forment un bloc, pas trois paragraphes détachés. */
-  .intro{margin:0;line-height:1.5;text-align:center;
+  /* Le bloc du haut est aligné à gauche, sur le bord des cartes. */
+  .intro{margin:0;line-height:1.5;text-align:left;
          text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
-  .diff{margin:4px 0 0;line-height:1.5;text-align:center}
+  .diff{margin:4px 0 0;line-height:1.5;text-align:left}
   /* le moteur de la slide 2 : chaque mot arrive de son propre flou */
   .mot{display:inline-block;margin-right:.28em;
        transition-property:opacity,filter,transform;
