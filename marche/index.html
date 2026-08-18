@@ -12,9 +12,19 @@
   #scene, #scene *{font-family:inherit;font-size:1.02rem;font-weight:300;
                    color:rgb(255 255 255 / .9);letter-spacing:.002em}
   #scene text{font-size:1.02rem}
-  .intro{margin:0;line-height:1.55;text-align:center;max-width:64ch;
+  /* Aucun texte ne passe à la ligne : ni le haut, ni les titres. */
+  .intro,.diff,.titre,.periode{white-space:nowrap}
+  .intro{margin:0;line-height:1.55;text-align:center;
          text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
-  .diff{margin:16px 0 0;line-height:1.6;text-align:center;max-width:82ch}
+  .diff{margin:16px 0 0;line-height:1.6;text-align:center}
+  /* le moteur de la slide 2 : chaque mot arrive de son propre flou */
+  .mot{display:inline-block;margin-right:.28em;
+       transition-property:opacity,filter,transform;
+       transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+       will-change:filter,transform,opacity;transform-style:preserve-3d;
+       backface-visibility:hidden}
+  .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
+            filter:none;transform:none}
   .duo{margin:auto 0;display:grid;grid-template-columns:1fr 1fr;gap:56px;
        width:100%}
   .pied{position:absolute;left:72px;right:72px;bottom:22px;display:flex;
@@ -90,7 +100,7 @@
 </div>
 <div id="scene">
   <p class="intro">Un marché à +15 %/an, et une couverture qui va bien au-delà du web.</p>
-  <p class="diff">Ouverture, open source. Souveraineté IA, commercial ou EU ou 100 % locale. Données, restent anonymisées, proxy si IA externe. Couverture, web + AD + K8s + réseau.</p>
+  <p class="diff">Open source, souveraineté IA, données anonymisées, couverture au-delà du web.</p>
   <div class="duo"><div class="carte"><p class="titre">Le marché du pentest, +15 %/an</p><p class="periode">De ≈ 2 Md$ à 4,4-5,5 Md$, 2024 à 2030</p><div class="toile"><svg viewBox="0 0 420 208" width="420" height="208"><defs><filter id="lueur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="10" result="flou"/><feComposite in="SourceGraphic" in2="flou" operator="over"/></filter></defs><line x1="30" y1="178.0" x2="394" y2="178.0" stroke="rgb(255 255 255 / .07)"/><line x1="30" y1="122.7" x2="394" y2="122.7" stroke="rgb(255 255 255 / .07)"/><line x1="30" y1="67.3" x2="394" y2="67.3" stroke="rgb(255 255 255 / .07)"/><line x1="30" y1="12.0" x2="394" y2="12.0" stroke="rgb(255 255 255 / .07)"/><g filter="url(#lueur)"><path class="trace" d="M30.00,122.67 C60.33,122.67 60.33,112.15 90.67,112.15 C121.00,112.15 121.00,99.70 151.33,99.70 C181.67,99.70 181.67,85.04 212.00,85.04 C242.33,85.04 242.33,67.33 272.67,67.33 C303.00,67.33 303.00,46.58 333.33,46.58 C363.67,46.58 363.67,25.83 394.00,25.83" fill="none" stroke="#cfe1f2" stroke-width="2.4" stroke-linecap="round"/><path class="trace" d="M30.00,122.67 C60.33,122.67 60.33,115.47 90.67,115.47 C121.00,115.47 121.00,107.45 151.33,107.45 C181.67,107.45 181.67,98.32 212.00,98.32 C242.33,98.32 242.33,87.81 272.67,87.81 C303.00,87.81 303.00,71.48 333.33,71.48 C363.67,71.48 363.67,56.27 394.00,56.27" fill="none" stroke="#7691d4" stroke-width="2.4" stroke-linecap="round"/></g><text x="30.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .9)">2024</text><text x="151.3" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .9)">2026</text><text x="272.7" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .9)">2028</text><text x="394.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .9)">2030</text></svg></div></div><div class="carte"><p class="titre">La couverture, 50 sous-agents</p><p class="periode">Les cinq plans les plus fournis</p><div class="fnl-boite"><svg class="fnl" viewBox="0 0 420 148" width="420" height="148"><defs><linearGradient id="fg0" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#c9dcef"/><stop offset="100%" stop-color="#a9c2e6"/></linearGradient><linearGradient id="fg1" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#a9c2e6"/><stop offset="100%" stop-color="#8aa6dc"/></linearGradient><linearGradient id="fg2" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#8aa6dc"/><stop offset="100%" stop-color="#6d8ad0"/></linearGradient><linearGradient id="fg3" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#6d8ad0"/><stop offset="100%" stop-color="#5470c6"/></linearGradient><linearGradient id="fg4" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#5470c6"/><stop offset="100%" stop-color="#5470c6"/></linearGradient></defs><rect x="0.0" y="0" width="80.8" height="148" fill="rgb(255 255 255 / .022)"/><rect x="169.6" y="0" width="80.8" height="148" fill="rgb(255 255 255 / .022)"/><rect x="339.2" y="0" width="80.8" height="148" fill="rgb(255 255 255 / .022)"/><g transform="translate(0.0,0)"><path d="M 0 8.88 C 44.44 8.88, 36.36 30.59, 80.80 30.59 L 80.80 117.41 C 36.36 117.41, 44.44 139.12, 0 139.12 Z" fill="#c9dcef" opacity="0.180"/><path d="M 0 16.48 C 44.44 16.48, 36.36 35.65, 80.80 35.65 L 80.80 112.35 C 36.36 112.35, 44.44 131.52, 0 131.52 Z" fill="#c9dcef" opacity="0.505"/><path d="M 0 24.07 C 44.44 24.07, 36.36 40.72, 80.80 40.72 L 80.80 107.28 C 36.36 107.28, 44.44 123.93, 0 123.93 Z" fill="url(#fg0)" opacity="0.830"/></g><g transform="translate(84.8,0)"><path d="M 0 30.59 C 44.44 30.59, 36.36 30.59, 80.80 30.59 L 80.80 117.41 C 36.36 117.41, 44.44 117.41, 0 117.41 Z" fill="#a9c2e6" opacity="0.180"/><path d="M 0 35.65 C 44.44 35.65, 36.36 35.65, 80.80 35.65 L 80.80 112.35 C 36.36 112.35, 44.44 112.35, 0 112.35 Z" fill="#a9c2e6" opacity="0.505"/><path d="M 0 40.72 C 44.44 40.72, 36.36 40.72, 80.80 40.72 L 80.80 107.28 C 36.36 107.28, 44.44 107.28, 0 107.28 Z" fill="url(#fg1)" opacity="0.830"/></g><g transform="translate(169.6,0)"><path d="M 0 30.59 C 44.44 30.59, 36.36 30.59, 80.80 30.59 L 80.80 117.41 C 36.36 117.41, 44.44 117.41, 0 117.41 Z" fill="#8aa6dc" opacity="0.180"/><path d="M 0 35.65 C 44.44 35.65, 36.36 35.65, 80.80 35.65 L 80.80 112.35 C 36.36 112.35, 44.44 112.35, 0 112.35 Z" fill="#8aa6dc" opacity="0.505"/><path d="M 0 40.72 C 44.44 40.72, 36.36 40.72, 80.80 40.72 L 80.80 107.28 C 36.36 107.28, 44.44 107.28, 0 107.28 Z" fill="url(#fg2)" opacity="0.830"/></g><g transform="translate(254.4,0)"><path d="M 0 30.59 C 44.44 30.59, 36.36 37.82, 80.80 37.82 L 80.80 110.18 C 36.36 110.18, 44.44 117.41, 0 117.41 Z" fill="#6d8ad0" opacity="0.180"/><path d="M 0 35.65 C 44.44 35.65, 36.36 42.04, 80.80 42.04 L 80.80 105.96 C 36.36 105.96, 44.44 112.35, 0 112.35 Z" fill="#6d8ad0" opacity="0.505"/><path d="M 0 40.72 C 44.44 40.72, 36.36 46.26, 80.80 46.26 L 80.80 101.74 C 36.36 101.74, 44.44 107.28, 0 107.28 Z" fill="url(#fg3)" opacity="0.830"/></g><g transform="translate(339.2,0)"><path d="M 0 37.82 C 44.44 37.82, 36.36 37.82, 80.80 37.82 L 80.80 110.18 C 36.36 110.18, 44.44 110.18, 0 110.18 Z" fill="#5470c6" opacity="0.180"/><path d="M 0 42.04 C 44.44 42.04, 36.36 42.04, 80.80 42.04 L 80.80 105.96 C 36.36 105.96, 44.44 105.96, 0 105.96 Z" fill="#5470c6" opacity="0.505"/><path d="M 0 46.26 C 44.44 46.26, 36.36 46.26, 80.80 46.26 L 80.80 101.74 C 36.36 101.74, 44.44 101.74, 0 101.74 Z" fill="url(#fg4)" opacity="0.830"/></g><line x1="82.8" y1="0" x2="82.8" y2="148" stroke="rgb(255 255 255 / .07)"/><line x1="167.6" y1="0" x2="167.6" y2="148" stroke="rgb(255 255 255 / .07)"/><line x1="252.4" y1="0" x2="252.4" y2="148" stroke="rgb(255 255 255 / .07)"/><line x1="337.2" y1="0" x2="337.2" y2="148" stroke="rgb(255 255 255 / .07)"/></svg><div class="etg" style="left:0.0px;width:80.8px"><span class="v">9</span><span class="bas"><span class="l">Stacks</span><span class="pct">100%</span></span></div><div class="etg" style="left:84.8px;width:80.8px"><span class="v">6</span><span class="bas"><span class="l">CMS</span><span class="pct">67%</span></span></div><div class="etg" style="left:169.6px;width:80.8px"><span class="v">6</span><span class="bas"><span class="l">Cloud</span><span class="pct">67%</span></span></div><div class="etg" style="left:254.4px;width:80.8px"><span class="v">6</span><span class="bas"><span class="l">CI/CD</span><span class="pct">67%</span></span></div><div class="etg" style="left:339.2px;width:80.8px"><span class="v">5</span><span class="bas"><span class="l">Identité</span><span class="pct">56%</span></span></div></div></div></div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>10 / 14</span></div>
@@ -102,6 +112,35 @@
 // composants est respecte : l'entonnoir ouvre ses etages avec le decalage de
 // 0,12 s du composant, ses etiquettes suivent a +0,25 s, et la courbe se
 // trace d'un trait.
+// ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
+// Chaque mot part de son propre flou, monte de quelques pixels et se pose.
+// Une fois pose, on rend le calque composite : un `blur(0px)` ou un
+// `will-change` qui reste, et le texte ressort mou.
+function cinema(el, base) {
+  const mots = el.textContent.split(' ');
+  el.textContent = '';
+  const spans = mots.map((m, i) => {
+    const e = document.createElement('span');
+    e.className = 'mot';
+    e.textContent = m;
+    e.style.transitionDuration = (1.5 + Math.cos(i * 0.3) * 0.2) + 's';
+    e.style.transitionDelay = (i * 0.055) + 's';
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' +
+      (0.92 + Math.sin(i * 0.2) * 0.04) + ') rotateX(-12deg)';
+    el.appendChild(e);
+    return e;
+  });
+  setTimeout(() => spans.forEach(e => {
+    e.style.opacity = 1;
+    e.style.filter = 'blur(0px) brightness(1)';
+    e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+  }), base);
+  setTimeout(() => spans.forEach(e => e.classList.add('pose')),
+             base + 1800 + mots.length * 55);
+}
+
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
@@ -128,11 +167,7 @@ function ouvrir() {
       { duration: 2000, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
-    ...[intro, diff].map((e, i) => e.animate(
-      [{ opacity: 0, transform: 'translateY(14px)', filter: 'blur(8px)' },
-       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 1400, delay: 150 + i * 160, easing: COURBE,
-        fill: 'backwards' })),
+
     ...cartes.map((c, i) => c.animate(
       [{ opacity: 0, transform: 'translateY(26px) scale(.985)',
          filter: 'blur(14px)' },
@@ -154,6 +189,11 @@ function ouvrir() {
       { duration: 1700, delay: 800 + i * 220, easing: COURBE,
         fill: 'backwards' }))
   ];
+  // les textes, dans l'ordre de lecture : le haut, puis les deux cartes
+  [[intro, 150], [diff, 420],
+   ...[...document.querySelectorAll('.titre')].map((e, i) => [e, 700 + i * 160]),
+   ...[...document.querySelectorAll('.periode')].map((e, i) => [e, 860 + i * 160])
+  ].forEach(([e, d]) => cinema(e, d));
 }
 ouvrir();
 
