@@ -2,87 +2,133 @@
 <title>Darkmoon, marché et différenciant</title>
 <style>
   *,*::before,*::after{box-sizing:border-box}
-  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
-            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
-            -webkit-font-smoothing:antialiased}
-  #scene{position:absolute;inset:0;z-index:1;padding:52px 72px 64px;
-         display:flex;flex-direction:column}
-  .intro{margin:0 0 26px;font-size:1.5rem;font-weight:300;line-height:1.5;
-         letter-spacing:.002em;color:rgb(255 255 255 / .96);max-width:58ch;
-         text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
-  .grille{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;flex:1;
-          min-height:0}
-  .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
+  html,body{margin:0;height:100%;overflow:hidden;background:#050505;color:#fff;
+    font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,
+                'Helvetica Neue',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  /* ── Le fond de la demo : deux taches floues, par-dessus le decor ────── */
+  .tache{position:absolute;border-radius:9999px;mix-blend-mode:screen;
+         pointer-events:none;z-index:1}
+  .tache.bleue{top:0;left:-80px;width:500px;height:500px;
+    background:rgb(37 99 235 / .10);filter:blur(140px);
+    animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+  .tache.verte{bottom:0;right:-80px;width:600px;height:600px;
+    background:rgb(16 185 129 / .10);filter:blur(160px)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+  #scene{position:absolute;top:50%;left:50%;transform-origin:50% 50%;
+         z-index:2;display:flex;flex-direction:column;align-items:center}
+  .entete{text-align:center;margin-bottom:28px}
+  .entete p{margin:0 auto;max-width:576px;font-size:1.125rem;font-weight:300;
+            line-height:1.625;color:#71717a}
+  .grille{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+          width:100%}
+  .pied{position:absolute;left:72px;right:72px;bottom:22px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
-  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
-          opacity:0}
+  #rideau{position:fixed;inset:0;z-index:9;background:#050505;
+          pointer-events:none;opacity:0}
 
-  /* ── La carte du composant `glare-cards`, portée classe par classe ───── */
+  /* ── La carte du composant, portee classe par classe ─────────────────── */
   .glare{position:relative;isolation:isolate;overflow:hidden;
          border-radius:2rem;border:1px solid rgb(255 255 255 / .1);
          background:rgb(24 24 27 / .5);
          -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-         padding:22px 28px;transition:border-color .5s ease,box-shadow .5s ease;
+         padding:32px;transition:border-color .5s ease,box-shadow .5s ease;
          transform-style:preserve-3d;perspective:1000px;
-         --mx:0;--my:0;--eclat:rgb(232 241 250 / .22);
-         transform:rotateX(calc(var(--my) * -2.5deg))
-                   rotateY(calc(var(--mx) * 2.5deg))}
-  /* l'anneau conique : il ne peint que le filet, decoupe au masque */
+         --mx:0;--my:0;--rx:0;--ry:0;--tilt:15;
+         --eclat:rgb(255 255 255 / .2);
+         transform:rotateX(calc(var(--rx) * var(--tilt) * 1deg))
+                   rotateY(calc(var(--ry) * var(--tilt) * 1deg))}
   .glare .anneau{position:absolute;inset:-1px;z-index:3;padding:1px;
     border-radius:inherit;pointer-events:none;
     background:conic-gradient(from 0deg at
       calc(50% + var(--mx) * 50%) calc(50% + var(--my) * 50%),
       transparent, var(--eclat), transparent);
     -webkit-mask-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);
-    -webkit-mask-clip:content-box,border-box;
-    -webkit-mask-composite:xor;
+    -webkit-mask-clip:content-box,border-box;-webkit-mask-composite:xor;
     mask-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);
     mask-clip:content-box,border-box;mask-composite:exclude}
-  /* la nappe radiale, posee en `soft-light` comme dans le composant */
   .glare .nappe{position:absolute;inset:0;z-index:1;pointer-events:none;
     border-radius:inherit;mix-blend-mode:soft-light;
     background:radial-gradient(circle at
       calc(50% + var(--mx) * 100%) calc(50% + var(--my) * 100%),
       var(--eclat) 0%, transparent 80%)}
-  /* le balayage : une bande claire inclinee de 15 degres */
   .glare .balai{position:absolute;inset:-50%;z-index:0;pointer-events:none;
     opacity:.1;transform:rotate(15deg) translateX(calc(var(--mx) * -20%));
     background:linear-gradient(90deg,transparent,
       rgb(255 255 255 / .4),transparent)}
   .glare .dedans{position:relative;z-index:4;height:100%;width:100%;
-                 display:flex;flex-direction:column;
-                 transform:translateZ(24px)}
+    display:flex;flex-direction:column;transform:translateZ(50px);
+    filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
 
-  /* ── Le contenu des cartes ───────────────────────────────────────────── */
-  .lib{margin:0;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-       color:rgb(255 255 255 / .45)}
-  .val{margin:10px 0 0;font-size:1.28rem;font-weight:400;line-height:1.35;
-       color:#fff}
-  .note{margin:auto 0 0;font-size:.86rem;font-weight:300;line-height:1.5;
-        color:rgb(255 255 255 / .55)}
-  .chiffre{margin:12px 0 0;font-size:1.72rem;font-weight:300;line-height:1.2;
-           letter-spacing:-.01em;color:#fff;white-space:nowrap;
-           font-variant-numeric:tabular-nums}
-  .croissance{margin:8px 0 0;font-size:.95rem;color:rgb(255 255 255 / .6)}
+  /* carte 1, le graphique */
+  .c1{height:450px;background:rgb(24 24 27 / .5);
+      border-color:rgb(39 39 42 / .5);--tilt:12}
+  .c1 .haut{display:flex;justify-content:space-between;align-items:flex-start;
+            margin-bottom:auto}
+  .c1 .titre-bloc>*+*{margin-top:24px}
+  .c1 .marque{display:flex;align-items:center;gap:8px;color:#34d399}
+  .c1 .marque span{font-size:.75rem;text-transform:uppercase;
+                   letter-spacing:.1em}
+  .c1 h3{margin:0;font-size:1.28rem;font-weight:600;color:#fff;
+         line-height:1.3;white-space:nowrap}
+  .c1 .chiffre{font-size:1.7rem;color:rgb(255 255 255 / .9);
+               white-space:nowrap}
+  .c1 .graphe{height:192px;width:100%;margin-top:32px}
 
-  .marche{grid-column:span 2}
-  .couverture{grid-column:span 4}
-  .ouverture,.souverainete,.donnees{grid-column:span 2}
-  .usages{grid-column:span 6}
+  /* carte 2, l'image */
+  .c2{height:450px;padding:0;border:0;--tilt:20;
+      --eclat:rgb(56 189 248 / .4)}
+  .c2 .voile{position:absolute;inset:0;z-index:10;
+    background:linear-gradient(to top,#050505,rgb(5 5 5 / .2),transparent)}
+  .c2 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+          transition:transform 1s ease;animation:respire 18s ease-in-out
+          infinite}
+  @keyframes respire{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+  .c2 .texte{position:absolute;inset:0;z-index:20;padding:32px;display:flex;
+             flex-direction:column;justify-content:flex-end}
+  .c2 h3{margin:0 0 8px;font-size:1.5rem;font-weight:700;color:#fff}
+  .c2 p{margin:0 0 24px;font-size:.875rem;line-height:1.5;color:#a1a1aa}
+  .c2 .filet{display:flex;align-items:center;gap:16px}
+  .c2 .filet i{display:block;height:1px;flex:1;
+               background:rgb(255 255 255 / .2)}
+  .c2 .filet svg{color:#60a5fa;animation:pulse 2s cubic-bezier(.4,0,.6,1)
+                 infinite}
 
-  .pastilles{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-  .pastilles span{padding:4px 10px;border-radius:9999px;font-size:11.5px;
-    color:rgb(255 255 255 / .74);background:rgb(255 255 255 / .05);
-    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08)}
-  .agents{margin:10px 0 0;font-size:.86rem;color:rgb(255 255 255 / .55)}
+  /* carte 3, les barres */
+  .c3{height:450px;background:rgb(9 9 11 / .8);
+      border-color:rgb(255 255 255 / .05);--tilt:15;
+      --eclat:rgb(244 63 94 / .2)}
+  .c3 .dedans{justify-content:space-between}
+  .c3 .bloc>*+*{margin-top:24px}
+  .c3 .rang{display:flex;justify-content:space-between;align-items:center}
+  .c3 .rang>svg{color:#f43f5e}
+  .c3 .points{display:flex;gap:4px}
+  .c3 .points i{width:6px;height:6px;border-radius:9999px;background:#f43f5e;
+                animation:bond 1s infinite}
+  @keyframes bond{0%,100%{transform:translateY(-25%);
+    animation-timing-function:cubic-bezier(.8,0,1,1)}
+    50%{transform:none;animation-timing-function:cubic-bezier(0,0,.2,1)}}
+  .c3 .lib{margin:0 0 4px;font-size:.75rem;color:#71717a;
+           text-transform:uppercase;letter-spacing:-.05em}
+  .c3 h3{margin:0;font-size:2.25rem;font-weight:700;color:#fff;
+         letter-spacing:-.05em}
+  .c3 h3 span{font-size:1.125rem;color:#f43f5e;margin-left:6px}
+  .c3 .graphe{height:160px;width:100%;padding:0 8px;overflow:hidden}
+  .c3 .plans{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;
+             font-size:10.5px;color:#71717a}
 
-  .usages .dedans{flex-direction:row;align-items:center;gap:0}
-  .usage{flex:1;padding:0 18px;border-left:1px solid rgb(255 255 255 / .08)}
-  .usage:first-child{padding-left:0;border-left:0}
-  .usage b{display:block;font-size:.95rem;font-weight:500;color:#fff}
-  .usage span{display:block;margin-top:4px;font-size:.8rem;font-weight:300;
-              line-height:1.4;color:rgb(255 255 255 / .52)}
+  /* la seconde rangee : le tableau du differenciant, meme carte */
+  .petite{height:158px;--tilt:10;padding:26px 28px}
+  .petite .lib{margin:0;font-size:.75rem;text-transform:uppercase;
+               letter-spacing:.1em;color:#71717a}
+  .petite h3{margin:9px 0 0;font-size:1.12rem;font-weight:600;color:#fff;
+             line-height:1.3}
+  .petite p{margin:auto 0 0;font-size:.78rem;font-weight:300;line-height:1.45;
+            color:#a1a1aa}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
@@ -127,38 +173,57 @@
   </div>
   <div class="grain"></div>
 </div>
+<div class="tache bleue"></div><div class="tache verte"></div>
 <div id="scene">
-  <p class="intro">Un marché à +15 %/an, et une couverture qui va bien au-delà du web : les 50 sous-agents de Darkmoon.</p>
-  <div class="grille"><div class="glare marche"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Le marché du pentest</p><p class="chiffre">≈ 2 Md$ → 4,4-5,5 Md$</p><p class="croissance">+15 %/an</p></div></div><div class="glare couverture"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Couverture</p><p class="val">Web + AD + K8s + réseau</p><div class="pastilles"><span>CMS</span><span>PHP</span><span>Node.js</span><span>Flask</span><span>ASP.NET</span><span>Spring Boot</span><span>Ruby</span><span>Go</span><span>GraphQL</span><span>Active Directory</span><span>Kubernetes</span><span>AWS</span><span>Azure</span><span>GCP</span><span>Entra ID</span><span>GitHub</span><span>GitLab</span><span>Jenkins</span><span>Terraform</span><span>Ansible</span><span>Docker</span><span>Registres</span><span>Vault</span><span>Bases SQL</span><span>NoSQL</span><span>Kafka</span><span>Redis</span><span>MQTT</span><span>Firmware IoT</span><span>Navigateur headless</span></div><p class="agents">50 sous-agents dans <code>conf/agents</code>, déclenchés sur la technologie réellement détectée.</p></div></div><div class="glare ouverture"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Ouverture</p><p class="val">Open source</p><p class="note">GPLv3, auditable de bout en bout.</p></div></div><div class="glare souverainete"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Souveraineté IA</p><p class="val">Commercial ou EU ou 100 % locale</p><p class="note">Claude, une IA européenne, ou un modèle qui ne sort jamais de chez vous.</p></div></div><div class="glare donnees"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Données</p><p class="val">Restent anonymisées, proxy si IA externe</p><p class="note">Les valeurs sensibles sont remplacées avant l'appel au modèle.</p></div></div><div class="glare usages"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><div class="usage"><b>Équipes sécurité</b><span>pentest continu sur toute l'infrastructure</span></div><div class="usage"><b>Pipelines DevSecOps</b><span>la sécurité entre dans la CI/CD</span></div><div class="usage"><b>Bug bounty</b><span>analyse autonome de la cible</span></div><div class="usage"><b>Recherche</b><span>exploration de surface d'attaque qui s'adapte</span></div><div class="usage"><b>Formation</b><span>des évaluations guidées et reproductibles</span></div></div></div></div>
+  <div class="entete"><p>Un marché à +15 %/an. Pour les équipes sécurité, les pipelines DevSecOps, le bug bounty, la recherche et la formation.</p></div>
+  <div class="grille"><div class="glare c1"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><div class="haut"><div class="titre-bloc"><div class="marque"><svg   class="lucide lucide-activity"   xmlns="http://www.w3.org/2000/svg"   width="18"   height="18"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /> </svg><span class="mono">Le marché du pentest</span></div><h3>≈ 2 Md$ → 4,4-5,5 Md$</h3></div><span class="chiffre mono">+15&nbsp;%</span></div><div class="graphe"><svg width="330" height="192" viewBox="0 0 330 192"><defs><linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stop-color="#10b981" stop-opacity=".3"/><stop offset="95%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs><path d="M5.00,187.00 C22.78,180.08 40.56,173.69 58.33,166.24 C76.11,158.79 93.89,150.63 111.67,142.02 C129.44,133.41 147.22,124.11 165.00,114.34 C182.78,104.57 200.56,94.33 218.33,83.20 C236.11,72.07 253.89,60.16 271.67,47.21 C289.44,34.26 307.22,19.07 325.00,5.00 L325.00,187.00 L5.00,187.00 Z" fill="url(#colorVal)"/><path d="M5.00,187.00 C22.78,180.08 40.56,173.69 58.33,166.24 C76.11,158.79 93.89,150.63 111.67,142.02 C129.44,133.41 147.22,124.11 165.00,114.34 C182.78,104.57 200.56,94.33 218.33,83.20 C236.11,72.07 253.89,60.16 271.67,47.21 C289.44,34.26 307.22,19.07 325.00,5.00" fill="none" stroke="#10b981" stroke-width="2"/></svg></div></div></div><div class="glare c2"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><div class="voile"></div><img src="ui-infra-map.png" alt=""><div class="texte"><h3>Web + AD + K8s + réseau</h3><p>50 sous-agents dans <span class="mono">conf/agents</span>, déclenchés sur la technologie réellement détectée, jamais sur une inférence.</p><div class="filet"><i></i><svg   class="lucide lucide-sparkles"   xmlns="http://www.w3.org/2000/svg"   width="16"   height="16"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />   <path d="M20 2v4" />   <path d="M22 4h-4" />   <circle cx="4" cy="20" r="2" /> </svg></div></div></div></div><div class="glare c3"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><div class="bloc"><div class="rang"><svg   class="lucide lucide-network"   xmlns="http://www.w3.org/2000/svg"   width="24"   height="24"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <rect x="16" y="16" width="6" height="6" rx="1" />   <rect x="2" y="16" width="6" height="6" rx="1" />   <rect x="9" y="2" width="6" height="6" rx="1" />   <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />   <path d="M12 12V8" /> </svg><div class="points"><i style="animation-delay:0s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:.4s"></i></div></div><div><p class="lib mono">Couverture par plan</p><h3>50<span>agents</span></h3><div class="plans"><span>9 stacks web</span><span>6 web et cms</span><span>6 cloud et socle</span><span>6 ci/cd et iac</span><span>5 identité</span><span>5 réseau</span><span>5 divers</span><span>4 conteneurs</span><span>4 données</span></div></div></div><div class="graphe"><svg width="314" height="160" viewBox="0 0 314 160"><path d="M6.69,155.00 L6.69,9.00 Q6.69,5.00 10.69,5.00 L33.09,5.00 Q37.09,5.00 37.09,9.00 L37.09,155.00 Z" fill="#f43f5e"/><path d="M40.47,155.00 L40.47,59.00 Q40.47,55.00 44.47,55.00 L66.87,55.00 Q70.87,55.00 70.87,59.00 L70.87,155.00 Z" fill="#f43f5e"/><path d="M74.24,155.00 L74.24,59.00 Q74.24,55.00 78.24,55.00 L100.64,55.00 Q104.64,55.00 104.64,59.00 L104.64,155.00 Z" fill="#f43f5e"/><path d="M108.02,155.00 L108.02,59.00 Q108.02,55.00 112.02,55.00 L134.42,55.00 Q138.42,55.00 138.42,59.00 L138.42,155.00 Z" fill="#f43f5e"/><path d="M141.80,155.00 L141.80,75.67 Q141.80,71.67 145.80,71.67 L168.20,71.67 Q172.20,71.67 172.20,75.67 L172.20,155.00 Z" fill="#f43f5e"/><path d="M175.58,155.00 L175.58,75.67 Q175.58,71.67 179.58,71.67 L201.98,71.67 Q205.98,71.67 205.98,75.67 L205.98,155.00 Z" fill="#f43f5e"/><path d="M209.36,155.00 L209.36,75.67 Q209.36,71.67 213.36,71.67 L235.76,71.67 Q239.76,71.67 239.76,75.67 L239.76,155.00 Z" fill="#f43f5e"/><path d="M243.13,155.00 L243.13,92.33 Q243.13,88.33 247.13,88.33 L269.53,88.33 Q273.53,88.33 273.53,92.33 L273.53,155.00 Z" fill="#f43f5e"/><path d="M276.91,155.00 L276.91,92.33 Q276.91,88.33 280.91,88.33 L303.31,88.33 Q307.31,88.33 307.31,92.33 L307.31,155.00 Z" fill="#f43f5e"/></svg></div></div></div><div class="glare petite"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Ouverture</p><h3>Open source</h3><p>GPLv3, auditable de bout en bout.</p></div></div><div class="glare petite"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Souveraineté IA</p><h3>Commercial ou EU ou 100 % locale</h3><p>Claude, une IA européenne, ou un modèle qui ne sort jamais de chez vous.</p></div></div><div class="glare petite"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Données</p><h3>Restent anonymisées, proxy si IA externe</h3><p>Les valeurs sensibles sont remplacées avant l'appel au modèle.</p></div></div></div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>10 / 14</span></div>
+<script>
+// La demo est composee a sa largeur naturelle, `max-w-7xl` moins ses
+// gouttieres, puis mise a l'echelle d'un bloc : rien n'est recompose.
+const L = 1232, scene = document.getElementById('scene');
+scene.style.width = L + 'px';
+function caler() {
+  scene.style.transform = 'none';
+  const h = scene.getBoundingClientRect().height;
+  const k = Math.min((window.innerWidth - 96) / L,
+                     (window.innerHeight - 84) / h);
+  scene.style.transform = 'translate(-50%,-50%) scale(' + k + ')';
+}
+caler();
+window.addEventListener('resize', caler);
+</script>
 
 <script>
 // ── Le pointeur, simule ──────────────────────────────────────────────────
-// Le composant lit la position de la souris et en tire deux nombres entre
-// -1 et 1, qui pilotent l'inclinaison et le centre des trois lumieres. Sur
-// une slide personne ne survole : chaque carte suit une lente courbe de
-// Lissajous, de periode et de phase differentes, donc la lumiere tourne
-// sans jamais se repeter d'une carte a l'autre.
+// Le composant tire de la souris deux nombres entre -1 et 1 qui pilotent
+// l'inclinaison et le centre des trois lumieres. Personne ne survole une
+// slide : chaque carte suit une lente courbe de Lissajous, de periode et de
+// phase differentes.
 const cartes = [...document.querySelectorAll('.glare')];
 const t0 = performance.now();
-function tourner() {
+(function tourner() {
   const t = (performance.now() - t0) / 1000;
   cartes.forEach((c, i) => {
-    const w = 0.30 + i * 0.045, ph = i * 1.7;
-    c.style.setProperty('--mx', (Math.sin(t * w + ph)).toFixed(4));
-    c.style.setProperty('--my', (Math.cos(t * w * 0.72 + ph * 1.3)).toFixed(4));
+    const w = 0.28 + i * 0.04, ph = i * 1.7;
+    const mx = Math.sin(t * w + ph), my = Math.cos(t * w * 0.72 + ph * 1.3);
+    // les lumieres suivent tout le champ, l'inclinaison est amortie : la
+    // demo est plate au repos, elle ne bascule que sous le curseur
+    c.style.setProperty('--mx', mx.toFixed(4));
+    c.style.setProperty('--my', my.toFixed(4));
+    c.style.setProperty('--rx', (my * -0.28).toFixed(4));
+    c.style.setProperty('--ry', (mx * 0.28).toFixed(4));
   });
   requestAnimationFrame(tourner);
-}
-tourner();
+})();
 
-// ── Ouverture : rideau noir, cartes qui montent ──────────────────────────
+// ── Ouverture ────────────────────────────────────────────────────────────
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
 const decor = document.getElementById('ether');
-const intro = document.querySelector('.intro');
+const entete = document.querySelector('.entete');
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
 let animations = [], derniereOuverture = 0;
 
@@ -170,20 +235,18 @@ function ouvrir() {
       { duration: 2200, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
-    intro.animate([{ opacity: 0, transform: 'translateY(12px)' },
-                   { opacity: 1, transform: 'none' }],
-      { duration: 1500, delay: 200, easing: COURBE, fill: 'backwards' }),
+    entete.animate([{ opacity: 0, transform: 'translateY(20px)' },
+                    { opacity: 1, transform: 'none' }],
+      { duration: 1400, delay: 150, easing: COURBE, fill: 'backwards' }),
     ...cartes.map((c, i) => c.animate([
-      { opacity: 0, transform: 'translateY(22px) scale(.985)' },
-      { opacity: 1, transform: 'none' }],
-      { duration: 1500, delay: 420 + i * 130, easing: COURBE,
+      { opacity: 0, transform: 'translateY(24px) scale(.985)' },
+      { opacity: 1 }],
+      { duration: 1500, delay: 400 + i * 120, easing: COURBE,
         fill: 'backwards' }))
   ];
 }
 ouvrir();
 
-// Rejouer au retour sur la slide : le signal fiable est la reprise d'une
-// cadence pleine apres un trou, le lecteur ne masquant pas les voisines.
 let precedent = performance.now(), reprise = false, rapides = 0;
 (function veille() {
   const t = performance.now(), dt = t - precedent;
