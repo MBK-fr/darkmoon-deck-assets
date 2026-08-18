@@ -1,0 +1,216 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<title>Darkmoon, trois façons d'adopter</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+  #scene{position:absolute;inset:0;z-index:2;padding:44px 104px 52px;
+         display:flex;flex-direction:column;align-items:stretch}
+
+  /* Une seule écriture pour toute la slide : même corps, même graisse,
+     même couleur. La hiérarchie vient de la place, pas de la typographie. */
+  #scene, #scene *{font-size:1.08rem;font-weight:300;
+                   color:rgb(255 255 255 / .9);letter-spacing:.002em}
+  /* Aucun texte ne passe à la ligne. */
+  #scene p, #scene h1, #scene h2, #scene span{white-space:nowrap}
+
+  .haut{margin:0 0 26px}
+  .haut p{margin:0;line-height:1.5;text-align:left;
+          text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
+  .haut p + p{margin-top:4px}
+
+  .grille{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;
+          align-items:stretch;margin:auto 0}
+
+  /* ── La carte du composant, matière de la charte ─────────────────────── */
+  .offre{position:relative;transition:transform .3s ease}
+  .offre:nth-child(1){transform:rotate(-1deg)}
+  .offre:nth-child(2){transform:rotate(1deg)}
+  .offre:nth-child(3){transform:rotate(-2deg)}
+  .dos{position:absolute;inset:0;border-radius:10px;background:transparent;
+       border:2px solid rgb(220 234 244 / .5);
+       box-shadow:4px 4px 0 0 rgb(220 234 244 / .22);
+       transition:box-shadow .3s ease,transform .3s ease}
+  .offre:hover .dos{box-shadow:8px 8px 0 0 rgb(220 234 244 / .28);
+                    transform:translate(-4px,-4px)}
+  .dedans{position:relative;padding:22px 22px 20px;display:flex;
+          flex-direction:column;height:100%}
+  .populaire{position:absolute;top:-10px;right:6px;transform:rotate(12deg);
+    padding:3px 12px;border-radius:9999px;background:rgb(220 234 244 / .92);
+    border:2px solid rgb(220 234 244);color:#05070b}
+  #scene .populaire, #scene .populaire span{color:#05070b}
+  .rond{width:46px;height:46px;border-radius:9999px;display:flex;
+        align-items:center;justify-content:center;margin-bottom:14px;
+        border:2px solid rgb(220 234 244 / .5);color:rgb(220 234 244)}
+  .rond svg{fill:none;stroke:currentColor;stroke-width:1.8;
+            stroke-linecap:round;stroke-linejoin:round}
+  .nom{margin:0}
+  .cible{margin:2px 0 0;color:rgb(255 255 255 / .58)}
+  .prix{margin:14px 0 0}
+  .precision{margin:2px 0 0;color:rgb(255 255 255 / .58)}
+  .lignes{margin:16px 0 18px;display:flex;flex-direction:column;gap:9px}
+  .ligne{display:flex;align-items:center;gap:11px}
+  .coche{width:20px;height:20px;flex:none;border-radius:9999px;display:flex;
+         align-items:center;justify-content:center;
+         border:2px solid rgb(220 234 244 / .5);color:rgb(220 234 244)}
+  .coche svg{fill:none;stroke:currentColor;stroke-width:3;
+             stroke-linecap:round;stroke-linejoin:round}
+  .bouton{margin-top:auto;height:46px;display:flex;align-items:center;
+          justify-content:center;border-radius:8px;background:transparent;
+          border:2px solid rgb(220 234 244 / .5);
+          box-shadow:4px 4px 0 0 rgb(220 234 244 / .22);
+          transition:box-shadow .3s ease,transform .3s ease}
+  .offre:hover .bouton{box-shadow:6px 6px 0 0 rgb(220 234 244 / .3);
+                       transform:translate(-2px,-2px)}
+  .offre.vedette .bouton{background:rgb(220 234 244 / .92);
+                         border-color:rgb(220 234 244)}
+  #scene .offre.vedette .bouton span{color:#05070b}
+
+  .pied{position:absolute;left:72px;right:72px;bottom:20px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+  /* le moteur de la slide 2 : chaque mot arrive de son propre flou */
+  .mot{display:inline-block;margin-right:.28em;
+       transition-property:opacity,filter,transform;
+       transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+       will-change:filter,transform,opacity;transform-style:preserve-3d;
+       backface-visibility:hidden}
+  .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
+            filter:none;transform:none}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+</style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
+<div id="scene">
+  <div class="haut">
+    <p>Trois façons d'adopter Darkmoon.</p>
+    <p>Pentest on Demand, 799 € par engagement. Nos experts s'en chargent, cadre légal inclus.</p>
+  </div>
+  <div class="grille"><div class="offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-star"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /> </svg></div><p class="nom">Community</p><p class="cible">Équipes techniques</p><p class="prix">Gratuit</p><p class="precision">Open source, à héberger vous-même</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Moteur autonome sur GitHub</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>GPLv3, auditable et modifiable</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>18 agents IA, 80 outils</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Exécution sous contrôle MCP</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support communautaire</span></div></div><div class="bouton"><span>Étoiler sur GitHub</span></div></div></div><div class="offre vedette"><div class="dos"></div><div class="dedans"><div class="populaire"><span>Populaire</span></div><div class="rond"><svg   class="lucide lucide-sparkles"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />   <path d="M20 2v4" />   <path d="M22 4h-4" />   <circle cx="4" cy="20" r="2" /> </svg></div><p class="nom">Pro</p><p class="cible">Pentesters et équipes sécurité</p><p class="prix">149 € par mois</p><p class="precision">Facturé 1788 € par an</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Community, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Runtime durci et scellé</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Centre de commande live</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tous les rapports, PDF marqué</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Licence liée au matériel</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support prioritaire</span></div></div><div class="bouton"><span>Obtenir Darkmoon</span></div></div></div><div class="offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-pencil"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />   <path d="m15 5 4 4" /> </svg></div><p class="nom">Custom</p><p class="cible">Entreprises, MSSP, revendeurs</p><p class="prix">Sur devis</p><p class="precision">Adapté à votre périmètre</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Pro, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Espace multi-utilisateurs</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Rapports à votre charte</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Programme partenaire</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Accompagnement dédié, SLA</span></div></div><div class="bouton"><span>Parler à l'équipe</span></div></div></div></div>
+</div>
+<div class="pied"><span>DARKMOON · ASC-IT</span><span>11 / 14</span></div>
+
+<script>
+// ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
+function cinema(el, base) {
+  const mots = el.textContent.split(' ');
+  el.textContent = '';
+  const spans = mots.map((m, i) => {
+    const e = document.createElement('span');
+    e.className = 'mot';
+    e.textContent = m;
+    e.style.transitionDuration = (1.5 + Math.cos(i * 0.3) * 0.2) + 's';
+    e.style.transitionDelay = (i * 0.055) + 's';
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' +
+      (0.92 + Math.sin(i * 0.2) * 0.04) + ') rotateX(-12deg)';
+    el.appendChild(e);
+    return e;
+  });
+  setTimeout(() => spans.forEach(e => {
+    e.style.opacity = 1;
+    e.style.filter = 'blur(0px) brightness(1)';
+    e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+  }), base);
+  setTimeout(() => spans.forEach(e => e.classList.add('pose')),
+             base + 1800 + mots.length * 55);
+}
+
+// ── Ouverture cinematique ────────────────────────────────────────────────
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const decor = document.getElementById('ether');
+const offres = [...document.querySelectorAll('.offre')];
+const hauts = [...document.querySelectorAll('.haut p')];
+const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+let animations = [], derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  animations.forEach(a => a.cancel());
+  const tours = ['rotate(-1deg)', 'rotate(1deg)', 'rotate(-2deg)'];
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2000, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
+    // les cartes arrivent en se redressant, chacune vers son inclinaison
+    ...offres.map((c, i) => c.animate(
+      [{ opacity: 0, transform: 'translateY(26px) scale(.985) rotate(0deg)',
+         filter: 'blur(14px)' },
+       { opacity: 1, transform: tours[i], filter: 'blur(0px)' }],
+      { duration: 1500, delay: 620 + i * 170, easing: COURBE,
+        fill: 'backwards' })),
+    ...[...document.querySelectorAll('.ligne, .bouton')].map((e, i) => e.animate(
+      [{ opacity: 0, transform: 'translateY(8px)' },
+       { opacity: 1, transform: 'none' }],
+      { duration: 700, delay: 1100 + i * 45, easing: COURBE,
+        fill: 'backwards' }))
+  ];
+  hauts.forEach((e, i) => cinema(e, 150 + i * 240));
+}
+ouvrir();
+
+// Rejouer au retour sur la slide.
+let precedent = performance.now(), reprise = false, rapides = 0;
+(function veille() {
+  const t = performance.now(), dt = t - precedent;
+  precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
+  requestAnimationFrame(veille);
+})();
+</script>
+
+</body></html>
