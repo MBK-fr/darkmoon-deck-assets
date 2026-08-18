@@ -5,69 +5,74 @@
   html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
             font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
             -webkit-font-smoothing:antialiased}
-  #scene{position:absolute;inset:0;z-index:2;padding:44px 104px 52px;
-         display:flex;flex-direction:column;align-items:stretch}
+  #scene{position:absolute;inset:0;z-index:2;padding:38px 96px 48px;
+         display:flex;flex-direction:column}
 
-  /* Une seule écriture pour toute la slide : même corps, même graisse,
-     même couleur. La hiérarchie vient de la place, pas de la typographie. */
-  #scene, #scene *{font-size:1.08rem;font-weight:300;
-                   color:rgb(255 255 255 / .9);letter-spacing:.002em}
-  /* Aucun texte ne passe à la ligne. */
-  #scene p, #scene h1, #scene h2, #scene span{white-space:nowrap}
-
-  .haut{margin:0 0 26px}
-  .haut p{margin:0;line-height:1.5;text-align:left;
+  /* L'en-tête du composant : titre et chapeau, centrés. */
+  .haut{text-align:center;margin:0 0 22px}
+  .haut p{margin:0;line-height:1.5;white-space:nowrap;
           text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
-  .haut p + p{margin-top:4px}
+  .titre{font-size:1.9rem;font-weight:300;letter-spacing:-.012em;
+         color:rgb(255 255 255 / .96)}
+  .chapeau{margin-top:8px;font-size:1.02rem;font-weight:300;
+           color:rgb(255 255 255 / .58)}
 
-  .grille{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;
-          align-items:stretch;margin:auto 0}
+  /* La grille : la carte du milieu remonte, les deux autres se rapprochent
+     du centre et sont réduites à 94 pour cent, comme dans le composant. */
+  .grille{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+          align-items:start;margin:auto 0}
+  .offre{position:relative;border-radius:16px;padding:22px 22px 18px;
+         display:flex;flex-direction:column;text-align:center;
+         transform:translateY(20px) scale(.94)}
+  .offre:nth-child(1){transform-origin:right center;
+                      transform:translate(30px,20px) scale(.94)}
+  .offre:nth-child(3){transform-origin:left center;
+                      transform:translate(-30px,20px) scale(.94)}
+  .offre.vedette{transform:translateY(0) scale(1);z-index:10}
 
-  /* ── La carte du composant, matière de la charte ─────────────────────── */
-  /* Droites : l'inclinaison du composant est retirée. */
-  .offre{position:relative;transition:transform .3s ease;
-         border-radius:var(--radius)}
-  /* Le filet et l'ombre dure du composant restent, posés PAR-DESSUS la
-     texture Darkmoon de la slide 3. */
+  /* Le filet du composant, posé par-dessus la texture Darkmoon. */
   .dos{position:absolute;inset:0;z-index:3;pointer-events:none;
-       border-radius:var(--radius);background:transparent;
-       border:2px solid rgb(220 234 244 / .5);
-       box-shadow:4px 4px 0 0 rgb(220 234 244 / .22);
-       transition:box-shadow .3s ease,transform .3s ease}
-  .offre:hover .dos{box-shadow:8px 8px 0 0 rgb(220 234 244 / .28);
-                    transform:translate(-4px,-4px)}
-  .dedans{position:relative;z-index:4;padding:22px 22px 20px;display:flex;
-          flex-direction:column;height:100%}
-  .populaire{position:absolute;top:-12px;right:-6px;transform:rotate(12deg);
-    padding:3px 12px;border-radius:9999px;background:rgb(220 234 244 / .92);
-    border:2px solid rgb(220 234 244);color:#05070b}
-  #scene .populaire, #scene .populaire span{color:#05070b}
-  .rond{width:46px;height:46px;border-radius:9999px;display:flex;
-        align-items:center;justify-content:center;margin-bottom:14px;
-        border:2px solid rgb(220 234 244 / .5);color:rgb(220 234 244)}
-  .rond svg{fill:none;stroke:currentColor;stroke-width:1.8;
-            stroke-linecap:round;stroke-linejoin:round}
-  .nom{margin:0}
-  .cible{margin:2px 0 0;color:rgb(255 255 255 / .58)}
-  .prix{margin:14px 0 0}
-  .precision{margin:2px 0 0;color:rgb(255 255 255 / .58)}
-  .lignes{margin:16px 0 18px;display:flex;flex-direction:column;gap:9px}
-  .ligne{display:flex;align-items:center;gap:11px}
-  .coche{width:20px;height:20px;flex:none;border-radius:9999px;display:flex;
-         align-items:center;justify-content:center;
-         border:2px solid rgb(220 234 244 / .5);color:rgb(220 234 244)}
-  .coche svg{fill:none;stroke:currentColor;stroke-width:3;
-             stroke-linecap:round;stroke-linejoin:round}
-  .bouton{margin-top:auto;height:46px;display:flex;align-items:center;
-          justify-content:center;border-radius:8px;background:transparent;
-          border:2px solid rgb(220 234 244 / .5);
-          box-shadow:4px 4px 0 0 rgb(220 234 244 / .22);
-          transition:box-shadow .3s ease,transform .3s ease}
-  .offre:hover .bouton{box-shadow:6px 6px 0 0 rgb(220 234 244 / .3);
-                       transform:translate(-2px,-2px)}
+       border-radius:16px;border:1px solid rgb(255 255 255 / .14)}
+  .offre.vedette .dos{border:2px solid rgb(220 234 244 / .82)}
+  .dedans{position:relative;z-index:4;display:flex;flex-direction:column;
+          height:100%}
+
+  .populaire{position:absolute;top:0;right:0;left:auto;z-index:5;
+    width:max-content;display:flex;
+    align-items:center;gap:5px;padding:3px 10px;
+    border-radius:0 16px 0 14px;background:rgb(220 234 244 / .92)}
+  .populaire span{color:#05070b;font-size:.86rem;font-weight:500}
+  .populaire svg{width:14px;height:14px;fill:#05070b;stroke:#05070b}
+
+  .nom{margin:0;font-size:1rem;font-weight:400;letter-spacing:.02em;
+       color:rgb(255 255 255 / .6)}
+  .prixrang{margin:14px 0 0;display:flex;align-items:baseline;
+            justify-content:center;gap:8px}
+  .prix{font-size:2.5rem;font-weight:300;letter-spacing:-.02em;color:#fff;
+        line-height:1}
+  .periode{font-size:.92rem;font-weight:400;color:rgb(255 255 255 / .55)}
+  .precision{margin:8px 0 0;font-size:.86rem;font-weight:300;
+             color:rgb(255 255 255 / .5)}
+  .lignes{margin:16px 0 0;display:flex;flex-direction:column;gap:8px;
+          text-align:left}
+  .ligne{display:flex;align-items:flex-start;gap:9px;font-size:1rem;
+         font-weight:300;color:rgb(255 255 255 / .88)}
+  .ligne svg{width:15px;height:15px;flex:none;margin-top:3px;fill:none;
+             stroke:rgb(220 234 244);stroke-width:2.6;stroke-linecap:round;
+             stroke-linejoin:round}
+  .filet{margin:16px 0;height:1px;background:rgb(255 255 255 / .12)}
+  .bouton{margin-top:auto;height:44px;display:flex;align-items:center;
+          justify-content:center;border-radius:10px;font-size:1.02rem;
+          font-weight:400;letter-spacing:-.01em;color:#fff;
+          border:1px solid rgb(255 255 255 / .18);background:transparent;
+          transition:background .3s ease,border-color .3s ease}
   .offre.vedette .bouton{background:rgb(220 234 244 / .92);
                          border-color:rgb(220 234 244)}
-  #scene .offre.vedette .bouton span{color:#05070b}
+  #scene .offre.vedette .bouton{color:#05070b}
+  .offre:hover .bouton{background:rgb(220 234 244 / .16);
+                       border-color:rgb(220 234 244 / .55)}
+  .pieddecarte{margin:14px 0 0;font-size:.86rem;font-weight:300;
+               color:rgb(255 255 255 / .5)}
 
   .pied{position:absolute;left:72px;right:72px;bottom:20px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
@@ -381,10 +386,10 @@
 </div>
 <div id="scene">
   <div class="haut">
-    <p>Trois façons d'adopter Darkmoon.</p>
-    <p>Pentest on Demand, 799 € par engagement. Nos experts s'en chargent, cadre légal inclus.</p>
+    <p class="titre">Trois façons d'adopter Darkmoon.</p>
+    <p class="chapeau">Pentest on Demand, 799 € par engagement. Nos experts s'en chargent, cadre légal inclus.</p>
   </div>
-  <div class="grille"><div class="bg-card offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-star"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /> </svg></div><p class="nom">Community</p><p class="cible">Équipes techniques</p><p class="prix">Gratuit</p><p class="precision">Open source, auto-hébergé</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Moteur autonome sur GitHub</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>GPLv3, auditable et modifiable</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>18 agents IA, 80 outils</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Exécution sous contrôle MCP</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support communautaire</span></div></div><div class="bouton"><span>Étoiler sur GitHub</span></div></div></div><div class="bg-card offre vedette"><div class="dos"></div><div class="dedans"><div class="populaire"><span>Populaire</span></div><div class="rond"><svg   class="lucide lucide-sparkles"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />   <path d="M20 2v4" />   <path d="M22 4h-4" />   <circle cx="4" cy="20" r="2" /> </svg></div><p class="nom">Pro</p><p class="cible">Pentesters et équipes sécurité</p><p class="prix">149 € par mois</p><p class="precision">Facturé 1788 € par an</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Community, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Runtime durci et scellé</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Centre de commande live</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tous les rapports, PDF marqué</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Licence liée au matériel</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support prioritaire</span></div></div><div class="bouton"><span>Obtenir Darkmoon</span></div></div></div><div class="bg-card offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-pencil"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />   <path d="m15 5 4 4" /> </svg></div><p class="nom">Custom</p><p class="cible">Entreprises, MSSP, revendeurs</p><p class="prix">Sur devis</p><p class="precision">Adapté à votre périmètre</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Pro, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Espace multi-utilisateurs</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Rapports à votre charte</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Programme partenaire</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Accompagnement dédié, SLA</span></div></div><div class="bouton"><span>Parler à l'équipe</span></div></div></div></div>
+  <div class="grille"><div class="bg-card offre"><div class="dos"></div><div class="dedans"><p class="nom">Community</p><div class="prixrang"><span class="prix">Gratuit</span></div><p class="precision">Open source, à héberger vous-même</p><div class="lignes"><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Moteur autonome sur GitHub</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>GPLv3, auditable et modifiable</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>18 agents IA, 80 outils</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Exécution sous contrôle MCP</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Support communautaire</span></div></div><div class="filet"></div><div class="bouton">Étoiler sur GitHub</div><p class="pieddecarte">Pour les équipes techniques.</p></div></div><div class="bg-card offre vedette"><div class="dos"></div><div class="populaire"><svg   class="lucide lucide-star"   xmlns="http://www.w3.org/2000/svg"   width="14"   height="14"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /> </svg><span>Populaire</span></div><div class="dedans"><p class="nom">Pro</p><div class="prixrang"><span class="prix">149 €</span><span class="periode">par mois</span></div><p class="precision">Facturé 1788 € par an</p><div class="lignes"><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Tout Community, et en plus</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Runtime durci et scellé</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Centre de commande live</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Tous les rapports, PDF marqué</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Licence liée au matériel</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Support prioritaire</span></div></div><div class="filet"></div><div class="bouton">Obtenir Darkmoon</div><p class="pieddecarte">Pour les pentesters et les équipes sécurité.</p></div></div><div class="bg-card offre"><div class="dos"></div><div class="dedans"><p class="nom">Custom</p><div class="prixrang"><span class="prix">Sur devis</span></div><p class="precision">Adapté à votre périmètre</p><div class="lignes"><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Tout Pro, et en plus</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Espace multi-utilisateurs</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Rapports à votre charte</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Programme partenaire</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Accompagnement dédié, SLA</span></div></div><div class="filet"></div><div class="bouton">Parler à l'équipe</div><p class="pieddecarte">Pour les entreprises, MSSP et revendeurs.</p></div></div></div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>11 / 14</span></div>
 
@@ -548,13 +553,15 @@ function ouvrir() {
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
       { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
     // les cartes arrivent en se redressant, chacune vers son inclinaison
-    ...offres.map((c, i) => c.animate(
-      [{ opacity: 0, transform: 'translateY(26px) scale(.985)',
-         filter: 'blur(14px)' },
-       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 1500, delay: 620 + i * 170, easing: COURBE,
-        fill: 'backwards' })),
-    ...[...document.querySelectorAll('.ligne, .bouton')].map((e, i) => e.animate(
+    ...offres.map((c, i) => {
+      const fin = getComputedStyle(c).transform;
+      return c.animate(
+        [{ opacity: 0, filter: 'blur(14px)' },
+         { opacity: 1, filter: 'blur(0px)' }],
+        { duration: 1500, delay: 620 + i * 170, easing: COURBE,
+          fill: 'backwards' });
+    }),
+    ...[...document.querySelectorAll('.ligne, .bouton, .prixrang')].map((e, i) => e.animate(
       [{ opacity: 0, transform: 'translateY(8px)' },
        { opacity: 1, transform: 'none' }],
       { duration: 700, delay: 1100 + i * 45, easing: COURBE,
