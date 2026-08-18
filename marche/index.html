@@ -1,0 +1,203 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<title>Darkmoon, marché et différenciant</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+  #scene{position:absolute;inset:0;z-index:1;padding:52px 72px 64px;
+         display:flex;flex-direction:column}
+  .intro{margin:0 0 26px;font-size:1.5rem;font-weight:300;line-height:1.5;
+         letter-spacing:.002em;color:rgb(255 255 255 / .96);max-width:58ch;
+         text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
+  .grille{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;flex:1;
+          min-height:0}
+  .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+
+  /* ── La carte du composant `glare-cards`, portée classe par classe ───── */
+  .glare{position:relative;isolation:isolate;overflow:hidden;
+         border-radius:2rem;border:1px solid rgb(255 255 255 / .1);
+         background:rgb(24 24 27 / .5);
+         -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+         padding:22px 28px;transition:border-color .5s ease,box-shadow .5s ease;
+         transform-style:preserve-3d;perspective:1000px;
+         --mx:0;--my:0;--eclat:rgb(232 241 250 / .22);
+         transform:rotateX(calc(var(--my) * -2.5deg))
+                   rotateY(calc(var(--mx) * 2.5deg))}
+  /* l'anneau conique : il ne peint que le filet, decoupe au masque */
+  .glare .anneau{position:absolute;inset:-1px;z-index:3;padding:1px;
+    border-radius:inherit;pointer-events:none;
+    background:conic-gradient(from 0deg at
+      calc(50% + var(--mx) * 50%) calc(50% + var(--my) * 50%),
+      transparent, var(--eclat), transparent);
+    -webkit-mask-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);
+    -webkit-mask-clip:content-box,border-box;
+    -webkit-mask-composite:xor;
+    mask-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);
+    mask-clip:content-box,border-box;mask-composite:exclude}
+  /* la nappe radiale, posee en `soft-light` comme dans le composant */
+  .glare .nappe{position:absolute;inset:0;z-index:1;pointer-events:none;
+    border-radius:inherit;mix-blend-mode:soft-light;
+    background:radial-gradient(circle at
+      calc(50% + var(--mx) * 100%) calc(50% + var(--my) * 100%),
+      var(--eclat) 0%, transparent 80%)}
+  /* le balayage : une bande claire inclinee de 15 degres */
+  .glare .balai{position:absolute;inset:-50%;z-index:0;pointer-events:none;
+    opacity:.1;transform:rotate(15deg) translateX(calc(var(--mx) * -20%));
+    background:linear-gradient(90deg,transparent,
+      rgb(255 255 255 / .4),transparent)}
+  .glare .dedans{position:relative;z-index:4;height:100%;width:100%;
+                 display:flex;flex-direction:column;
+                 transform:translateZ(24px)}
+
+  /* ── Le contenu des cartes ───────────────────────────────────────────── */
+  .lib{margin:0;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+       color:rgb(255 255 255 / .45)}
+  .val{margin:10px 0 0;font-size:1.28rem;font-weight:400;line-height:1.35;
+       color:#fff}
+  .note{margin:auto 0 0;font-size:.86rem;font-weight:300;line-height:1.5;
+        color:rgb(255 255 255 / .55)}
+  .chiffre{margin:12px 0 0;font-size:1.72rem;font-weight:300;line-height:1.2;
+           letter-spacing:-.01em;color:#fff;white-space:nowrap;
+           font-variant-numeric:tabular-nums}
+  .croissance{margin:8px 0 0;font-size:.95rem;color:rgb(255 255 255 / .6)}
+
+  .marche{grid-column:span 2}
+  .couverture{grid-column:span 4}
+  .ouverture,.souverainete,.donnees{grid-column:span 2}
+  .usages{grid-column:span 6}
+
+  .pastilles{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .pastilles span{padding:4px 10px;border-radius:9999px;font-size:11.5px;
+    color:rgb(255 255 255 / .74);background:rgb(255 255 255 / .05);
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08)}
+  .agents{margin:10px 0 0;font-size:.86rem;color:rgb(255 255 255 / .55)}
+
+  .usages .dedans{flex-direction:row;align-items:center;gap:0}
+  .usage{flex:1;padding:0 18px;border-left:1px solid rgb(255 255 255 / .08)}
+  .usage:first-child{padding-left:0;border-left:0}
+  .usage b{display:block;font-size:.95rem;font-weight:500;color:#fff}
+  .usage span{display:block;margin-top:4px;font-size:.8rem;font-weight:300;
+              line-height:1.4;color:rgb(255 255 255 / .52)}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+</style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
+<div id="scene">
+  <p class="intro">Un marché à +15 %/an, et une couverture qui va bien au-delà du web : les 50 sous-agents de Darkmoon.</p>
+  <div class="grille"><div class="glare marche"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Le marché du pentest</p><p class="chiffre">≈ 2 Md$ → 4,4-5,5 Md$</p><p class="croissance">+15 %/an</p></div></div><div class="glare couverture"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Couverture</p><p class="val">Web + AD + K8s + réseau</p><div class="pastilles"><span>CMS</span><span>PHP</span><span>Node.js</span><span>Flask</span><span>ASP.NET</span><span>Spring Boot</span><span>Ruby</span><span>Go</span><span>GraphQL</span><span>Active Directory</span><span>Kubernetes</span><span>AWS</span><span>Azure</span><span>GCP</span><span>Entra ID</span><span>GitHub</span><span>GitLab</span><span>Jenkins</span><span>Terraform</span><span>Ansible</span><span>Docker</span><span>Registres</span><span>Vault</span><span>Bases SQL</span><span>NoSQL</span><span>Kafka</span><span>Redis</span><span>MQTT</span><span>Firmware IoT</span><span>Navigateur headless</span></div><p class="agents">50 sous-agents dans <code>conf/agents</code>, déclenchés sur la technologie réellement détectée.</p></div></div><div class="glare ouverture"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Ouverture</p><p class="val">Open source</p><p class="note">GPLv3, auditable de bout en bout.</p></div></div><div class="glare souverainete"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Souveraineté IA</p><p class="val">Commercial ou EU ou 100 % locale</p><p class="note">Claude, une IA européenne, ou un modèle qui ne sort jamais de chez vous.</p></div></div><div class="glare donnees"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><p class="lib">Données</p><p class="val">Restent anonymisées, proxy si IA externe</p><p class="note">Les valeurs sensibles sont remplacées avant l'appel au modèle.</p></div></div><div class="glare usages"><div class="balai"></div><div class="nappe"></div><div class="anneau"></div><div class="dedans"><div class="usage"><b>Équipes sécurité</b><span>pentest continu sur toute l'infrastructure</span></div><div class="usage"><b>Pipelines DevSecOps</b><span>la sécurité entre dans la CI/CD</span></div><div class="usage"><b>Bug bounty</b><span>analyse autonome de la cible</span></div><div class="usage"><b>Recherche</b><span>exploration de surface d'attaque qui s'adapte</span></div><div class="usage"><b>Formation</b><span>des évaluations guidées et reproductibles</span></div></div></div></div>
+</div>
+<div class="pied"><span>DARKMOON · ASC-IT</span><span>10 / 14</span></div>
+
+<script>
+// ── Le pointeur, simule ──────────────────────────────────────────────────
+// Le composant lit la position de la souris et en tire deux nombres entre
+// -1 et 1, qui pilotent l'inclinaison et le centre des trois lumieres. Sur
+// une slide personne ne survole : chaque carte suit une lente courbe de
+// Lissajous, de periode et de phase differentes, donc la lumiere tourne
+// sans jamais se repeter d'une carte a l'autre.
+const cartes = [...document.querySelectorAll('.glare')];
+const t0 = performance.now();
+function tourner() {
+  const t = (performance.now() - t0) / 1000;
+  cartes.forEach((c, i) => {
+    const w = 0.30 + i * 0.045, ph = i * 1.7;
+    c.style.setProperty('--mx', (Math.sin(t * w + ph)).toFixed(4));
+    c.style.setProperty('--my', (Math.cos(t * w * 0.72 + ph * 1.3)).toFixed(4));
+  });
+  requestAnimationFrame(tourner);
+}
+tourner();
+
+// ── Ouverture : rideau noir, cartes qui montent ──────────────────────────
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const decor = document.getElementById('ether');
+const intro = document.querySelector('.intro');
+const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+let animations = [], derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  animations.forEach(a => a.cancel());
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2200, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
+    intro.animate([{ opacity: 0, transform: 'translateY(12px)' },
+                   { opacity: 1, transform: 'none' }],
+      { duration: 1500, delay: 200, easing: COURBE, fill: 'backwards' }),
+    ...cartes.map((c, i) => c.animate([
+      { opacity: 0, transform: 'translateY(22px) scale(.985)' },
+      { opacity: 1, transform: 'none' }],
+      { duration: 1500, delay: 420 + i * 130, easing: COURBE,
+        fill: 'backwards' }))
+  ];
+}
+ouvrir();
+
+// Rejouer au retour sur la slide : le signal fiable est la reprise d'une
+// cadence pleine apres un trou, le lecteur ne masquant pas les voisines.
+let precedent = performance.now(), reprise = false, rapides = 0;
+(function veille() {
+  const t = performance.now(), dt = t - precedent;
+  precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
+  requestAnimationFrame(veille);
+})();
+</script>
+
+</body></html>
