@@ -109,22 +109,10 @@
             filter:none;transform:none}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
-     on le teinte avec les couleurs relevees dans l'animation des cartes :
-     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
-     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
-     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 background-image:linear-gradient(135deg,
-                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
-                   #8a4a44 100%);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
+  #ether .fluide{position:absolute;inset:0;
+                 background-image:url('../ether/silk.webp');
+                 background-size:cover;background-position:center;
+                 background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
@@ -396,25 +384,7 @@
      12,6:1 sans aide. La carte montre le composant, rien d'autre. */
 </style></head><body>
 <div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
+  <div class="fluide"></div>
   <div class="grain"></div>
 </div>
 <div id="scene">
@@ -445,7 +415,7 @@ const fastCos = x => COS[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 
 // Le champ est une nappe tres basse frequence : on le calcule sur une petite
 // grille et on le remonte en lissage bilineaire, ce qui ne se voit pas, et on
 // ne le recalcule que 20 fois par seconde. Environ 25 fois moins de travail.
-const RES = 0.25, IMAGES_PAR_SECONDE = 20;
+const RES = 0.25, IMAGES_PAR_SECONDE = 12;
 const LENTEUR = 0.35;         // ralentissement demande plus tot
 const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
 const boucles = [];
@@ -552,8 +522,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (1.5 + Math.cos(i * 0.3) * 0.2) + 's';
-    e.style.transitionDelay = (i * 0.055) + 's';
+    e.style.transitionDuration = (0.55 + Math.cos(i * 0.3) * 0.08) + 's';
+    e.style.transitionDelay = (i * 0.018) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -567,7 +537,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 1800 + mots.length * 55);
+             base + 700 + mots.length * 18);
 }
 
 // ── L'interrupteur de facturation ────────────────────────────────────────
@@ -600,22 +570,22 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 2000, easing: COURBE, fill: 'backwards' }),
+      { duration: 750, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 850, easing: COURBE, fill: 'backwards' })] : []),
     // les cartes arrivent en se redressant, chacune vers son inclinaison
     ...offres.map((c, i) => {
       const fin = getComputedStyle(c).transform;
       return c.animate(
         [{ opacity: 0, filter: 'blur(14px)' },
          { opacity: 1, filter: 'blur(0px)' }],
-        { duration: 1500, delay: 620 + i * 170, easing: COURBE,
+        { duration: 550, delay: 80 + i * 65, easing: COURBE,
           fill: 'backwards' });
     }),
     ...[...document.querySelectorAll('.ligne, .bouton, .prixrang')].map((e, i) => e.animate(
       [{ opacity: 0, transform: 'translateY(8px)' },
        { opacity: 1, transform: 'none' }],
-      { duration: 700, delay: 1100 + i * 45, easing: COURBE,
+      { duration: 320, delay: 140 + i * 20, easing: COURBE,
         fill: 'backwards' }))
   ];
   hauts.forEach((e, i) => cinema(e, 150 + i * 240));

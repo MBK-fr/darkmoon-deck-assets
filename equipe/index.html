@@ -42,13 +42,13 @@
             opacity:1;
             filter:drop-shadow(0 22px 42px rgb(0 0 0 / .78))
                    drop-shadow(0 6px 14px rgb(0 0 0 / .6));
-            transition:opacity .4s ease,filter .5s ease}
+            transition:opacity .2s ease,filter .5s ease}
   /* Retour au noir et blanc du composant, mais la photo ne s'arrete pas net
      en bas : un degrade l'eteint sur son dernier tiers, elle sort du noir de
      la slide au lieu d'y etre posee. */
   .vignette img{width:100%;height:100%;object-fit:cover;display:block;
                 filter:grayscale(1) brightness(.74) contrast(1.06);
-                transition:filter .5s ease;
+                transition:filter .22s ease;
     -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 56%,
       rgb(0 0 0 / .58) 80%,rgb(0 0 0 / .06) 100%);
     mask-image:linear-gradient(to bottom,#000 0,#000 56%,
@@ -84,46 +84,16 @@
           opacity:0}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
-     on le teinte avec les couleurs relevees dans l'animation des cartes :
-     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
-     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
-     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 background-image:linear-gradient(135deg,
-                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
-                   #8a4a44 100%);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
+  #ether .fluide{position:absolute;inset:0;
+                 background-image:url('../ether/silk.webp');
+                 background-size:cover;background-position:center;
+                 background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
 </style></head><body>
 <div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
+  <div class="fluide"></div>
   <div class="grain"></div>
 </div>
 <div id="scene">
@@ -188,8 +158,8 @@ function cinema(el, base) {
     const e = document.createElement('span');
     e.className = 'mot';
     e.textContent = m;
-    e.style.transitionDuration = (1.5 + Math.cos(i * 0.3) * 0.2) + 's';
-    e.style.transitionDelay = (i * 0.055) + 's';
+    e.style.transitionDuration = (0.55 + Math.cos(i * 0.3) * 0.08) + 's';
+    e.style.transitionDelay = (i * 0.018) + 's';
     e.style.opacity = 0;
     e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
     e.style.transform = 'translateY(14px) scale(' +
@@ -203,7 +173,7 @@ function cinema(el, base) {
     e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
   }), base);
   setTimeout(() => spans.forEach(e => e.classList.add('pose')),
-             base + 1800 + mots.length * 55);
+             base + 700 + mots.length * 18);
 }
 
 // ── Ouverture : le rideau se leve, la scene arrive en fondu ──────────────
@@ -219,18 +189,18 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 2200, easing: COURBE, fill: 'backwards' }),
+      { duration: 800, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 900, easing: COURBE, fill: 'backwards' })] : []),
     ...vignettes.map((v, i) => v.animate([
       { opacity: 0, transform: 'translateY(18px) scale(.97)' },
       { opacity: 1, transform: 'none' }],
-      { duration: 1500, delay: 280 + i * 130, easing: COURBE,
+      { duration: 550, delay: 45 + i * 50, easing: COURBE,
         fill: 'backwards' })),
     ...lignes.map((l, i) => l.animate([
       { opacity: 0, transform: 'translateX(14px)' },
       { opacity: 1, transform: 'none' }],
-      { duration: 1300, delay: 520 + i * 110, easing: COURBE,
+      { duration: 500, delay: 80 + i * 45, easing: COURBE,
         fill: 'backwards' }))
   ];
   cinema(document.querySelector('.intro'), 180);

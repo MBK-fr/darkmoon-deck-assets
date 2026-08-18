@@ -25,22 +25,10 @@
         justify-content:center;min-height:100vh;background:transparent}
   
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
-     on le teinte avec les couleurs relevees dans l'animation des cartes :
-     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
-     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
-     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 background-image:linear-gradient(135deg,
-                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
-                   #8a4a44 100%);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
+  #ether .fluide{position:absolute;inset:0;
+                 background-image:url('../ether/silk.webp');
+                 background-size:cover;background-position:center;
+                 background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
@@ -69,25 +57,7 @@
   .m.pose{will-change:auto;transform-style:flat;backface-visibility:visible}
 </style></head><body>
 <div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
+  <div class="fluide"></div>
   <div class="grain"></div>
 </div>
 <div class="wrap"><div class="inner"><p class="txt" id="p"></p></div></div>
@@ -99,7 +69,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "Un", "p": "normal", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "p": "normal", "d": 2.487, "r": 0.081, "b": 12, "s": 0.91}, {"t": "par", "p": "normal", "d": 2.448, "r": 0.144, "b": 13, "s": 0.919}, {"t": "an.", "p": "normal", "d": 2.386, "r": 0.236, "b": 12, "s": 0.928}, {"t": "Des", "p": "normal", "d": 2.309, "r": 0.34, "b": 15, "s": 0.936}, {"t": "attaques", "p": "normal", "d": 2.221, "r": 0.372, "b": 18, "s": 0.942}, {"t": "tous", "p": "normal", "d": 2.132, "r": 0.466, "b": 15, "s": 0.947}, {"t": "les", "p": "normal", "d": 2.049, "r": 0.524, "b": 18, "s": 0.949}, {"t": "jours.", "p": "normal", "d": 1.979, "r": 0.596, "b": 13, "s": 0.95}, {"t": "Une", "p": "normal", "d": 1.929, "r": 0.714, "b": 12, "s": 0.949}, {"t": "photo", "p": "normal", "d": 1.903, "r": 0.769, "b": 18, "s": 0.945}, {"t": "à", "p": "normal", "d": 1.904, "r": 0.815, "b": 15, "s": 0.94}, {"t": "l'instant", "p": "normal", "d": 1.931, "r": 0.888, "b": 14, "s": 0.934}, {"t": "T.", "p": "normal", "d": 1.982, "r": 0.973, "b": 14, "s": 0.926}, {"t": "Un", "p": "normal", "d": 2.053, "r": 1.058, "b": 16, "s": 0.917}, {"t": "audit", "p": "normal", "d": 2.137, "r": 1.131, "b": 14, "s": 0.907}, {"t": "fige", "p": "normal", "d": 2.226, "r": 1.18, "b": 15, "s": 0.897}, {"t": "la", "p": "normal", "d": 2.313, "r": 1.266, "b": 13, "s": 0.887}, {"t": "sécurité", "p": "normal", "d": 2.39, "r": 1.347, "b": 15, "s": 0.878}, {"t": "à", "p": "normal", "d": 2.45, "r": 1.415, "b": 18, "s": 0.869}, {"t": "une", "p": "normal", "d": 2.488, "r": 1.501, "b": 19, "s": 0.862}, {"t": "date.", "p": "normal", "d": 2.5, "r": 1.563, "b": 19, "s": 0.856}, {"t": "La", "p": "normal", "d": 2.485, "r": 1.623, "b": 15, "s": 0.852}, {"t": "cible", "p": "normal", "d": 2.445, "r": 1.716, "b": 15, "s": 0.85}, {"t": ":", "p": "normal", "d": 2.383, "r": 1.751, "b": 16, "s": 0.85}, {"t": "les", "p": "normal", "d": 2.304, "r": 1.845, "b": 17, "s": 0.852}, {"t": "sous-traitants.", "p": "normal", "d": 2.216, "r": 1.926, "b": 16, "s": 0.856}, {"t": "4×", "p": "normal", "d": 2.127, "r": 1.991, "b": 13, "s": 0.861}, {"t": "plus", "p": "normal", "d": 2.044, "r": 2.037, "b": 18, "s": 0.868}, {"t": "de", "p": "normal", "d": 1.975, "r": 2.11, "b": 17, "s": 0.877}, {"t": "victimes", "p": "normal", "d": 1.927, "r": 2.18, "b": 19, "s": 0.886}, {"t": "que", "p": "normal", "d": 1.902, "r": 2.264, "b": 13, "s": 0.896}, {"t": "les", "p": "normal", "d": 1.905, "r": 2.351, "b": 17, "s": 0.906}, {"t": "grands", "p": "normal", "d": 1.933, "r": 2.401, "b": 17, "s": 0.916}, {"t": "comptes.", "p": "normal", "d": 1.986, "r": 2.484, "b": 19, "s": 0.925}, {"t": "NIS2,", "p": "normal", "d": 2.057, "r": 2.528, "b": 13, "s": 0.933}, {"t": "DORA.", "p": "normal", "d": 2.142, "r": 2.642, "b": 19, "s": 0.94}, {"t": "Tester", "p": "normal", "d": 2.231, "r": 2.7, "b": 13, "s": 0.945}, {"t": "devient", "p": "normal", "d": 2.318, "r": 2.738, "b": 16, "s": 0.948}, {"t": "obligatoire.", "p": "normal", "d": 2.394, "r": 2.837, "b": 19, "s": 0.95}];
+const MOTS = [{"t": "Un", "p": "normal", "d": 0.7, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "p": "normal", "d": 0.696, "r": 0.023, "b": 12, "s": 0.91}, {"t": "par", "p": "normal", "d": 0.683, "r": 0.033, "b": 13, "s": 0.919}, {"t": "an.", "p": "normal", "d": 0.662, "r": 0.073, "b": 12, "s": 0.928}, {"t": "Des", "p": "normal", "d": 0.636, "r": 0.126, "b": 15, "s": 0.936}, {"t": "attaques", "p": "normal", "d": 0.607, "r": 0.107, "b": 18, "s": 0.942}, {"t": "tous", "p": "normal", "d": 0.577, "r": 0.151, "b": 15, "s": 0.947}, {"t": "les", "p": "normal", "d": 0.55, "r": 0.159, "b": 18, "s": 0.949}, {"t": "jours.", "p": "normal", "d": 0.526, "r": 0.182, "b": 13, "s": 0.95}, {"t": "Une", "p": "normal", "d": 0.51, "r": 0.251, "b": 12, "s": 0.949}, {"t": "photo", "p": "normal", "d": 0.501, "r": 0.257, "b": 18, "s": 0.945}, {"t": "à", "p": "normal", "d": 0.501, "r": 0.254, "b": 15, "s": 0.94}, {"t": "l'instant", "p": "normal", "d": 0.51, "r": 0.278, "b": 14, "s": 0.934}, {"t": "T.", "p": "normal", "d": 0.527, "r": 0.315, "b": 14, "s": 0.926}, {"t": "Un", "p": "normal", "d": 0.551, "r": 0.351, "b": 16, "s": 0.917}, {"t": "audit", "p": "normal", "d": 0.579, "r": 0.376, "b": 14, "s": 0.907}, {"t": "fige", "p": "normal", "d": 0.609, "r": 0.377, "b": 15, "s": 0.897}, {"t": "la", "p": "normal", "d": 0.638, "r": 0.414, "b": 13, "s": 0.887}, {"t": "sécurité", "p": "normal", "d": 0.663, "r": 0.448, "b": 15, "s": 0.878}, {"t": "à", "p": "normal", "d": 0.683, "r": 0.468, "b": 18, "s": 0.869}, {"t": "une", "p": "normal", "d": 0.696, "r": 0.506, "b": 19, "s": 0.862}, {"t": "date.", "p": "normal", "d": 0.7, "r": 0.52, "b": 19, "s": 0.856}, {"t": "La", "p": "normal", "d": 0.695, "r": 0.532, "b": 15, "s": 0.852}, {"t": "cible", "p": "normal", "d": 0.682, "r": 0.577, "b": 15, "s": 0.85}, {"t": ":", "p": "normal", "d": 0.661, "r": 0.565, "b": 16, "s": 0.85}, {"t": "les", "p": "normal", "d": 0.635, "r": 0.611, "b": 17, "s": 0.852}, {"t": "sous-traitants.", "p": "normal", "d": 0.605, "r": 0.645, "b": 16, "s": 0.856}, {"t": "4×", "p": "normal", "d": 0.576, "r": 0.662, "b": 13, "s": 0.861}, {"t": "plus", "p": "normal", "d": 0.548, "r": 0.661, "b": 18, "s": 0.868}, {"t": "de", "p": "normal", "d": 0.525, "r": 0.687, "b": 17, "s": 0.877}, {"t": "victimes", "p": "normal", "d": 0.509, "r": 0.71, "b": 19, "s": 0.886}, {"t": "que", "p": "normal", "d": 0.501, "r": 0.747, "b": 13, "s": 0.896}, {"t": "les", "p": "normal", "d": 0.502, "r": 0.787, "b": 17, "s": 0.906}, {"t": "grands", "p": "normal", "d": 0.511, "r": 0.789, "b": 17, "s": 0.916}, {"t": "comptes.", "p": "normal", "d": 0.529, "r": 0.825, "b": 19, "s": 0.925}, {"t": "NIS2,", "p": "normal", "d": 0.552, "r": 0.822, "b": 13, "s": 0.933}, {"t": "DORA.", "p": "normal", "d": 0.581, "r": 0.889, "b": 19, "s": 0.94}, {"t": "Tester", "p": "normal", "d": 0.61, "r": 0.9, "b": 13, "s": 0.945}, {"t": "devient", "p": "normal", "d": 0.639, "r": 0.892, "b": 16, "s": 0.948}, {"t": "obligatoire.", "p": "normal", "d": 0.665, "r": 0.944, "b": 19, "s": 0.95}];
 const p = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');

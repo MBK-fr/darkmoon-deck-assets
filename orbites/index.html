@@ -108,46 +108,16 @@
            rgb(0 0 0 / .78) 34%,rgb(0 0 0 / .45) 60%,rgb(0 0 0 / .3) 100%)}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
-     on le teinte avec les couleurs relevees dans l'animation des cartes :
-     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
-     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
-     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 background-image:linear-gradient(135deg,
-                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
-                   #8a4a44 100%);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
+  #ether .fluide{position:absolute;inset:0;
+                 background-image:url('../ether/silk.webp');
+                 background-size:cover;background-position:center;
+                 background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
 </style></head><body>
 <div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
+  <div class="fluide"></div>
   <div class="grain"></div>
 </div>
 <div id="voile"></div>
@@ -172,7 +142,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "La", "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 2.487, "r": 0.083, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 2.448, "r": 0.148, "b": 13, "s": 0.919}, {"t": "explose.", "d": 2.386, "r": 0.242, "b": 12, "s": 0.928}, {"t": "Les", "d": 2.309, "r": 0.347, "b": 15, "s": 0.936}, {"t": "outils", "d": 2.221, "r": 0.38, "b": 18, "s": 0.942}, {"t": "IA", "d": 2.132, "r": 0.475, "b": 15, "s": 0.947}, {"t": "du", "d": 2.049, "r": 0.534, "b": 18, "s": 0.949}, {"t": "marché", "d": 1.979, "r": 0.608, "b": 13, "s": 0.95}, {"t": "s'arrêtent", "d": 1.929, "r": 0.727, "b": 12, "s": 0.949}, {"t": "au", "d": 1.903, "r": 0.783, "b": 18, "s": 0.945}, {"t": "web.", "d": 1.904, "r": 0.831, "b": 15, "s": 0.94}, {"t": "Le", "d": 1.931, "r": 0.905, "b": 14, "s": 0.934}, {"t": "reste", "d": 1.982, "r": 0.991, "b": 14, "s": 0.926}, {"t": ":", "d": 2.053, "r": 1.077, "b": 16, "s": 0.917}, {"t": "angle", "d": 2.137, "r": 1.151, "b": 14, "s": 0.907}, {"t": "mort.", "d": 2.226, "r": 1.202, "b": 15, "s": 0.897}, {"t": "Tous", "d": 2.313, "r": 1.288, "b": 13, "s": 0.887}, {"t": "les", "d": 2.39, "r": 1.37, "b": 15, "s": 0.878}, {"t": "scopes", "d": 2.45, "r": 1.44, "b": 18, "s": 0.869}, {"t": "couverts", "d": 2.488, "r": 1.526, "b": 19, "s": 0.862}, {"t": "par", "d": 2.5, "r": 1.589, "b": 19, "s": 0.856}, {"t": "Darkmoon :", "d": 2.485, "r": 1.65, "b": 15, "s": 0.852}, {"t": "Applications", "d": 2.445, "r": 1.744, "b": 15, "s": 0.85}, {"t": "web,", "d": 2.383, "r": 1.781, "b": 16, "s": 0.85}, {"t": "API,", "d": 2.304, "r": 1.875, "b": 17, "s": 0.852}, {"t": "Active", "d": 2.216, "r": 1.957, "b": 16, "s": 0.856}, {"t": "Directory,", "d": 2.127, "r": 2.023, "b": 13, "s": 0.861}, {"t": "Kubernetes,", "d": 2.044, "r": 2.07, "b": 18, "s": 0.868}, {"t": "Cloud,", "d": 1.975, "r": 2.144, "b": 17, "s": 0.877}, {"t": "Réseaux", "d": 1.927, "r": 2.215, "b": 19, "s": 0.886}, {"t": "internes,", "d": 1.902, "r": 2.3, "b": 13, "s": 0.896}, {"t": "Systèmes", "d": 1.905, "r": 2.388, "b": 17, "s": 0.906}, {"t": "legacy,", "d": 1.933, "r": 2.438, "b": 17, "s": 0.916}, {"t": "CMS,", "d": 1.986, "r": 2.522, "b": 19, "s": 0.925}, {"t": "e-commerce.", "d": 2.057, "r": 2.567, "b": 13, "s": 0.933}];
+const MOTS = [{"t": "La", "d": 0.7, "r": -0.009, "b": 14, "s": 0.9}, {"t": "surface", "d": 0.696, "r": 0.024, "b": 12, "s": 0.91}, {"t": "d'attaque", "d": 0.683, "r": 0.034, "b": 13, "s": 0.919}, {"t": "explose.", "d": 0.662, "r": 0.075, "b": 12, "s": 0.928}, {"t": "Les", "d": 0.636, "r": 0.128, "b": 15, "s": 0.936}, {"t": "outils", "d": 0.607, "r": 0.11, "b": 18, "s": 0.942}, {"t": "IA", "d": 0.577, "r": 0.154, "b": 15, "s": 0.947}, {"t": "du", "d": 0.55, "r": 0.163, "b": 18, "s": 0.949}, {"t": "marché", "d": 0.526, "r": 0.186, "b": 13, "s": 0.95}, {"t": "s'arrêtent", "d": 0.51, "r": 0.255, "b": 12, "s": 0.949}, {"t": "au", "d": 0.501, "r": 0.261, "b": 18, "s": 0.945}, {"t": "web.", "d": 0.501, "r": 0.259, "b": 15, "s": 0.94}, {"t": "Le", "d": 0.51, "r": 0.284, "b": 14, "s": 0.934}, {"t": "reste", "d": 0.527, "r": 0.32, "b": 14, "s": 0.926}, {"t": ":", "d": 0.551, "r": 0.357, "b": 16, "s": 0.917}, {"t": "angle", "d": 0.579, "r": 0.382, "b": 14, "s": 0.907}, {"t": "mort.", "d": 0.609, "r": 0.384, "b": 15, "s": 0.897}, {"t": "Tous", "d": 0.638, "r": 0.421, "b": 13, "s": 0.887}, {"t": "les", "d": 0.663, "r": 0.455, "b": 15, "s": 0.878}, {"t": "scopes", "d": 0.683, "r": 0.476, "b": 18, "s": 0.869}, {"t": "couverts", "d": 0.696, "r": 0.514, "b": 19, "s": 0.862}, {"t": "par", "d": 0.7, "r": 0.528, "b": 19, "s": 0.856}, {"t": "Darkmoon :", "d": 0.695, "r": 0.541, "b": 15, "s": 0.852}, {"t": "Applications", "d": 0.682, "r": 0.587, "b": 15, "s": 0.85}, {"t": "web,", "d": 0.661, "r": 0.575, "b": 16, "s": 0.85}, {"t": "API,", "d": 0.635, "r": 0.621, "b": 17, "s": 0.852}, {"t": "Active", "d": 0.605, "r": 0.655, "b": 16, "s": 0.856}, {"t": "Directory,", "d": 0.576, "r": 0.673, "b": 13, "s": 0.861}, {"t": "Kubernetes,", "d": 0.548, "r": 0.672, "b": 18, "s": 0.868}, {"t": "Cloud,", "d": 0.525, "r": 0.698, "b": 17, "s": 0.877}, {"t": "Réseaux", "d": 0.509, "r": 0.721, "b": 19, "s": 0.886}, {"t": "internes,", "d": 0.501, "r": 0.758, "b": 13, "s": 0.896}, {"t": "Systèmes", "d": 0.502, "r": 0.799, "b": 17, "s": 0.906}, {"t": "legacy,", "d": 0.511, "r": 0.801, "b": 17, "s": 0.916}, {"t": "CMS,", "d": 0.529, "r": 0.838, "b": 19, "s": 0.925}, {"t": "e-commerce.", "d": 0.552, "r": 0.835, "b": 13, "s": 0.933}];
 const pTexte = document.getElementById('p');
 MOTS.forEach(w => {
   const e = document.createElement('span');
@@ -287,19 +257,19 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 2200, easing: COURBE, fill: 'backwards' }),
+      { duration: 800, easing: COURBE, fill: 'backwards' }),
     decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' }),
+      { duration: 900, easing: COURBE, fill: 'backwards' }),
     bloc.animate([
       { opacity: 0, filter: 'blur(26px)',
         transform: 'translateX(-50%) scale(.92)' },
       { opacity: 1, filter: 'blur(0px)',
         transform: 'translateX(-50%) scale(1)' }],
-      { duration: 2300, delay: 260, easing: COURBE, fill: 'backwards' }),
+      { duration: 870, delay: 100, easing: COURBE, fill: 'backwards' }),
     ...texte.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(18px)', filter: 'blur(14px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 1700, delay: 420 + i * 170, easing: COURBE,
+      { duration: 650, delay: 60 + i * 65, easing: COURBE,
         fill: 'backwards' }))
   ];
 }

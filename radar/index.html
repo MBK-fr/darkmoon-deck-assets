@@ -137,46 +137,16 @@
           pointer-events:none;opacity:0}
 
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:-100px;
-                 filter:url(#ether-filtre) blur(4px)}
-  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
-     on le teinte avec les couleurs relevees dans l'animation des cartes :
-     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
-     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
-     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
-  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
-                 background-image:linear-gradient(135deg,
-                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
-                   #8a4a44 100%);
-                 -webkit-mask-image:url('../ether/mask.png');
-                 mask-image:url('../ether/mask.png');
-                 -webkit-mask-size:cover;mask-size:cover;
-                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-                 -webkit-mask-position:center;mask-position:center}
+  #ether .fluide{position:absolute;inset:0;
+                 background-image:url('../ether/silk.webp');
+                 background-size:cover;background-position:center;
+                 background-repeat:no-repeat}
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
 </style></head><body>
 <div id="ether">
-  <div class="fluide">
-    <svg style="position:absolute" aria-hidden="true"><defs>
-      <filter id="ether-filtre">
-        <feTurbulence result="undulation" numOctaves="2"
-                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
-        <feColorMatrix in="undulation" type="hueRotate" values="180">
-          <animate attributeName="values" from="0" to="360" dur="5.84s"
-                   repeatCount="indefinite"/>
-        </feColorMatrix>
-        <feColorMatrix in="dist" result="circulation" type="matrix"
-          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
-        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
-                           result="dist"/>
-        <feDisplacementMap in="dist" in2="undulation" scale="100"
-                           result="output"/>
-      </filter>
-    </defs></svg>
-    <div class="teinte"></div>
-  </div>
+  <div class="fluide"></div>
   <div class="grain"></div>
 </div>
 <div id="scene">
@@ -189,7 +159,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "La", "z": 0, "c": false, "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "solution", "z": 0, "c": false, "d": 2.487, "r": 0.075, "b": 12, "s": 0.91}, {"t": ":", "z": 0, "c": false, "d": 2.448, "r": 0.134, "b": 13, "s": 0.919}, {"t": "Darkmoon", "z": 0, "c": false, "d": 2.386, "r": 0.222, "b": 12, "s": 0.928}, {"t": "teste", "z": 0, "c": false, "d": 2.309, "r": 0.322, "b": 15, "s": 0.936}, {"t": "vos", "z": 0, "c": false, "d": 2.221, "r": 0.35, "b": 18, "s": 0.942}, {"t": "systèmes", "z": 0, "c": false, "d": 2.132, "r": 0.441, "b": 15, "s": 0.947}, {"t": "en", "z": 0, "c": false, "d": 2.049, "r": 0.496, "b": 18, "s": 0.949}, {"t": "continu,", "z": 0, "c": false, "d": 1.979, "r": 0.565, "b": 13, "s": 0.95}, {"t": "tout", "z": 0, "c": false, "d": 1.929, "r": 0.68, "b": 12, "s": 0.949}, {"t": "seul.", "z": 0, "c": false, "d": 1.903, "r": 0.732, "b": 18, "s": 0.945}, {"t": "Vous", "z": 0, "c": false, "d": 1.904, "r": 0.775, "b": 15, "s": 0.94}, {"t": "confiez", "z": 0, "c": false, "d": 1.931, "r": 0.845, "b": 14, "s": 0.934}, {"t": "une", "z": 0, "c": false, "d": 1.982, "r": 0.927, "b": 14, "s": 0.926}, {"t": "cible.", "z": 0, "c": false, "d": 2.053, "r": 1.009, "b": 16, "s": 0.917}, {"t": "Il", "z": 0, "c": false, "d": 2.137, "r": 1.08, "b": 14, "s": 0.907}, {"t": "explore,", "z": 0, "c": false, "d": 2.226, "r": 1.126, "b": 15, "s": 0.897}, {"t": "trouve", "z": 0, "c": false, "d": 2.313, "r": 1.209, "b": 13, "s": 0.887}, {"t": "les", "z": 0, "c": false, "d": 2.39, "r": 1.288, "b": 15, "s": 0.878}, {"t": "failles,", "z": 0, "c": false, "d": 2.45, "r": 1.353, "b": 18, "s": 0.869}, {"t": "les", "z": 0, "c": false, "d": 2.488, "r": 1.436, "b": 19, "s": 0.862}, {"t": "prouve,", "z": 0, "c": false, "d": 2.5, "r": 1.496, "b": 19, "s": 0.856}, {"t": "et", "z": 0, "c": false, "d": 2.485, "r": 1.553, "b": 15, "s": 0.852}, {"t": "livre", "z": 0, "c": false, "d": 2.445, "r": 1.644, "b": 15, "s": 0.85}, {"t": "un", "z": 0, "c": false, "d": 2.383, "r": 1.677, "b": 16, "s": 0.85}, {"t": "rapport", "z": 0, "c": false, "d": 2.304, "r": 1.767, "b": 17, "s": 0.852}, {"t": "clair.", "z": 0, "c": false, "d": 2.216, "r": 1.846, "b": 16, "s": 0.856}, {"t": "En", "z": 0, "c": true, "d": 2.127, "r": 1.908, "b": 13, "s": 0.861}, {"t": "continu", "z": 0, "c": true, "d": 2.044, "r": 1.952, "b": 18, "s": 0.868}, {"t": ":", "z": 0, "c": false, "d": 1.975, "r": 2.023, "b": 17, "s": 0.877}, {"t": "à", "z": 0, "c": false, "d": 1.927, "r": 2.09, "b": 19, "s": 0.886}, {"t": "chaque", "z": 0, "c": false, "d": 1.902, "r": 2.172, "b": 13, "s": 0.896}, {"t": "évolution,", "z": 0, "c": false, "d": 1.905, "r": 2.257, "b": 17, "s": 0.906}, {"t": "pas", "z": 0, "c": false, "d": 1.933, "r": 2.304, "b": 17, "s": 0.916}, {"t": "une", "z": 0, "c": false, "d": 1.986, "r": 2.385, "b": 19, "s": 0.925}, {"t": "fois", "z": 0, "c": false, "d": 2.057, "r": 2.427, "b": 13, "s": 0.933}, {"t": "par", "z": 0, "c": false, "d": 2.142, "r": 2.538, "b": 19, "s": 0.94}, {"t": "an.", "z": 0, "c": false, "d": 2.231, "r": 2.594, "b": 13, "s": 0.945}, {"t": "Avec", "z": 0, "c": true, "d": 2.318, "r": 2.63, "b": 16, "s": 0.948}, {"t": "preuves", "z": 0, "c": true, "d": 2.394, "r": 2.727, "b": 19, "s": 0.95}, {"t": ":", "z": 0, "c": false, "d": 2.453, "r": 2.777, "b": 18, "s": 0.949}, {"t": "chaque", "z": 0, "c": false, "d": 2.489, "r": 2.875, "b": 17, "s": 0.947}, {"t": "faille", "z": 0, "c": false, "d": 2.5, "r": 2.899, "b": 19, "s": 0.943}, {"t": "est", "z": 0, "c": false, "d": 2.483, "r": 2.983, "b": 13, "s": 0.937}, {"t": "démontrée,", "z": 0, "c": false, "d": 2.442, "r": 3.058, "b": 15, "s": 0.929}, {"t": "pas", "z": 0, "c": false, "d": 2.378, "r": 3.139, "b": 14, "s": 0.921}, {"t": "signalée.", "z": 0, "c": false, "d": 2.299, "r": 3.205, "b": 18, "s": 0.911}, {"t": "Sous", "z": 0, "c": true, "d": 2.211, "r": 3.255, "b": 19, "s": 0.901}, {"t": "contrôle", "z": 0, "c": true, "d": 2.122, "r": 3.307, "b": 19, "s": 0.891}, {"t": ":", "z": 0, "c": false, "d": 2.04, "r": 3.391, "b": 16, "s": 0.882}, {"t": "vos", "z": 0, "c": false, "d": 1.972, "r": 3.482, "b": 18, "s": 0.873}, {"t": "données", "z": 0, "c": false, "d": 1.925, "r": 3.549, "b": 16, "s": 0.865}, {"t": "restent", "z": 0, "c": false, "d": 1.902, "r": 3.608, "b": 17, "s": 0.859}, {"t": "chez", "z": 0, "c": false, "d": 1.906, "r": 3.675, "b": 18, "s": 0.854}, {"t": "vous.", "z": 0, "c": false, "d": 1.936, "r": 3.756, "b": 14, "s": 0.851}];
+const MOTS = [{"t": "La", "z": 0, "c": false, "d": 0.7, "r": -0.009, "b": 14, "s": 0.9}, {"t": "solution", "z": 0, "c": false, "d": 0.696, "r": 0.021, "b": 12, "s": 0.91}, {"t": ":", "z": 0, "c": false, "d": 0.683, "r": 0.03, "b": 13, "s": 0.919}, {"t": "Darkmoon", "z": 0, "c": false, "d": 0.662, "r": 0.069, "b": 12, "s": 0.928}, {"t": "teste", "z": 0, "c": false, "d": 0.636, "r": 0.12, "b": 15, "s": 0.936}, {"t": "vos", "z": 0, "c": false, "d": 0.607, "r": 0.1, "b": 18, "s": 0.942}, {"t": "systèmes", "z": 0, "c": false, "d": 0.577, "r": 0.143, "b": 15, "s": 0.947}, {"t": "en", "z": 0, "c": false, "d": 0.55, "r": 0.15, "b": 18, "s": 0.949}, {"t": "continu,", "z": 0, "c": false, "d": 0.526, "r": 0.172, "b": 13, "s": 0.95}, {"t": "tout", "z": 0, "c": false, "d": 0.51, "r": 0.24, "b": 12, "s": 0.949}, {"t": "seul.", "z": 0, "c": false, "d": 0.501, "r": 0.245, "b": 18, "s": 0.945}, {"t": "Vous", "z": 0, "c": false, "d": 0.501, "r": 0.242, "b": 15, "s": 0.94}, {"t": "confiez", "z": 0, "c": false, "d": 0.51, "r": 0.265, "b": 14, "s": 0.934}, {"t": "une", "z": 0, "c": false, "d": 0.527, "r": 0.3, "b": 14, "s": 0.926}, {"t": "cible.", "z": 0, "c": false, "d": 0.551, "r": 0.336, "b": 16, "s": 0.917}, {"t": "Il", "z": 0, "c": false, "d": 0.579, "r": 0.36, "b": 14, "s": 0.907}, {"t": "explore,", "z": 0, "c": false, "d": 0.609, "r": 0.36, "b": 15, "s": 0.897}, {"t": "trouve", "z": 0, "c": false, "d": 0.638, "r": 0.396, "b": 13, "s": 0.887}, {"t": "les", "z": 0, "c": false, "d": 0.663, "r": 0.429, "b": 15, "s": 0.878}, {"t": "failles,", "z": 0, "c": false, "d": 0.683, "r": 0.448, "b": 18, "s": 0.869}, {"t": "les", "z": 0, "c": false, "d": 0.696, "r": 0.485, "b": 19, "s": 0.862}, {"t": "prouve,", "z": 0, "c": false, "d": 0.7, "r": 0.498, "b": 19, "s": 0.856}, {"t": "et", "z": 0, "c": false, "d": 0.695, "r": 0.51, "b": 15, "s": 0.852}, {"t": "livre", "z": 0, "c": false, "d": 0.682, "r": 0.554, "b": 15, "s": 0.85}, {"t": "un", "z": 0, "c": false, "d": 0.661, "r": 0.542, "b": 16, "s": 0.85}, {"t": "rapport", "z": 0, "c": false, "d": 0.635, "r": 0.586, "b": 17, "s": 0.852}, {"t": "clair.", "z": 0, "c": false, "d": 0.605, "r": 0.619, "b": 16, "s": 0.856}, {"t": "En", "z": 0, "c": true, "d": 0.576, "r": 0.636, "b": 13, "s": 0.861}, {"t": "continu", "z": 0, "c": true, "d": 0.548, "r": 0.634, "b": 18, "s": 0.868}, {"t": ":", "z": 0, "c": false, "d": 0.525, "r": 0.659, "b": 17, "s": 0.877}, {"t": "à", "z": 0, "c": false, "d": 0.509, "r": 0.681, "b": 19, "s": 0.886}, {"t": "chaque", "z": 0, "c": false, "d": 0.501, "r": 0.717, "b": 13, "s": 0.896}, {"t": "évolution,", "z": 0, "c": false, "d": 0.502, "r": 0.757, "b": 17, "s": 0.906}, {"t": "pas", "z": 0, "c": false, "d": 0.511, "r": 0.758, "b": 17, "s": 0.916}, {"t": "une", "z": 0, "c": false, "d": 0.529, "r": 0.794, "b": 19, "s": 0.925}, {"t": "fois", "z": 0, "c": false, "d": 0.552, "r": 0.79, "b": 13, "s": 0.933}, {"t": "par", "z": 0, "c": false, "d": 0.581, "r": 0.856, "b": 19, "s": 0.94}, {"t": "an.", "z": 0, "c": false, "d": 0.61, "r": 0.866, "b": 13, "s": 0.945}, {"t": "Avec", "z": 0, "c": true, "d": 0.639, "r": 0.857, "b": 16, "s": 0.948}, {"t": "preuves", "z": 0, "c": true, "d": 0.665, "r": 0.909, "b": 19, "s": 0.95}, {"t": ":", "z": 0, "c": false, "d": 0.684, "r": 0.913, "b": 18, "s": 0.949}, {"t": "chaque", "z": 0, "c": false, "d": 0.696, "r": 0.966, "b": 17, "s": 0.947}, {"t": "faille", "z": 0, "c": false, "d": 0.7, "r": 0.945, "b": 19, "s": 0.943}, {"t": "est", "z": 0, "c": false, "d": 0.694, "r": 0.984, "b": 13, "s": 0.937}, {"t": "démontrée,", "z": 0, "c": false, "d": 0.681, "r": 1.014, "b": 15, "s": 0.929}, {"t": "pas", "z": 0, "c": false, "d": 0.659, "r": 1.05, "b": 14, "s": 0.921}, {"t": "signalée.", "z": 0, "c": false, "d": 0.633, "r": 1.071, "b": 18, "s": 0.911}, {"t": "Sous", "z": 0, "c": true, "d": 0.604, "r": 1.076, "b": 19, "s": 0.901}, {"t": "contrôle", "z": 0, "c": true, "d": 0.574, "r": 1.083, "b": 19, "s": 0.891}, {"t": ":", "z": 0, "c": false, "d": 0.547, "r": 1.121, "b": 16, "s": 0.882}, {"t": "vos", "z": 0, "c": false, "d": 0.524, "r": 1.167, "b": 18, "s": 0.873}, {"t": "données", "z": 0, "c": false, "d": 0.508, "r": 1.189, "b": 16, "s": 0.865}, {"t": "restent", "z": 0, "c": false, "d": 0.501, "r": 1.203, "b": 17, "s": 0.859}, {"t": "chez", "z": 0, "c": false, "d": 0.502, "r": 1.224, "b": 18, "s": 0.854}, {"t": "vous.", "z": 0, "c": false, "d": 0.512, "r": 1.261, "b": 14, "s": 0.851}];
 // Le texte est en plusieurs paragraphes : chaque mot va dans le sien, et
 // l'apparition suit l'ordre de lecture, du chapo a la derniere ligne.
 const zones = [...document.querySelectorAll('#texte .par')];
@@ -258,15 +228,15 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 2200, easing: COURBE, fill: 'backwards' }),
+      { duration: 800, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 900, easing: COURBE, fill: 'backwards' })] : []),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
+      { duration: 900, easing: COURBE, fill: 'backwards' })] : []),
     ...blocs.map((e, i) => e.animate([
       { opacity: 0, transform: 'translateY(16px)', filter: 'blur(12px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 1600, delay: 380 + i * 160, easing: COURBE,
+      { duration: 600, delay: 55 + i * 60, easing: COURBE,
         fill: 'backwards' }))
   ];
   jouerTexte();
