@@ -14,15 +14,16 @@
   .par{margin:0;color:#fff;font-weight:300;font-size:1.66rem;line-height:1.62;
        letter-spacing:.016em;perspective:900px}
   .par.fini{perspective:none}
-  .source{margin:26px 0 0;font-size:.9rem;font-weight:300;
-          color:rgb(255 255 255 / .48)}
-  /* Les mots-clés en néon, dans le bleu de la charte : le mot reste peu
-     lumineux, c'est le halo qui porte, comme sur un vrai tube. */
-  .m.cle{color:#9bb8ff;
-         text-shadow:0 0 6px rgb(107 156 255 / .95),
-                     0 0 18px rgb(77 126 255 / .7),
-                     0 0 42px rgb(60 104 220 / .45),
-                     0 0 10px rgba(0,0,0,1), 0 0 26px rgba(0,0,0,.95)}
+  /* Même corps, même graisse, même famille que le paragraphe : la seule
+     différence est l'espace qui la sépare. */
+  .source{margin:26px 0 0;font-size:1.66rem;font-weight:300;line-height:1.62;
+          letter-spacing:.016em;color:#fff;
+          text-shadow:0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1),
+                      0 0 44px rgba(0,0,0,.98)}
+  /* Les mots-clés portent la couleur de la charte, et rien d'autre : pas de
+     halo, pas de néon. Seules les ombres noires de lisibilité restent, les
+     mêmes que sur le reste du texte. */
+  .m.cle{color:#9bb8ff}
   .m{display:inline-block;margin-right:.32em;
      transition-property:opacity,filter,transform,text-shadow;
      transition-timing-function:cubic-bezier(.25,.46,.45,.94);
@@ -89,8 +90,6 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const NEON = '0 0 6px rgb(107 156 255 / .95), 0 0 18px rgb(77 126 255 / .7), '
-           + '0 0 42px rgb(60 104 220 / .45), ';
 const MOTS = [{"t": "Un", "c": false, "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "c": false, "d": 2.487, "r": 0.078, "b": 12, "s": 0.91}, {"t": "par", "c": false, "d": 2.448, "r": 0.139, "b": 13, "s": 0.919}, {"t": "an,", "c": false, "d": 2.386, "r": 0.23, "b": 12, "s": 0.928}, {"t": "des", "c": false, "d": 2.309, "r": 0.331, "b": 15, "s": 0.936}, {"t": "attaques", "c": false, "d": 2.221, "r": 0.362, "b": 18, "s": 0.942}, {"t": "tous", "c": false, "d": 2.132, "r": 0.454, "b": 15, "s": 0.947}, {"t": "les", "c": false, "d": 2.049, "r": 0.51, "b": 18, "s": 0.949}, {"t": "jours.", "c": false, "d": 1.979, "r": 0.581, "b": 13, "s": 0.95}, {"t": "Une", "c": false, "d": 1.929, "r": 0.698, "b": 12, "s": 0.949}, {"t": "photo", "c": false, "d": 1.903, "r": 0.751, "b": 18, "s": 0.945}, {"t": "à", "c": false, "d": 1.904, "r": 0.797, "b": 15, "s": 0.94}, {"t": "l'instant", "c": true, "d": 1.931, "r": 0.868, "b": 14, "s": 0.934}, {"t": "T", "c": true, "d": 1.982, "r": 0.951, "b": 14, "s": 0.926}, {"t": ":", "c": false, "d": 2.053, "r": 1.035, "b": 16, "s": 0.917}, {"t": "un", "c": false, "d": 2.137, "r": 1.107, "b": 14, "s": 0.907}, {"t": "audit", "c": false, "d": 2.226, "r": 1.155, "b": 15, "s": 0.897}, {"t": "fige", "c": false, "d": 2.313, "r": 1.239, "b": 13, "s": 0.887}, {"t": "la", "c": false, "d": 2.39, "r": 1.319, "b": 15, "s": 0.878}, {"t": "sécurité", "c": false, "d": 2.45, "r": 1.386, "b": 18, "s": 0.869}, {"t": "à", "c": false, "d": 2.488, "r": 1.471, "b": 19, "s": 0.862}, {"t": "une", "c": false, "d": 2.5, "r": 1.531, "b": 19, "s": 0.856}, {"t": "date.", "c": false, "d": 2.485, "r": 1.59, "b": 15, "s": 0.852}, {"t": "La", "c": false, "d": 2.445, "r": 1.682, "b": 15, "s": 0.85}, {"t": "cible,", "c": false, "d": 2.383, "r": 1.716, "b": 16, "s": 0.85}, {"t": "ce", "c": false, "d": 2.304, "r": 1.808, "b": 17, "s": 0.852}, {"t": "sont", "c": false, "d": 2.216, "r": 1.888, "b": 16, "s": 0.856}, {"t": "les", "c": true, "d": 2.127, "r": 1.952, "b": 13, "s": 0.861}, {"t": "sous-traitants,", "c": true, "d": 2.044, "r": 1.997, "b": 18, "s": 0.868}, {"t": "quatre", "c": false, "d": 1.975, "r": 2.069, "b": 17, "s": 0.877}, {"t": "fois", "c": false, "d": 1.927, "r": 2.138, "b": 19, "s": 0.886}, {"t": "plus", "c": false, "d": 1.902, "r": 2.221, "b": 13, "s": 0.896}, {"t": "de", "c": false, "d": 1.905, "r": 2.307, "b": 17, "s": 0.906}, {"t": "victimes", "c": false, "d": 1.933, "r": 2.355, "b": 17, "s": 0.916}, {"t": "que", "c": false, "d": 1.986, "r": 2.437, "b": 19, "s": 0.925}, {"t": "les", "c": false, "d": 2.057, "r": 2.48, "b": 13, "s": 0.933}, {"t": "grands", "c": false, "d": 2.142, "r": 2.593, "b": 19, "s": 0.94}, {"t": "comptes.", "c": false, "d": 2.231, "r": 2.65, "b": 13, "s": 0.945}, {"t": "Et", "c": false, "d": 2.318, "r": 2.687, "b": 16, "s": 0.948}, {"t": "avec", "c": false, "d": 2.394, "r": 2.785, "b": 19, "s": 0.95}, {"t": "NIS2", "c": true, "d": 2.453, "r": 2.836, "b": 18, "s": 0.949}, {"t": "et", "c": true, "d": 2.489, "r": 2.935, "b": 17, "s": 0.947}, {"t": "DORA,", "c": true, "d": 2.5, "r": 2.961, "b": 19, "s": 0.943}, {"t": "tester", "c": false, "d": 2.483, "r": 3.047, "b": 13, "s": 0.937}, {"t": "devient", "c": false, "d": 2.442, "r": 3.122, "b": 15, "s": 0.929}, {"t": "obligatoire.", "c": false, "d": 2.378, "r": 3.205, "b": 14, "s": 0.921}];
 const par = document.getElementById('par');
 
@@ -106,7 +105,7 @@ function poser() {
     e.style.opacity = 0;
     e.style.filter = 'blur(' + w.b + 'px) brightness(.6)';
     e.style.transform = 'translateY(16px) scale(' + w.s + ') rotateX(-12deg)';
-    e.style.textShadow = (w.c ? NEON : '') + NOIR;
+    e.style.textShadow = NOIR;
     par.appendChild(e);
     return { e, w };
   });
@@ -115,7 +114,7 @@ function poser() {
       e.style.opacity = 1;
       e.style.filter = 'blur(0px) brightness(1)';
       e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
-      e.style.textShadow = (w.c ? NEON : '') + NOIR;
+      e.style.textShadow = NOIR;
     });
   }, 120));
   // une fois pose, on libere le calque composite, sinon le mot ramollit
