@@ -8,32 +8,34 @@
   #scene{position:absolute;top:50%;left:50%;transform-origin:50% 50%;
          z-index:1;padding:0 72px}
 
-  /* ── L'en-tête, dans la typographie du deck ──────────────────────────── */
-  .oeil{margin:0 0 14px;font-size:11px;letter-spacing:.18em;
-        text-transform:uppercase;color:rgb(255 255 255 / .42)}
-  h1{margin:0;font-size:2.7rem;font-weight:300;line-height:1.12;
-     letter-spacing:-.012em;color:#fff}
-  .chapeau{margin:16px 0 0;font-size:1.06rem;font-weight:300;line-height:1.6;
-           color:rgb(255 255 255 / .72);max-width:70ch}
-  .maison{margin:6px 0 0;font-size:.92rem;font-weight:400;
-          color:rgb(255 255 255 / .45)}
+  /* ── Le texte : un seul paragraphe, deux lignes ──────────────────────── */
+  .intro{margin:0 0 4px;font-size:1.18rem;font-weight:300;line-height:1.62;
+         letter-spacing:.004em;color:rgb(255 255 255 / .94);max-width:104ch;
+         text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
   .pied{position:absolute;left:72px;right:72px;bottom:24px;display:flex;
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
   /* ── Le composant `team-showcase`, porté classe par classe ───────────── */
   .team{display:flex;align-items:flex-start;gap:56px;user-select:none;
-        width:100%;max-width:1024px;margin:34px auto 0;padding:0 24px}
+        width:100%;margin:34px 0 0}
   .mosaique{display:flex;gap:12px;flex-shrink:0}
   .col{display:flex;flex-direction:column;gap:12px}
   .vignette{overflow:hidden;border-radius:12px;cursor:pointer;flex-shrink:0;
             opacity:1;transition:opacity .4s ease}
+  /* Le composant met ses photos en noir et blanc. Le gris est terne sur ce
+     fond et manque de contraste : on garde le principe, une image sourde qui
+     s'allume, mais dans le bleu de la charte. La bichromie est obtenue en
+     ramenant l'image en une seule teinte (sepia) puis en tournant cette
+     teinte vers le royal, avec une saturation qui la tient loin du gris. */
   .vignette img{width:100%;height:100%;object-fit:cover;display:block;
-                filter:grayscale(1) brightness(.77);
+                filter:grayscale(1) sepia(1) hue-rotate(188deg) saturate(2.6)
+                       brightness(.82) contrast(1.12);
                 transition:filter .5s ease}
-  .team.vise .vignette{opacity:.6}
+  .team.vise .vignette{opacity:.72}
   .team.vise .vignette.actif{opacity:1}
-  .vignette.actif img{filter:grayscale(0) brightness(1)}
+  .vignette.actif img{filter:grayscale(0) brightness(1.04) saturate(1.08)
+                             contrast(1.04)}
 
   .liste{display:flex;flex-direction:column;gap:20px;padding-top:8px;flex:1}
   .ligne{cursor:pointer;opacity:1;transition:opacity .3s ease}
@@ -48,9 +50,11 @@
               letter-spacing:-.011em;color:rgb(255 255 255 / .8);
               transition:color .3s ease}
   .ligne.actif .nom{color:#fff}
-  .ligne .role{margin:6px 0 0;padding-left:27px;font-size:10px;
+  .ligne .role{margin:6px 0 0;padding-left:27px;font-size:10.5px;
     font-weight:500;text-transform:uppercase;letter-spacing:.2em;
-    color:rgb(255 255 255 / .5)}
+    color:rgb(158 190 230 / .78)}
+  .ligne.actif .role{color:rgb(190 214 245 / .95)}
+  .ligne.actif .pastille{width:20px;background:rgb(178 206 240)}
 
   #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
           opacity:0}
@@ -99,10 +103,7 @@
   <div class="grain"></div>
 </div>
 <div id="scene">
-  <p class="oeil">L'ÉQUIPE</p>
-  <h1>Des pentesters de métier, 10 ans de terrain.</h1>
-  <p class="chapeau">Créateur de Dark Moon, open source depuis 2013. Pentester de métier.</p>
-  <p class="maison">ASC-IT, éditeur, Toulouse, Made in France.</p>
+  <p class="intro">Des pentesters de métier, 10 ans de terrain. Créateur de Dark Moon, open source depuis 2013. Pentester de métier. ASC-IT, éditeur, Toulouse, Made in France.</p>
   <div class="team">
     <div class="mosaique"><div class="col" style="margin-top:0px"><div class="vignette" data-i="0" style="width:155px;height:165px"><img src="aurelien.avif" alt="Aurélien STRICH"></div><div class="vignette" data-i="3" style="width:155px;height:165px"><img src="florian.avif" alt="Florian CARDINAL"></div></div><div class="col" style="margin-top:68px"><div class="vignette" data-i="1" style="width:172px;height:182px"><img src="mehdi.avif" alt="Mehdi BOUTAYEB"></div><div class="vignette" data-i="4" style="width:172px;height:182px"><img src="teva.avif" alt="Teva LEGARES"></div></div><div class="col" style="margin-top:32px"><div class="vignette" data-i="2" style="width:162px;height:172px"><img src="vincent.avif" alt="Vincent MAHAUX"></div></div></div>
     <div class="liste"><div class="ligne" data-i="0"><div class="haut"><span class="pastille"></span><span class="nom">Aurélien STRICH</span></div><p class="role">Architecte logiciel, chef de projet</p></div><div class="ligne" data-i="1"><div class="haut"><span class="pastille"></span><span class="nom">Mehdi BOUTAYEB</span></div><p class="role">Directeur des systèmes et de la cybersécurité</p></div><div class="ligne" data-i="2"><div class="haut"><span class="pastille"></span><span class="nom">Vincent MAHAUX</span></div><p class="role">Directeur commercial, consultant cybersécurité</p></div><div class="ligne" data-i="3"><div class="haut"><span class="pastille"></span><span class="nom">Florian CARDINAL</span></div><p class="role">Développeur fullstack, lead tech</p></div><div class="ligne" data-i="4"><div class="haut"><span class="pastille"></span><span class="nom">Teva LEGARES</span></div><p class="role">Administrateur système, réseau et sécurité</p></div></div>
