@@ -24,19 +24,21 @@
           align-items:stretch;margin:auto 0}
 
   /* ── La carte du composant, matière de la charte ─────────────────────── */
-  .offre{position:relative;transition:transform .3s ease}
-  .offre:nth-child(1){transform:rotate(-1deg)}
-  .offre:nth-child(2){transform:rotate(1deg)}
-  .offre:nth-child(3){transform:rotate(-2deg)}
-  .dos{position:absolute;inset:0;border-radius:10px;background:transparent;
+  /* Droites : l'inclinaison du composant est retirée. */
+  .offre{position:relative;transition:transform .3s ease;
+         border-radius:var(--radius)}
+  /* Le filet et l'ombre dure du composant restent, posés PAR-DESSUS la
+     texture Darkmoon de la slide 3. */
+  .dos{position:absolute;inset:0;z-index:3;pointer-events:none;
+       border-radius:var(--radius);background:transparent;
        border:2px solid rgb(220 234 244 / .5);
        box-shadow:4px 4px 0 0 rgb(220 234 244 / .22);
        transition:box-shadow .3s ease,transform .3s ease}
   .offre:hover .dos{box-shadow:8px 8px 0 0 rgb(220 234 244 / .28);
                     transform:translate(-4px,-4px)}
-  .dedans{position:relative;padding:22px 22px 20px;display:flex;
+  .dedans{position:relative;z-index:4;padding:22px 22px 20px;display:flex;
           flex-direction:column;height:100%}
-  .populaire{position:absolute;top:-10px;right:6px;transform:rotate(12deg);
+  .populaire{position:absolute;top:-12px;right:-6px;transform:rotate(12deg);
     padding:3px 12px;border-radius:9999px;background:rgb(220 234 244 / .92);
     border:2px solid rgb(220 234 244);color:#05070b}
   #scene .populaire, #scene .populaire span{color:#05070b}
@@ -101,6 +103,259 @@
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
+</style><style>
+  :root{ --radius:14px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
+  /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
+     sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
+     plus clair que la carte) en les passant en blanc a faible alpha. */
+  .text-muted,.dark\:text-muted{color:rgb(255 255 255 / .20)}
+  .text-muted-foreground,.dark\:text-muted-foreground{color:rgb(255 255 255 / .55)}
+  .text-zinc-400{color:rgb(255 255 255 / .38)}
+  .dark\:text-zinc-600{color:rgb(255 255 255 / .30)}
+  .text-primary\/15{color:rgb(255 255 255 / .15)}
+  .dark\:text-primary\/35{color:rgb(255 255 255 / .35)}
+  .text-zinc-800{color:#fff}
+  *,*::before,*::after{border-color:rgb(255 255 255 / .25)}
+  .ring-background{--tw-ring-color:rgb(255 255 255 / .22)}
+
+  /* `gap-4` n'est pas dans le port CSS : le composant ne s'en sert pas, mais
+     le nettoyage de la carte 1 en a besoin pour separer le picto du nombre. */
+  .gap-4{gap:1rem}
+  /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
+     noire ne se voit pas, autant ne rien peindre */
+  /* filet blanc de 2 px, et une ombre noire large et franche pour detacher
+     les cartes du fond etheral, qui est clair par endroits */
+  /* ── Filet des cartes : RETIRE pour essai le 10/08/2026 ────────────────
+     Etat precedent, a remettre tel quel si besoin :
+         border: 2px solid rgb(220 234 244 / .8);
+     soit l'Alice de la charte (#DCEAF4, celle des pictogrammes) a 80 %,
+     retenue apres le blanc pur juge trop eclatant. Luminance mesuree du
+     trait : 167/255 contre 255 pour le blanc pur.
+     L'ombre noire ci-dessous, elle, est conservee. */
+  /* ── Habillage de bord : equerres + balayage ──────────────────────────
+     Pas de cadre ferme. Quatre equerres d'angle, dans la grammaire carree de
+     la charte — c'est la meme forme que les pictogrammes — et un filet d'un
+     pixel sur lequel une lumiere fait le tour de la carte en sept secondes.
+     La carte se detache par ses angles, pas par un trait continu. */
+  /* le composant pose la classe `border` sur ses cartes : sans ce zero,
+     il reste un trait d'un pixel sous la lueur, exactement celui que
+     Mehdi voyait encore */
+  /* blanc pur demande, et angles tres arrondis. `--radius` pilote a la fois
+     la carte (`rounded-lg`) et le cadre du fond anime : les deux restent
+     alignes, sinon le canevas deborderait en carre derriere les coins. */
+  /* ── Le filet est dessine par un pseudo-element, pas par `border` ──────
+     Les cartes sont soeurs dans la grille et leurs ombres noires debordent
+     largement (90 px de flou, 40 de propagation, pour 18 px de gouttiere).
+     Chaque carte peignait donc son ombre PAR-DESSUS le filet de ses voisines
+     de gauche et du dessus : le blanc tombait de 255 a 148 vers le bas et la
+     droite, ce qui se lisait comme un degrade de bordure.
+     Pose en pseudo-element avec un `z-index` positif, le filet passe apres
+     toutes les ombres des soeurs et reste uniforme. */
+  /* ── Le relief est calcule, plus dessine ───────────────────────────────
+     Une `box-shadow` ne sait pas ce qu'est une surface : elle etale une
+     couleur, et quel que soit le soin mis aux valeurs, ca reste une tache.
+     Un vrai biseau se calcule : on part d'une carte de hauteur, on en deduit
+     la normale en chaque point, et on eclaire.
+     C'est exactement ce que font `feDiffuseLighting` et `feSpecularLighting`.
+     La carte de hauteur est l'alpha de la forme, floute : le flou cree la
+     PENTE au bord, plate au centre. Le speculaire de Phong s'allume la ou la
+     normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
+     un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
+     lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
+  .bg-card{border-width:0;background:#000;position:relative;
+           box-shadow:0 130px 260px rgb(0 0 0 / 1),
+                      0 80px 170px rgb(0 0 0 / 1),
+                      0 44px 100px rgb(0 0 0 / 1),
+                      0 20px 52px rgb(0 0 0 / .98),
+                      0 6px 20px rgb(0 0 0 / .95),
+                      0 0 60px rgb(0 0 0 / .9);}
+  /* ── La lisiere : plus de trait, un flou bleu ─────────────────────────
+     Aucune bordure nette. Le bord est une lueur floue, prise dans les deux
+     bleus deja presents : celui du decor, releve a rgb(40,67,95), teinte
+     211 degres, et celui de la texture des cartes, qui tourne autour de
+     196 a 213. Elle deborde legerement dehors et rentre a l'interieur, sans
+     jamais faire de ligne.
+     Le degrade a 135 degres la garde plus dense au coin haut gauche, du cote
+     de la lumiere de la slide. */
+  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
+    pointer-events:none;border-radius:inherit;
+    /* Resserree et assombrie : le flou de 22 et 44 px debordait sur toute
+       la carte et remontait son niveau, d'ou l'impression de tout flou et
+       trop clair. On garde le principe, une lueur sans trait, mais courte :
+       6 px dedans, 9 px dehors, et des opacites divisees par deux. */
+    box-shadow:inset 0 0 6px 1px rgb(78 118 178 / .13),
+               inset 0 0 2px 0 rgb(120 158 210 / .10),
+               0 0 9px 0 rgb(58 92 152 / .12),
+               0 0 18px 1px rgb(40 66 116 / .07);
+    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .55) 45%,rgb(0 0 0 / .34) 68%,
+      rgb(0 0 0 / .2) 88%,rgb(0 0 0 / .14) 100%);
+    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .55) 45%,rgb(0 0 0 / .34) 68%,
+      rgb(0 0 0 / .2) 88%,rgb(0 0 0 / .14) 100%)}
+  /* ── Le bord en verre ─────────────────────────────────────────────────
+     Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
+     vient de la MATIERE deja presente. Une bande de verre court le long du
+     bord et refracte ce qu'il y a dessous, c'est-a-dire le motif anime de la
+     carte : `backdrop-filter` le floute, le remonte en clarte et le sature
+     un peu. Le bord prend donc les teintes du motif, sombres par nature, et
+     change avec lui. C'est le meme principe que le decor de la slide, qui
+     fabrique ses vagues en deformant une image sombre au lieu de peindre
+     des degrades clairs.
+     Le masque est fait de deux degrades doux, un vertical et un horizontal,
+     additionnes : ca decoupe un cadre sans passer par `mask-composite`, qui
+     crenele les angles arrondis. */
+  .verre{position:absolute;inset:0;z-index:5;pointer-events:none;
+    border-radius:inherit;
+    -webkit-backdrop-filter:blur(9px) brightness(1.75) saturate(1.35);
+    backdrop-filter:blur(9px) brightness(1.75) saturate(1.35);
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
+        transparent 91%,#000 100%),
+      linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%);
+    mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
+        transparent 91%,#000 100%),
+      linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%)}
+
+  /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
+     tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
+     cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
+     noir. Elle est retiree plutot que gardee pour la forme. */
+  /* l'occlusion au PIED de la paroi : un halo sombre qui deborde du sol vers
+     la paroi, donc la paroi s'assombrit en descendant, comme une vraie pente.
+     Sans ce degrade en travers, la paroi reste un aplat et ne tourne pas. */
+  .bg-card::before{content:"";position:absolute;inset:0;z-index:0;
+    border-radius:var(--radius);pointer-events:none;
+    box-shadow:0 0 3px 1px rgb(0 0 0 / .95), 0 0 8px rgb(0 0 0 / .6)}
+  /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
+  .grid.gap-3{gap:18px}
+  .bg-card>*:not(.fond){position:relative;z-index:1}
+  /* Le lisere est porte par la CARTE, pas par son fond, et avec un z-index
+     positif : `.fond` est un contexte d'empilement, un lisere pose dedans
+     serait repeint par l'ombre de la carte voisine, qui passe apres dans
+     l'ordre du document. C'est ce qui l'assombrissait par le bas et la droite.
+     Vraie bordure arrondie, lissee par le navigateur, eteinte par un masque
+     en degrade : l'anneau decoupe au `mask-composite` crenelait les coins. */
+  /* ESSAI : plus aucun trait, l'arete est faite d'ombre des deux cotes.
+     A l'interieur, des ombres `inset` qui creusent le bord ; a l'exterieur,
+     l'ombre portee de la carte. Le bord se lit comme un creux, pas comme un
+     cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
+  /* ── Le cadre, en objet et non en trait ────────────────────────────────
+     Un `ridge` CSS ne connait que deux nuances, posees a plat : ca donne un
+     biseau de boite de dialogue, pas une matiere. Le cadre est donc monte en
+     couches, avec UNE source de lumiere en haut a gauche, comme le lavis qui
+     eclaire deja l'interieur de la carte :
+       1. l'arete du dessus accroche la lumiere, franche et fine ;
+       2. les flancs la recoivent de biais, donc plus faible a droite ;
+       3. la sous-face ne recoit qu'un rebond, plus doux et plus large ;
+       4. une couture sombre separe le cadre du verre ;
+       5. le verre est EN RETRAIT : son ombre portee tombe a l'interieur,
+          plus dense sous l'arete haute que partout ailleurs.
+     Les `inset` suivent le rayon avec anticrenelage, contrairement a un
+     anneau decoupe au `mask-composite` qui sortait en escalier dans les
+     angles. Le degrade de l'etat de reference reste en masque : la matiere
+     est franche au coin haut gauche et s'eteint le long du bord. */
+  /* ── Les ondes, transposees du groupe de gauche du pen flo__/vYLObxK ───
+     Ce n'est pas le meme dessin que la carte creusee : le pen y empile trois
+     formes concentriques qui portent CHACUNE la meme paire d'ombres, une
+     fois a l'interieur et une fois a l'exterieur. Releve dans sa feuille :
+         .shadow--wave        { rgb(255,255,255)        4px  4px 6px inset,
+                                rgba(174,174,192,.2)  -4px -4px 6px inset }
+         .shadow--wave::before{ rgb(255,255,255)        4px  4px 6px,
+                                rgba(174,174,192,.2)  -4px -4px 6px }
+     La clarte est en +4 +4, donc en HAUT A GAUCHE, et l'ombre en bas a
+     droite. C'est l'inverse de la carte creusee essayee avant, et c'est ce
+     sens-la qui va avec la slide : la lumiere y vient du haut gauche, comme
+     le lavis des cartes et comme le decor, plus clair de ce cote. Un reflet
+     pose en bas a droite se lisait comme un eclairage qui n'existe pas.
+     Le blanc pur est abandonne : sur ce fond noir il claquait. La clarte est
+     une lumiere BLEUE ET BASSE, prise dans l'animation des cartes, et elle
+     faiblit d'une onde a l'autre en s'enfoncant, comme une ride qui meurt.
+     Les formes restent rectangulaires et gardent le rayon de la carte : les
+     bords se superposent au lieu de se concentrer en cercles. */
+
+  /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
+     Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
+         border-radius: 28px
+         border: 0px none
+         background-color: rgb(23, 26, 17)
+         box-shadow: none
+     Ce que je prenais pour un filet dans la capture n'etait que la lisiere
+     entre son fond, un vert tres sombre, et le noir de la page. La carte se
+     detache par un aplat un peu plus clair que son fond, rien d'autre. */
+
+  /* Filet simple, sans rien autour : les reperes d'angle, le semis de
+     points, la lisiere neon, la bordure floue et les equerres sont tous
+     retires. Voir la memoire du projet pour leurs valeurs. */
+  /* Le fond de carte doit etre OPAQUE : sans lui, le groupe est
+     transparent et le grain en `overlay` n'a rien contre quoi se melanger,
+     il se pose alors en gris plein. Mesure du defaut : la carte remontait
+     de 11 a 41 sur 255. */
+  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
+        overflow:hidden;background:#000}
+
+  .verre{display:none}
+  /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
+     son niveau general, et un voile l'eteint la ou la typographie se pose,
+     en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
+     rien a lire, donc le mouvement reste visible. */
+  .fond canvas{display:block;width:100%;height:100%;opacity:.62}
+  /* ── Le grain, version argentique ─────────────────────────────────────
+     Ce qui rendait les essais precedents bas de gamme : une texture de 88 px
+     etiree, donc un motif repete et flou, posee en `screen`, mode qui ajoute
+     de la lumiere partout et delave les noirs.
+     Ici le grain est fabrique a la resolution de l'ecran, un point de bruit
+     par pixel physique, jamais agrandi, et pose en `overlay`.
+     Le choix du mode a ete tranche par la mesure. En `screen`, le grain
+     ajoute de la lumiere partout et delave les noirs. En `soft-light`, la
+     formule prend une racine carree sur les fonds sombres : mesure, elle
+     remontait la carte de 21 niveaux, puis de 9 apres compensation, et le
+     noir profond de 4. En `overlay`, le fond sombre est simplement multiplie
+     par le bruit : le grain module les demi-teintes et DISPARAIT dans les
+     noirs, exactement comme l'argentique, ou l'ombre est lisse.
+     Il ne couvre que la surface des cartes, sous le texte, pas le decor,
+     qui a deja son propre bruit. */
+  .fond .grain-fin{position:absolute;inset:0;z-index:2;pointer-events:none;
+    mix-blend-mode:overlay;opacity:.62}
+  .fond::after{content:"";position:absolute;inset:0;z-index:1;
+    pointer-events:none;border-radius:inherit;
+    background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
+      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
+  /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
+     pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
+     ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
+     donc peint dans l'artwork.
+     On fait pareil : la lumiere est posee dans le fond de la carte, pas sur
+     son contour. Un lisere d'un pixel au plus pres du bord, plus une nappe
+     diagonale qui l'eteint, aux valeurs relevees dans la capture :
+     74/255 au coin haut gauche, 43 au quart, 15 a la moitie, 0 ensuite. */
+  /* la nappe : l'interieur de la carte s'eclaire au coin haut gauche */
+  /* la lumiere interieure, peinte dans le fond de la carte */
+  .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
+    border-radius:inherit;z-index:2;
+    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
+      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
+  /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
+     s'eteint donc le long du bord comme dans l'artwork de la reference.
+     Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
+     c'etait la l'erreur : mesure a 70 sur toute la longueur au lieu de
+     74 puis 43 puis 15 puis 0. */
+
+
+  /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
+     Rien n'est fait en transitions CSS. L'etat AU REPOS est l'etat final
+     (carte visible, aucun filtre, rideau invisible) ; l'ouverture est jouee
+     par l'API Web Animations en `fill: backwards`, qui applique la premiere
+     image pendant le delai puis rend l'element a son etat naturel.
+     Deux problemes disparaissent ensemble : plus de calque composite
+     residuel qui ramollit le texte, et le rejeu est immediat, alors qu'en
+     transitions retirer la classe relancait l'animation A REBOURS. */
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+
+  
+  #scene{z-index:1}
+  /* Pas de voile sur ce fond-la : mesure faite, le texte blanc y tient a
+     12,6:1 sans aide. La carte montre le composant, rien d'autre. */
 </style></head><body>
 <div id="ether">
   <div class="fluide">
@@ -129,10 +384,124 @@
     <p>Trois façons d'adopter Darkmoon.</p>
     <p>Pentest on Demand, 799 € par engagement. Nos experts s'en chargent, cadre légal inclus.</p>
   </div>
-  <div class="grille"><div class="offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-star"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /> </svg></div><p class="nom">Community</p><p class="cible">Équipes techniques</p><p class="prix">Gratuit</p><p class="precision">Open source, à héberger vous-même</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Moteur autonome sur GitHub</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>GPLv3, auditable et modifiable</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>18 agents IA, 80 outils</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Exécution sous contrôle MCP</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support communautaire</span></div></div><div class="bouton"><span>Étoiler sur GitHub</span></div></div></div><div class="offre vedette"><div class="dos"></div><div class="dedans"><div class="populaire"><span>Populaire</span></div><div class="rond"><svg   class="lucide lucide-sparkles"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />   <path d="M20 2v4" />   <path d="M22 4h-4" />   <circle cx="4" cy="20" r="2" /> </svg></div><p class="nom">Pro</p><p class="cible">Pentesters et équipes sécurité</p><p class="prix">149 € par mois</p><p class="precision">Facturé 1788 € par an</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Community, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Runtime durci et scellé</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Centre de commande live</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tous les rapports, PDF marqué</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Licence liée au matériel</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support prioritaire</span></div></div><div class="bouton"><span>Obtenir Darkmoon</span></div></div></div><div class="offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-pencil"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />   <path d="m15 5 4 4" /> </svg></div><p class="nom">Custom</p><p class="cible">Entreprises, MSSP, revendeurs</p><p class="prix">Sur devis</p><p class="precision">Adapté à votre périmètre</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Pro, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Espace multi-utilisateurs</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Rapports à votre charte</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Programme partenaire</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Accompagnement dédié, SLA</span></div></div><div class="bouton"><span>Parler à l'équipe</span></div></div></div></div>
+  <div class="grille"><div class="bg-card offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-star"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /> </svg></div><p class="nom">Community</p><p class="cible">Équipes techniques</p><p class="prix">Gratuit</p><p class="precision">Open source, auto-hébergé</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Moteur autonome sur GitHub</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>GPLv3, auditable et modifiable</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>18 agents IA, 80 outils</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Exécution sous contrôle MCP</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support communautaire</span></div></div><div class="bouton"><span>Étoiler sur GitHub</span></div></div></div><div class="bg-card offre vedette"><div class="dos"></div><div class="dedans"><div class="populaire"><span>Populaire</span></div><div class="rond"><svg   class="lucide lucide-sparkles"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />   <path d="M20 2v4" />   <path d="M22 4h-4" />   <circle cx="4" cy="20" r="2" /> </svg></div><p class="nom">Pro</p><p class="cible">Pentesters et équipes sécurité</p><p class="prix">149 € par mois</p><p class="precision">Facturé 1788 € par an</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Community, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Runtime durci et scellé</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Centre de commande live</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tous les rapports, PDF marqué</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Licence liée au matériel</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Support prioritaire</span></div></div><div class="bouton"><span>Obtenir Darkmoon</span></div></div></div><div class="bg-card offre"><div class="dos"></div><div class="dedans"><div class="rond"><svg   class="lucide lucide-pencil"   xmlns="http://www.w3.org/2000/svg"   width="22"   height="22"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />   <path d="m15 5 4 4" /> </svg></div><p class="nom">Custom</p><p class="cible">Entreprises, MSSP, revendeurs</p><p class="prix">Sur devis</p><p class="precision">Adapté à votre périmètre</p><div class="lignes"><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Tout Pro, et en plus</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Espace multi-utilisateurs</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Rapports à votre charte</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Programme partenaire</span></div><div class="ligne"><span class="coche"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="12"   height="12"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg></span><span>Accompagnement dédié, SLA</span></div></div><div class="bouton"><span>Parler à l'équipe</span></div></div></div></div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>11 / 14</span></div>
 
+<script>
+// ── tables de 1024 valeurs et acces `& 1023`, comme le composant
+const SIN = new Float32Array(1024), COS = new Float32Array(1024);
+for (let i = 0; i < 1024; i++) {
+  const a = i / 1024 * Math.PI * 2;
+  SIN[i] = Math.sin(a); COS[i] = Math.cos(a);
+}
+const fastSin = x => SIN[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 1023];
+const fastCos = x => COS[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 1023];
+
+// Cout du fond des cartes, mesure : a pleine resolution il fallait 614 000
+// pixels calcules en JavaScript par image, soit 149 ms, et la slide tombait a
+// 7 images par seconde ; le decor etheral, lui, saccadait faute de temps.
+// Le champ est une nappe tres basse frequence : on le calcule sur une petite
+// grille et on le remonte en lissage bilineaire, ce qui ne se voit pas, et on
+// ne le recalcule que 20 fois par seconde. Environ 25 fois moins de travail.
+const RES = 0.25, IMAGES_PAR_SECONDE = 20;
+const LENTEUR = 0.35;         // ralentissement demande plus tot
+const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
+const boucles = [];
+
+document.querySelectorAll('.bg-card').forEach((carte, k) => {
+  const fond = document.createElement('div');
+  fond.className = 'fond';
+  const toile = document.createElement('canvas');
+  fond.append(toile);
+  // le grain : une nappe de bruit gaussien, un point par pixel physique
+  const grain = document.createElement('canvas');
+  grain.className = 'grain-fin';
+  fond.append(grain);
+  const semer = () => {
+    const d = Math.min(2, window.devicePixelRatio || 1);
+    const gl = Math.round(fond.clientWidth * d), gh = Math.round(fond.clientHeight * d);
+    if (gl < 2 || gh < 2 || (grain.width === gl && grain.height === gh)) return;
+    grain.width = gl; grain.height = gh;
+    grain.style.width = fond.clientWidth + 'px';
+    grain.style.height = fond.clientHeight + 'px';
+    const c = grain.getContext('2d');
+    const img = c.createImageData(gl, gh), D = img.data;
+    for (let i = 0; i < D.length; i += 4) {
+      // gaussienne par somme de deux tirages, ecart-type 18 autour de 128,
+      // qui est le point neutre de `soft-light`
+      const g = 128 + (Math.random() + Math.random() - 1) * 30;
+      const v = g < 0 ? 0 : g > 255 ? 255 : g;
+      D[i] = D[i + 1] = D[i + 2] = v; D[i + 3] = 255;
+    }
+    c.putImageData(img, 0, 0);
+  };
+  semer();
+  new ResizeObserver(semer).observe(fond);
+  carte.prepend(fond);
+
+
+  const ctx = toile.getContext('2d');
+  let w = 0, h = 0, image = null, data = null;
+
+  // clientWidth, pas getBoundingClientRect : la scene porte un `scale`, le
+  // rect renvoie la taille a l'ecran et le canevas serait trop petit.
+  const dpr = 1;
+  boucles.push(secondes => {
+    const cw = Math.max(2, Math.round(fond.clientWidth * dpr));
+    const ch = Math.max(2, Math.round(fond.clientHeight * dpr));
+    if (toile.width !== cw || toile.height !== ch) {
+      toile.width = cw; toile.height = ch;
+      // RES etait une FRACTION : la carte large, six fois plus grande que
+      // les petites, se retrouvait agrandie d'autant plus, d'ou son flou.
+      // On fixe le facteur d'agrandissement a 2 pour toutes les cartes.
+      w = Math.max(2, Math.round(cw / 2)); h = Math.max(2, Math.round(ch / 2));
+      image = ctx.createImageData(w, h); data = image.data;
+    }
+    const t = secondes + DEPHASAGE[k % DEPHASAGE.length];
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const px = (2 * x - w) / h;
+        const py = (2 * y - h) / h;
+        let a = 0, b = 0;
+        for (let i = 0; i < 4; i++) {
+          a += fastCos(i - b + t * .5 - a * px);
+          b += fastSin(i * py + a);
+        }
+        const s = .3 + .4 * ((fastSin(a) + fastCos(b)) * .5);
+        const base = .1 + .15 * fastCos(px + py + t * .3);
+        const d1 = .2 * fastSin(a * 1.5 + t * .2);
+        const d2 = .15 * fastCos(b * 2 + t * .1);
+        const r = Math.max(0, Math.min(1, base + d2 * .8)) * s;
+        const g = Math.max(0, Math.min(1, base + d1 * .6)) * s;
+        const bl = Math.max(0, Math.min(1, base + d1 * 1.2 + d2 * .4)) * s;
+        const j = (y * w + x) * 4;
+        data[j] = r * 255; data[j + 1] = g * 255; data[j + 2] = bl * 255;
+        data[j + 3] = 255;
+      }
+    }
+    ctx.putImageData(image, 0, 0);
+    // le composant remonte son image en plus-proche-voisin, ce qui donne
+    // des blocs visibles une fois la scene mise a l'echelle : on lisse
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(toile, 0, 0, w, h, 0, 0, toile.width, toile.height);
+  });
+});
+
+const depart = performance.now();
+let dernierRendu = 0;
+function rendre() {
+  const maintenant = performance.now();
+  if (maintenant - dernierRendu >= 1000 / IMAGES_PAR_SECONDE) {
+    dernierRendu = maintenant;
+    const t = (maintenant - depart) / 1e3 * LENTEUR;
+    for (const b of boucles) b(t);
+  }
+  requestAnimationFrame(rendre);
+}
+rendre();
+
+</script>
 <script>
 // ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
 function cinema(el, base) {
@@ -173,7 +542,6 @@ let animations = [], derniereOuverture = 0;
 function ouvrir() {
   derniereOuverture = performance.now();
   animations.forEach(a => a.cancel());
-  const tours = ['rotate(-1deg)', 'rotate(1deg)', 'rotate(-2deg)'];
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
       { duration: 2000, easing: COURBE, fill: 'backwards' }),
@@ -181,9 +549,9 @@ function ouvrir() {
       { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
     // les cartes arrivent en se redressant, chacune vers son inclinaison
     ...offres.map((c, i) => c.animate(
-      [{ opacity: 0, transform: 'translateY(26px) scale(.985) rotate(0deg)',
+      [{ opacity: 0, transform: 'translateY(26px) scale(.985)',
          filter: 'blur(14px)' },
-       { opacity: 1, transform: tours[i], filter: 'blur(0px)' }],
+       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
       { duration: 1500, delay: 620 + i * 170, easing: COURBE,
         fill: 'backwards' })),
     ...[...document.querySelectorAll('.ligne, .bouton')].map((e, i) => e.animate(
