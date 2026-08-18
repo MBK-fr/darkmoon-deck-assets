@@ -1,0 +1,236 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<title>Darkmoon, une communauté depuis plus de 10 ans</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+
+  /* ── Le cadre du composant : sa perspective, son centrage ────────────── */
+  #cadre{position:absolute;inset:0;z-index:1;display:flex;align-items:center;
+         justify-content:center;overflow:hidden;perspective:1200px}
+  #plan{width:100%;display:flex;align-items:center;justify-content:flex-start;
+        transform:rotateX(8deg) rotateY(-28deg);transform-style:preserve-3d}
+  #piste{display:flex;white-space:nowrap}
+  #piste span{display:inline-block;font-size:64px;font-weight:700;
+              letter-spacing:-.03em;color:#fafafa}
+  /* Les deux dégradés de bord du composant. Le fond du deck est un décor
+     animé, pas un aplat : on les joue en masque pour ne pas peindre une
+     boîte noire par-dessus les vagues. */
+  #cadre{-webkit-mask-image:
+           linear-gradient(90deg,transparent 0%,#000 18%,#000 82%,
+                           transparent 100%),
+           linear-gradient(180deg,transparent 0%,#000 25%,#000 75%,
+                           transparent 100%);
+         -webkit-mask-composite:source-in;mask-composite:intersect;
+         mask-image:
+           linear-gradient(90deg,transparent 0%,#000 18%,#000 82%,
+                           transparent 100%),
+           linear-gradient(180deg,transparent 0%,#000 25%,#000 75%,
+                           transparent 100%)}
+
+  /* ── Le texte du deck, par-dessus ────────────────────────────────────── */
+  #texte{position:absolute;left:72px;top:64px;z-index:4;max-width:760px}
+  #texte p{margin:0;white-space:nowrap;
+           text-shadow:0 0 14px rgba(0,0,0,.95), 0 6px 34px rgba(0,0,0,.9)}
+  .titre{font-size:2rem;font-weight:300;line-height:1.35;
+         letter-spacing:-.014em;color:rgb(255 255 255 / .96)}
+  .oeil{margin-bottom:12px;font-size:.95rem;font-weight:300;
+        letter-spacing:.16em;text-transform:uppercase;
+        color:rgb(220 234 244 / .55)}
+
+  /* le chemin d'adoption, en bas */
+  #chemin{position:absolute;left:72px;right:72px;bottom:64px;z-index:4;
+          display:flex;align-items:center;gap:18px}
+  #chemin .etape{padding:9px 18px;border-radius:9999px;font-size:1rem;
+    font-weight:300;color:#fff;background:rgb(10 12 16 / .72);
+    box-shadow:inset 0 0 0 1px rgb(220 234 244 / .16),
+               0 10px 30px rgb(0 0 0 / .5);white-space:nowrap}
+  #chemin .fleche{font-size:1.2rem;color:rgb(220 234 244 / .6)}
+
+  .pied{position:absolute;left:72px;right:72px;bottom:22px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+  .mot{display:inline-block;margin-right:.28em;
+       transition-property:opacity,filter,transform;
+       transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+       will-change:filter,transform,opacity;transform-style:preserve-3d;
+       backface-visibility:hidden}
+  .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
+            filter:none;transform:none}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:-100px;
+                 filter:url(#ether-filtre) blur(4px)}
+  /* Le composant pose un gris neutre 128. On garde exactement sa clarte mais
+     on le teinte avec les couleurs relevees dans l'animation des cartes :
+     echantillonnage des cinq fonds, teintes dominantes a 187 et 195 degres
+     (turquoise), 210 a 225 (indigo), et un accent chaud vers 0.
+     Le degrade remplace l'aplat, le masque et le filtre ne changent pas. */
+  #ether .teinte{width:100%;height:100%;background-color:rgba(128,128,128,1);
+                 background-image:linear-gradient(135deg,
+                   #3d8a93 0%, #3f6f9b 32%, #4a5893 58%, #6d4a58 82%,
+                   #8a4a44 100%);
+                 -webkit-mask-image:url('../ether/mask.png');
+                 mask-image:url('../ether/mask.png');
+                 -webkit-mask-size:cover;mask-size:cover;
+                 -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+                 -webkit-mask-position:center;mask-position:center}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+</style></head><body>
+<div id="ether">
+  <div class="fluide">
+    <svg style="position:absolute" aria-hidden="true"><defs>
+      <filter id="ether-filtre">
+        <feTurbulence result="undulation" numOctaves="2"
+                      baseFrequency="0.0005,0.002" seed="0" type="turbulence"/>
+        <feColorMatrix in="undulation" type="hueRotate" values="180">
+          <animate attributeName="values" from="0" to="360" dur="5.84s"
+                   repeatCount="indefinite"/>
+        </feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix"
+          values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100"
+                           result="dist"/>
+        <feDisplacementMap in="dist" in2="undulation" scale="100"
+                           result="output"/>
+      </filter>
+    </defs></svg>
+    <div class="teinte"></div>
+  </div>
+  <div class="grain"></div>
+</div>
+<div id="cadre"><div id="plan"><div id="piste"></div></div></div>
+<div id="texte">
+  <p class="oeil">COMMUNAUTÉ & ADOPTION</p>
+  <p class="titre">Une communauté depuis plus de 10 ans.</p>
+</div>
+<div id="chemin"><span class="etape">Communauté open source</span><span class="fleche">&rarr;</span><span class="etape">Offre Pro</span><span class="fleche">&rarr;</span><span class="etape">Entreprise & MSSP</span></div>
+<div class="pied"><span>DARKMOON · ASC-IT</span><span>13 / 14</span></div>
+
+<script>
+// ── Le marquee en perspective, porte du composant ────────────────────────
+// Remotion rend image par image ; ici c'est une boucle rAF, mais les
+// formules sont les siennes : avance de `pixelsPerFrame` par image a 30 i/s,
+// liste repetee trois fois, ecart de 0,9 x le corps, et surtout la mise au
+// point par mot, floutee et attenuee selon la distance au centre.
+const CORPS = 64, ECART = CORPS * 0.9, PAR_IMAGE = 2, IPS = 30;
+const MOTS = ["30 000 utilisateurs", "+ 10 ans d'existence", "Open source GPLv3", "GitHub & MS Store"];
+const piste = document.getElementById('piste');
+const cadre = document.getElementById('cadre');
+
+// largeur totale d'un tour, calculee comme le composant : la somme des mots
+// plus un ecart par mot
+let total = 0;
+const spans = [];
+[...MOTS, ...MOTS, ...MOTS].forEach(m => {
+  const e = document.createElement('span');
+  e.textContent = m;
+  e.style.paddingRight = ECART + 'px';
+  piste.appendChild(e);
+  spans.push(e);
+});
+// mesure reelle plutot que l'estimation `longueur x corps x 0,6` du
+// composant : la police du deck n'est pas la sienne, et une estimation
+// fausse ferait sauter la boucle
+function mesurer() {
+  total = 0;
+  for (let i = 0; i < MOTS.length; i++) total += spans[i].offsetWidth;
+}
+mesurer();
+window.addEventListener('resize', mesurer);
+
+const depart = performance.now();
+let pas = 0;
+(function tourner() {
+  const image = (performance.now() - depart) / 1000 * IPS;
+  const x = -((image * PAR_IMAGE) % total);
+  piste.style.transform = 'translateX(' + x + 'px)';
+  const centre = cadre.clientWidth / 2;
+  pas = total / MOTS.length;
+  spans.forEach((e, i) => {
+    const D = (i * pas + pas / 2 + x - centre) / centre;
+    const M = Math.min(1, Math.abs(D));
+    e.style.filter = 'blur(' + (M * 6).toFixed(2) + 'px)';
+    e.style.opacity = (1 - M * 0.4).toFixed(3);
+  });
+  requestAnimationFrame(tourner);
+})();
+
+// ── Le texte du deck : le moteur de la slide 2, mot a mot ────────────────
+function cinema(el, base) {
+  const mots = el.textContent.split(' ');
+  el.textContent = '';
+  const parts = mots.map((m, i) => {
+    const e = document.createElement('span');
+    e.className = 'mot';
+    e.textContent = m;
+    e.style.transitionDuration = (1.5 + Math.cos(i * 0.3) * 0.2) + 's';
+    e.style.transitionDelay = (i * 0.055) + 's';
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' +
+      (0.92 + Math.sin(i * 0.2) * 0.04) + ') rotateX(-12deg)';
+    el.appendChild(e);
+    return e;
+  });
+  setTimeout(() => parts.forEach(e => {
+    e.style.opacity = 1;
+    e.style.filter = 'blur(0px) brightness(1)';
+    e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+  }), base);
+  setTimeout(() => parts.forEach(e => e.classList.add('pose')),
+             base + 1800 + mots.length * 55);
+}
+
+// ── Ouverture ────────────────────────────────────────────────────────────
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const decor = document.getElementById('ether');
+const textes = [...document.querySelectorAll('#texte p')];
+const etapes = [...document.querySelectorAll('#chemin > *')];
+const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+let animations = [], derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  animations.forEach(a => a.cancel());
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2000, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
+    cadre.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2200, delay: 400, easing: COURBE, fill: 'backwards' }),
+    ...etapes.map((e, i) => e.animate(
+      [{ opacity: 0, transform: 'translateY(12px)' },
+       { opacity: 1, transform: 'none' }],
+      { duration: 900, delay: 1200 + i * 140, easing: COURBE,
+        fill: 'backwards' }))
+  ];
+  textes.forEach((e, i) => cinema(e, 150 + i * 260));
+}
+ouvrir();
+
+let precedent = performance.now(), reprise = false, rapides = 0;
+(function veille() {
+  const t = performance.now(), dt = t - precedent;
+  precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
+  requestAnimationFrame(veille);
+})();
+</script>
+
+</body></html>
