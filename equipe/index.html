@@ -9,6 +9,13 @@
          z-index:1;padding:0 72px}
 
   /* ── Le texte : un seul paragraphe, deux lignes ──────────────────────── */
+  .mot{display:inline-block;margin-right:.28em;
+       transition-property:opacity,filter,transform;
+       transition-timing-function:cubic-bezier(.25,.46,.45,.94);
+       will-change:filter,transform,opacity;transform-style:preserve-3d;
+       backface-visibility:hidden}
+  .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
+            filter:none;transform:none}
   .intro{margin:0 0 4px;font-size:1.52rem;font-weight:300;line-height:1.55;
          letter-spacing:.002em;color:rgb(255 255 255 / .96);max-width:56ch;
          text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
@@ -166,6 +173,32 @@ function tourner() {
   el.addEventListener('mouseleave', () => { fige = false; });
 });
 
+// ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
+function cinema(el, base) {
+  const mots = el.textContent.split(' ');
+  el.textContent = '';
+  const spans = mots.map((m, i) => {
+    const e = document.createElement('span');
+    e.className = 'mot';
+    e.textContent = m;
+    e.style.transitionDuration = (1.5 + Math.cos(i * 0.3) * 0.2) + 's';
+    e.style.transitionDelay = (i * 0.055) + 's';
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' +
+      (0.92 + Math.sin(i * 0.2) * 0.04) + ') rotateX(-12deg)';
+    el.appendChild(e);
+    return e;
+  });
+  setTimeout(() => spans.forEach(e => {
+    e.style.opacity = 1;
+    e.style.filter = 'blur(0px) brightness(1)';
+    e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+  }), base);
+  setTimeout(() => spans.forEach(e => e.classList.add('pose')),
+             base + 1800 + mots.length * 55);
+}
+
 // ── Ouverture : le rideau se leve, la scene arrive en fondu ──────────────
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
@@ -193,6 +226,7 @@ function ouvrir() {
       { duration: 1300, delay: 520 + i * 110, easing: COURBE,
         fill: 'backwards' }))
   ];
+  cinema(document.querySelector('.intro'), 180);
   viser(-1);
   setTimeout(() => { if (!fige) viser(0); }, 1600);
   tourner();
