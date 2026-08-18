@@ -14,12 +14,6 @@
   .par{margin:0;color:#fff;font-weight:300;font-size:1.66rem;line-height:1.62;
        letter-spacing:.016em;perspective:900px}
   .par.fini{perspective:none}
-  /* Même corps, même graisse, même famille que le paragraphe : la seule
-     différence est l'espace qui la sépare. */
-  .source{margin:26px 0 0;font-size:1.66rem;font-weight:300;line-height:1.62;
-          letter-spacing:.016em;color:#fff;
-          text-shadow:0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1),
-                      0 0 44px rgba(0,0,0,.98)}
   /* Les mots-clés portent la couleur de la charte, et rien d'autre : pas de
      halo, pas de néon. Seules les ombres noires de lisibilité restent, les
      mêmes que sur le reste du texte. */
@@ -81,7 +75,6 @@
 </div>
 <div id="scene"><div class="inner">
   <p class="par" id="par"></p>
-  <p class="source">Source : Verizon Data Breach Investigations Report 2025.</p>
 </div></div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>02 / 14</span></div>
 
@@ -90,7 +83,7 @@
 const NOIR = '0 0 10px rgba(0,0,0,1), 0 0 22px rgba(0,0,0,1), '
            + '0 0 44px rgba(0,0,0,.98), 0 8px 46px rgba(0,0,0,.95), '
            + '0 0 110px rgba(0,0,0,.9)';
-const MOTS = [{"t": "Un", "c": false, "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "c": false, "d": 2.487, "r": 0.078, "b": 12, "s": 0.91}, {"t": "par", "c": false, "d": 2.448, "r": 0.139, "b": 13, "s": 0.919}, {"t": "an,", "c": false, "d": 2.386, "r": 0.23, "b": 12, "s": 0.928}, {"t": "des", "c": false, "d": 2.309, "r": 0.331, "b": 15, "s": 0.936}, {"t": "attaques", "c": false, "d": 2.221, "r": 0.362, "b": 18, "s": 0.942}, {"t": "tous", "c": false, "d": 2.132, "r": 0.454, "b": 15, "s": 0.947}, {"t": "les", "c": false, "d": 2.049, "r": 0.51, "b": 18, "s": 0.949}, {"t": "jours.", "c": false, "d": 1.979, "r": 0.581, "b": 13, "s": 0.95}, {"t": "Une", "c": false, "d": 1.929, "r": 0.698, "b": 12, "s": 0.949}, {"t": "photo", "c": false, "d": 1.903, "r": 0.751, "b": 18, "s": 0.945}, {"t": "à", "c": false, "d": 1.904, "r": 0.797, "b": 15, "s": 0.94}, {"t": "l'instant", "c": true, "d": 1.931, "r": 0.868, "b": 14, "s": 0.934}, {"t": "T", "c": true, "d": 1.982, "r": 0.951, "b": 14, "s": 0.926}, {"t": ":", "c": false, "d": 2.053, "r": 1.035, "b": 16, "s": 0.917}, {"t": "un", "c": false, "d": 2.137, "r": 1.107, "b": 14, "s": 0.907}, {"t": "audit", "c": false, "d": 2.226, "r": 1.155, "b": 15, "s": 0.897}, {"t": "fige", "c": false, "d": 2.313, "r": 1.239, "b": 13, "s": 0.887}, {"t": "la", "c": false, "d": 2.39, "r": 1.319, "b": 15, "s": 0.878}, {"t": "sécurité", "c": false, "d": 2.45, "r": 1.386, "b": 18, "s": 0.869}, {"t": "à", "c": false, "d": 2.488, "r": 1.471, "b": 19, "s": 0.862}, {"t": "une", "c": false, "d": 2.5, "r": 1.531, "b": 19, "s": 0.856}, {"t": "date.", "c": false, "d": 2.485, "r": 1.59, "b": 15, "s": 0.852}, {"t": "La", "c": false, "d": 2.445, "r": 1.682, "b": 15, "s": 0.85}, {"t": "cible,", "c": false, "d": 2.383, "r": 1.716, "b": 16, "s": 0.85}, {"t": "ce", "c": false, "d": 2.304, "r": 1.808, "b": 17, "s": 0.852}, {"t": "sont", "c": false, "d": 2.216, "r": 1.888, "b": 16, "s": 0.856}, {"t": "les", "c": true, "d": 2.127, "r": 1.952, "b": 13, "s": 0.861}, {"t": "sous-traitants,", "c": true, "d": 2.044, "r": 1.997, "b": 18, "s": 0.868}, {"t": "quatre", "c": false, "d": 1.975, "r": 2.069, "b": 17, "s": 0.877}, {"t": "fois", "c": false, "d": 1.927, "r": 2.138, "b": 19, "s": 0.886}, {"t": "plus", "c": false, "d": 1.902, "r": 2.221, "b": 13, "s": 0.896}, {"t": "de", "c": false, "d": 1.905, "r": 2.307, "b": 17, "s": 0.906}, {"t": "victimes", "c": false, "d": 1.933, "r": 2.355, "b": 17, "s": 0.916}, {"t": "que", "c": false, "d": 1.986, "r": 2.437, "b": 19, "s": 0.925}, {"t": "les", "c": false, "d": 2.057, "r": 2.48, "b": 13, "s": 0.933}, {"t": "grands", "c": false, "d": 2.142, "r": 2.593, "b": 19, "s": 0.94}, {"t": "comptes.", "c": false, "d": 2.231, "r": 2.65, "b": 13, "s": 0.945}, {"t": "Et", "c": false, "d": 2.318, "r": 2.687, "b": 16, "s": 0.948}, {"t": "avec", "c": false, "d": 2.394, "r": 2.785, "b": 19, "s": 0.95}, {"t": "NIS2", "c": true, "d": 2.453, "r": 2.836, "b": 18, "s": 0.949}, {"t": "et", "c": true, "d": 2.489, "r": 2.935, "b": 17, "s": 0.947}, {"t": "DORA,", "c": true, "d": 2.5, "r": 2.961, "b": 19, "s": 0.943}, {"t": "tester", "c": false, "d": 2.483, "r": 3.047, "b": 13, "s": 0.937}, {"t": "devient", "c": false, "d": 2.442, "r": 3.122, "b": 15, "s": 0.929}, {"t": "obligatoire.", "c": false, "d": 2.378, "r": 3.205, "b": 14, "s": 0.921}];
+const MOTS = [{"t": "Un", "c": false, "d": 2.5, "r": -0.009, "b": 14, "s": 0.9}, {"t": "audit", "c": false, "d": 2.487, "r": 0.075, "b": 12, "s": 0.91}, {"t": "par", "c": false, "d": 2.448, "r": 0.134, "b": 13, "s": 0.919}, {"t": "an,", "c": false, "d": 2.386, "r": 0.223, "b": 12, "s": 0.928}, {"t": "des", "c": false, "d": 2.309, "r": 0.323, "b": 15, "s": 0.936}, {"t": "attaques", "c": false, "d": 2.221, "r": 0.351, "b": 18, "s": 0.942}, {"t": "tous", "c": false, "d": 2.132, "r": 0.442, "b": 15, "s": 0.947}, {"t": "les", "c": false, "d": 2.049, "r": 0.497, "b": 18, "s": 0.949}, {"t": "jours.", "c": false, "d": 1.979, "r": 0.566, "b": 13, "s": 0.95}, {"t": "Une", "c": false, "d": 1.929, "r": 0.682, "b": 12, "s": 0.949}, {"t": "photo", "c": false, "d": 1.903, "r": 0.734, "b": 18, "s": 0.945}, {"t": "à", "c": false, "d": 1.904, "r": 0.777, "b": 15, "s": 0.94}, {"t": "l'instant", "c": true, "d": 1.931, "r": 0.847, "b": 14, "s": 0.934}, {"t": "T", "c": true, "d": 1.982, "r": 0.93, "b": 14, "s": 0.926}, {"t": ":", "c": false, "d": 2.053, "r": 1.012, "b": 16, "s": 0.917}, {"t": "un", "c": false, "d": 2.137, "r": 1.082, "b": 14, "s": 0.907}, {"t": "audit", "c": false, "d": 2.226, "r": 1.129, "b": 15, "s": 0.897}, {"t": "fige", "c": false, "d": 2.313, "r": 1.212, "b": 13, "s": 0.887}, {"t": "la", "c": false, "d": 2.39, "r": 1.291, "b": 15, "s": 0.878}, {"t": "sécurité", "c": false, "d": 2.45, "r": 1.357, "b": 18, "s": 0.869}, {"t": "à", "c": false, "d": 2.488, "r": 1.44, "b": 19, "s": 0.862}, {"t": "une", "c": false, "d": 2.5, "r": 1.499, "b": 19, "s": 0.856}, {"t": "date.", "c": false, "d": 2.485, "r": 1.557, "b": 15, "s": 0.852}, {"t": "La", "c": false, "d": 2.445, "r": 1.647, "b": 15, "s": 0.85}, {"t": "cible,", "c": false, "d": 2.383, "r": 1.68, "b": 16, "s": 0.85}, {"t": "ce", "c": false, "d": 2.304, "r": 1.771, "b": 17, "s": 0.852}, {"t": "sont", "c": false, "d": 2.216, "r": 1.85, "b": 16, "s": 0.856}, {"t": "les", "c": true, "d": 2.127, "r": 1.913, "b": 13, "s": 0.861}, {"t": "sous-traitants,", "c": true, "d": 2.044, "r": 1.957, "b": 18, "s": 0.868}, {"t": "quatre", "c": false, "d": 1.975, "r": 2.027, "b": 17, "s": 0.877}, {"t": "fois", "c": false, "d": 1.927, "r": 2.095, "b": 19, "s": 0.886}, {"t": "plus", "c": false, "d": 1.902, "r": 2.177, "b": 13, "s": 0.896}, {"t": "de", "c": false, "d": 1.905, "r": 2.262, "b": 17, "s": 0.906}, {"t": "victimes", "c": false, "d": 1.933, "r": 2.309, "b": 17, "s": 0.916}, {"t": "que", "c": false, "d": 1.986, "r": 2.39, "b": 19, "s": 0.925}, {"t": "les", "c": false, "d": 2.057, "r": 2.432, "b": 13, "s": 0.933}, {"t": "grands", "c": false, "d": 2.142, "r": 2.544, "b": 19, "s": 0.94}, {"t": "comptes", "c": false, "d": 2.231, "r": 2.599, "b": 13, "s": 0.945}, {"t": "selon", "c": false, "d": 2.318, "r": 2.636, "b": 16, "s": 0.948}, {"t": "le", "c": false, "d": 2.394, "r": 2.733, "b": 19, "s": 0.95}, {"t": "Verizon", "c": false, "d": 2.453, "r": 2.783, "b": 18, "s": 0.949}, {"t": "Data", "c": false, "d": 2.489, "r": 2.88, "b": 17, "s": 0.947}, {"t": "Breach", "c": false, "d": 2.5, "r": 2.905, "b": 19, "s": 0.943}, {"t": "Investigations", "c": false, "d": 2.483, "r": 2.989, "b": 13, "s": 0.937}, {"t": "Report", "c": false, "d": 2.442, "r": 3.064, "b": 15, "s": 0.929}, {"t": "2025.", "c": false, "d": 2.378, "r": 3.146, "b": 14, "s": 0.921}, {"t": "Et", "c": false, "d": 2.299, "r": 3.212, "b": 18, "s": 0.911}, {"t": "avec", "c": false, "d": 2.211, "r": 3.262, "b": 19, "s": 0.901}, {"t": "NIS2", "c": true, "d": 2.122, "r": 3.314, "b": 19, "s": 0.891}, {"t": "et", "c": true, "d": 2.04, "r": 3.398, "b": 16, "s": 0.882}, {"t": "DORA,", "c": true, "d": 1.972, "r": 3.489, "b": 18, "s": 0.873}, {"t": "tester", "c": false, "d": 1.925, "r": 3.556, "b": 16, "s": 0.865}, {"t": "devient", "c": false, "d": 1.902, "r": 3.615, "b": 17, "s": 0.859}, {"t": "obligatoire.", "c": false, "d": 1.906, "r": 3.682, "b": 18, "s": 0.854}];
 const par = document.getElementById('par');
 
 function poser() {
@@ -135,7 +128,6 @@ const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
 const decor = document.getElementById('ether');
-const source = document.querySelector('.source');
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
 let animations = [], derniereOuverture = 0;
 
@@ -146,9 +138,7 @@ function ouvrir() {
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
       { duration: 2200, easing: COURBE, fill: 'backwards' }),
     ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' })] : []),
-    source.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1200, delay: 2600, easing: COURBE, fill: 'backwards' })
+      { duration: 2600, easing: COURBE, fill: 'backwards' })] : [])
   ];
   poser();
 }
