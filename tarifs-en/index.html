@@ -1,161 +1,120 @@
-<!doctype html><html lang="fr" class="dark"><head><meta charset="utf-8">
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Darkmoon, three ways to adopt</title>
 <style>
-  /* ── jetons shadcn, thème sombre ─────────────────────────────────────── */
-  :root{
-    --background:0 0% 0%;          /* noir demandé pour la slide */
-    --foreground:0 0% 98%;
-    --card:0 0% 3.9%;
-    --card-foreground:0 0% 98%;
-    --muted:0 0% 14.9%;
-    --muted-foreground:0 0% 63.9%;
-    --primary:0 0% 98%;
-    --border:0 0% 14.9%;
-    --radius:.5rem;
-    --color-border:hsl(var(--border));
-  }
-  *,*::before,*::after{box-sizing:border-box;border:0 solid hsl(var(--border))}
-  html,body{margin:0;height:100%;overflow:hidden;background:hsl(var(--background))}
-  body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,
-       "Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
-  h2,p{margin:0;font-size:inherit;font-weight:inherit}
-  svg{display:block;vertical-align:middle}
-  img{display:block;max-width:100%;height:auto}
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+  #scene{position:absolute;inset:0;z-index:2;padding:26px 96px 40px;
+         display:flex;flex-direction:column}
 
-  /* ── la scène : le composant à sa taille naturelle, mis à l'échelle ──── */
-  #scene{position:absolute;top:50%;left:50%;transform-origin:50% 50%}
+  /* ── L'en-tête, relevé sur le rendu du composant ─────────────────────────
+     Titre en gras serré, chapeau en gris, puis la ligne de facturation avec
+     son interrupteur. Les corps sont ceux du composant, ramenés à l'échelle
+     de la slide. */
+  .haut{text-align:center;margin:0 0 14px}
+  .haut p{margin:0;line-height:1.35;white-space:nowrap;
+          text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
+  .titre{font-size:1.95rem;font-weight:700;letter-spacing:-.022em;
+         color:#fff}
+  .chapeau{margin-top:8px;font-size:.95rem;font-weight:400;
+           color:rgb(161 161 170)}
+  .bascule{display:flex;align-items:center;justify-content:center;gap:10px;
+           margin:14px auto 18px;background:none;border:0;padding:4px 8px;
+           cursor:pointer;font:inherit}
+  .bascule .piste i{transition:transform .3s cubic-bezier(.6,.04,.22,1)}
+  .bascule.on .piste{background:rgb(220 234 244 / .35)}
+  .bascule.on .piste i{transform:translateX(19px)}
+  .bascule .piste{width:42px;height:23px;border-radius:9999px;flex:none;
+    background:rgb(39 39 42);position:relative}
+  .bascule .piste i{position:absolute;top:3px;left:3px;width:17px;height:17px;
+    border-radius:9999px;background:rgb(220 234 244)}
+  .bascule b{font-size:.92rem;font-weight:600;color:#fff}
+  .bascule span{font-size:.92rem;font-weight:600;color:rgb(220 234 244)}
 
-  /* ── utilitaires Tailwind v4 employés par le composant ───────────────── */
-  .bg-background{background-color:hsl(var(--background))}
-  .text-foreground{color:hsl(var(--foreground))}
-  .bg-card{background-color:hsl(var(--card))}
-  .text-card-foreground{color:hsl(var(--card-foreground))}
-  .bg-gray-50{background-color:oklch(.985 .002 247.839)}
-  .text-muted{color:hsl(var(--muted))}
-  .text-muted-foreground{color:hsl(var(--muted-foreground))}
-  .text-zinc-400{color:oklch(.705 .015 286.067)}
-  .text-zinc-800{color:oklch(.274 .006 286.033)}
-  .text-transparent{color:transparent}
-  .text-primary\/15{color:hsl(var(--primary)/.15)}
+  /* ── Les cartes : géométrie du composant, texture de Darkmoon ────────── */
+  .grille{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+          align-items:start;margin:auto auto;width:100%;max-width:940px}
+  .offre{position:relative;border-radius:14px;padding:20px 20px 18px;
+         display:flex;flex-direction:column;text-align:center;
+         transform:scale(.94)}
+  .offre:nth-child(1){transform-origin:right center;
+                      transform:translateX(30px) scale(.94)}
+  .offre:nth-child(3){transform-origin:left center;
+                      transform:translateX(-30px) scale(.94)}
+  .offre.vedette{transform:translateY(-20px);z-index:10}
+  /* le filet du composant : 1 px zinc-800, et 2 px blancs sur la vedette */
+  #scene .offre .dos{position:absolute;inset:0;z-index:3;
+       pointer-events:none;border-radius:14px;
+       border:1px solid rgb(39 39 42)}
+  #scene .offre.vedette .dos{border:2px solid rgb(250 250 250)}
+  .dedans{position:relative;z-index:4;display:flex;flex-direction:column;
+          height:100%}
 
-  .w-full{width:100%}
-  .relative{position:relative}
-  .absolute{position:absolute}
-  .inset-0{inset:0}
-  .left-3{left:.75rem}
-  .top-2{top:.5rem}
-  .z-10{z-index:10}
-  .flex{display:flex}
-  .grid{display:grid}
-  .block{display:block}
-  .flex-col{flex-direction:column}
-  .items-center{align-items:center}
-  .justify-center{justify-content:center}
-  .justify-between{justify-content:space-between}
-  .justify-end{justify-content:flex-end}
-  .grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}
-  .col-span-full{grid-column:1 / -1}
-  .gap-1{gap:.25rem}
-  .gap-2{gap:.5rem}
-  .gap-3{gap:.75rem}
-  .mx-auto{margin-left:auto;margin-right:auto}
-  .m-auto{margin:auto}
-  .ml-\[calc\(50\%-1rem\)\]{margin-left:calc(50% - 1rem)}
-  .mt-6{margin-top:1.5rem}
-  .mt-14{margin-top:3.5rem}
-  .-mb-6{margin-bottom:-1.5rem}
-  .-mr-6{margin-right:-1.5rem}
-  .max-w-3xl{max-width:48rem}
-  .px-2{padding-left:.5rem;padding-right:.5rem}
-  .px-6{padding-left:1.5rem;padding-right:1.5rem}
-  .py-1{padding-top:.25rem;padding-bottom:.25rem}
-  .py-6{padding-top:1.5rem;padding-bottom:1.5rem}
-  .py-16{padding-top:4rem;padding-bottom:4rem}
-  .p-6{padding:1.5rem}
-  .pt-6{padding-top:1.5rem}
-  .h-24{height:6rem}
-  .h-fit{height:fit-content}
-  .h-full{height:100%}
-  .w-24{width:6rem}
-  .w-56{width:14rem}
-  .w-fit{width:fit-content}
-  .w-\[calc\(50\%\+0\.875rem\)\]{width:calc(50% + .875rem)}
-  .size-2{width:.5rem;height:.5rem}
-  .size-5{width:1.25rem;height:1.25rem}
-  .size-6{width:1.5rem;height:1.5rem}
-  .size-7{width:1.75rem;height:1.75rem}
-  .size-8{width:2rem;height:2rem}
-  .size-12{width:3rem;height:3rem}
-  .size-32{width:8rem;height:8rem}
-  .size-fit{width:fit-content;height:fit-content}
-  .size-full{width:100%;height:100%}
-  .aspect-square{aspect-ratio:1 / 1}
-  .overflow-hidden{overflow:hidden}
-  .rounded{border-radius:.25rem}
-  .rounded-lg{border-radius:var(--radius)}
-  .rounded-full{border-radius:9999px}
-  .rounded-tl-\(--radius\){border-top-left-radius:var(--radius)}
-  .border{border-width:1px}
-  .border-l{border-left-width:1px}
-  .border-t{border-top-width:1px}
-  .shadow-sm{box-shadow:0 1px 2px 0 rgb(0 0 0 / .05)}
-  .ring-4{box-shadow:0 0 0 4px var(--tw-ring-color,transparent)}
-  .ring-background{--tw-ring-color:hsl(var(--background))}
-  .text-xs{font-size:.75rem;line-height:1rem}
-  .text-lg{font-size:1.125rem;line-height:1.75rem}
-  .text-3xl{font-size:1.875rem;line-height:2.25rem}
-  .text-5xl{font-size:3rem;line-height:1}
-  .font-medium{font-weight:500}
-  .font-semibold{font-weight:600}
-  .text-center{text-align:center}
-  .transition{transition-property:color,background-color,border-color,
-    text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,
-    backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);
-    transition-duration:.15s}
-  .space-y-2>*+*{margin-top:.5rem}
-  .space-y-6>*+*{margin-top:1.5rem}
-  .space-y-12>*+*{margin-top:3rem}
-  .lucide{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;
-          stroke-linejoin:round}
+  #scene .offre .populaire{position:absolute;top:-13px;right:16px;left:auto;
+    z-index:5;width:max-content;display:flex;align-items:center;gap:5px;
+    padding:4px 12px;border-radius:9999px;background:rgb(250 250 250)}
+  .populaire span{color:#09090b;font-size:.82rem;font-weight:600}
+  .populaire svg{width:13px;height:13px;fill:#09090b;stroke:#09090b}
 
-  .before\:absolute::before{content:"";position:absolute}
-  .before\:inset-0::before{inset:0}
-  .before\:-inset-2::before{inset:-.5rem}
-  .before\:mx-auto::before{margin-left:auto;margin-right:auto}
-  .before\:w-px::before{width:1px}
-  .before\:rounded-full::before{border-radius:9999px}
-  .before\:border::before{border-width:1px}
-  .before\:bg-\(--color-border\)::before{background-color:var(--color-border)}
+  .nom{margin:0;font-size:.86rem;font-weight:600;letter-spacing:.045em;
+       text-transform:uppercase;color:rgb(161 161 170)}
+  .prixrang{margin:14px 0 0;display:flex;align-items:baseline;
+            justify-content:center;gap:8px}
+  .prix{font-size:2.05rem;font-weight:700;letter-spacing:-.025em;color:#fff;
+        line-height:1}
+  .periode{font-size:.85rem;font-weight:600;letter-spacing:.01em;
+           color:rgb(161 161 170)}
+  .precision{margin:9px 0 0;font-size:.78rem;font-weight:400;
+             color:rgb(161 161 170)}
+  .lignes{margin:14px 0 0;display:flex;flex-direction:column;gap:6px;
+          text-align:left}
+  .ligne{display:flex;align-items:flex-start;gap:9px;font-size:.92rem;
+         font-weight:400;color:rgb(250 250 250)}
+  .ligne svg{width:14px;height:14px;flex:none;margin-top:3px;fill:none;
+             stroke:rgb(250 250 250);stroke-width:2.2;stroke-linecap:round;
+             stroke-linejoin:round}
+  .filet{margin:14px 0;height:1px;background:rgb(39 39 42)}
+  .bouton{margin-top:auto;height:38px;display:flex;align-items:center;
+          justify-content:center;border-radius:8px;font-size:.95rem;
+          font-weight:600;letter-spacing:-.015em;color:#fff;
+          border:1px solid rgb(39 39 42);background:transparent;
+          transition:background .3s ease,border-color .3s ease}
+  .offre.vedette .bouton{background:rgb(250 250 250);
+                         border-color:rgb(250 250 250)}
+  #scene .offre.vedette .bouton{color:#09090b}
+  .offre:hover .bouton{background:rgb(220 234 244 / .16);
+                       border-color:rgb(220 234 244 / .55)}
+  .pieddecarte{margin:12px 0 0;font-size:.74rem;font-weight:400;
+               color:rgb(161 161 170)}
 
-  /* ── palier dark (le deck est en sombre) ─────────────────────────────── */
-  .dark\:bg-transparent{background-color:transparent}
-  .dark\:bg-white\/10{background-color:rgb(255 255 255 / .1)}
-  .dark\:border-white\/10{border-color:rgb(255 255 255 / .1)}
-  .dark\:before\:border-white\/5::before{border-color:rgb(255 255 255 / .05)}
-  .dark\:text-white{color:#fff}
-  .dark\:text-muted{color:hsl(var(--muted))}
-  .dark\:text-muted-foreground{color:hsl(var(--muted-foreground))}
-  .dark\:text-zinc-600{color:oklch(.442 .017 285.786)}
-  .dark\:text-primary\/35{color:hsl(var(--primary)/.35)}
+  .pied{position:absolute;left:72px;right:72px;bottom:16px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  /* Le pied porte les deux logos et plus de texte : Darkmoon avec son mot,
+     puis le logotype ASC-IT, separes par un filet. */
+  .pied .marque{display:flex;align-items:center;gap:12px}
+  .pied .lg-dm{height:17px;width:auto;display:block;opacity:.9}
+  .pied .lg-asc{height:12px;width:auto;display:block;opacity:.62}
+  .pied .tiret{width:1px;height:12px;background:rgb(255 255 255 / .22);
+               display:block}
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+  .mot{display:inline-block;margin-right:.28em;
+       transition-property:opacity,filter,transform;
+       transition-timing-function:cubic-bezier(.6,.04,.22,1);
+       will-change:filter,transform,opacity;transform-style:preserve-3d;
+       backface-visibility:hidden}
+  .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
+            filter:none;transform:none}
 
-  /* ── paliers sm (640) / md (768) / lg (1024) : la scène fait 1024 ────── */
-  @media (min-width:640px){
-    .sm\:col-span-3{grid-column:span 3 / span 3}
-    .sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .sm\:ml-6{margin-left:1.5rem}
-    .sm\:-my-6{margin-top:-1.5rem;margin-bottom:-1.5rem}
-    .sm\:-mr-6{margin-right:-1.5rem}
-    .sm\:w-\[150\%\]{width:150%}
-  }
-  @media (min-width:768px){
-    .md\:py-32{padding-top:8rem;padding-bottom:8rem}
-  }
-  @media (min-width:1024px){
-    .lg\:col-span-2{grid-column:span 2 / span 2}
-    .lg\:col-span-3{grid-column:span 3 / span 3}
-    .lg\:max-w-5xl{max-width:64rem}
-    .lg\:px-6{padding-left:1.5rem;padding-right:1.5rem}
-    .lg\:space-y-6>*+*{margin-top:1.5rem}
-  }
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:0;width:100%;height:100%;
+                 object-fit:cover;object-position:center;
+                 pointer-events:none;border:0;display:block}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
 
   .langue{position:absolute;top:22px;right:72px;z-index:6;display:flex;
           align-items:center;gap:9px;font-size:11px;letter-spacing:.16em;
@@ -432,27 +391,18 @@
                display:block}
 
   
-  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
-  #ether .fluide{position:absolute;inset:0;width:100%;height:100%;
-                 object-fit:cover;object-position:center;
-                 pointer-events:none;border:0;display:block}
-  #ether .grain{position:absolute;inset:0;
-                background-image:url('../ether/noise.png');
-                background-size:240px;background-repeat:repeat;opacity:.5}
-
   #scene{z-index:1}
   /* Pas de voile sur ce fond-la : mesure faite, le texte blanc y tient a
      12,6:1 sans aide. La carte montre le composant, rien d'autre. */
 </style><script>
 (function(){
-  var ici = 'fr', jumelle = '../acad-en/';
+  var ici = 'en', jumelle = '../tarifs/';
   try {
     var choisi = localStorage.getItem('darkmoon-deck-langue');
     if (choisi && choisi !== ici) location.replace(jumelle);
   } catch (e) {}
 })();
-</script></head>
-<body class="bg-background text-foreground">
+</script></head><body>
 <div id="ether">
   <video class="fluide" autoplay muted loop playsinline preload="auto"
          disablepictureinpicture tabindex="-1" aria-hidden="true"
@@ -462,27 +412,18 @@
   </video>
   <div class="grain"></div>
 </div>
-<div id="scene"><section class="bg-gray-50 py-16 md:py-32 dark:bg-transparent"><div class="mx-auto max-w-3xl lg:max-w-5xl px-6"><div class="relative"><div class="relative z-10 grid grid-cols-6 gap-3"><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full flex overflow-hidden lg:col-span-2"><div class="p-6 relative m-auto size-fit pt-6"><div class="relative flex w-56 flex-col items-center justify-center gap-3"><img class="" src="picto-pdf.svg" alt="" style="object-fit:contain;box-sizing:border-box;height:40px;width:40px"><span class="block w-fit text-5xl font-semibold">420+</span></div><h2 class="mt-6 text-center text-3xl font-semibold">publications, 2024 à 2026</h2></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="relative mx-auto flex aspect-square size-32 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-scenario-ok.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:64px;height:64px"></div><div class="relative z-10 mt-6 space-y-2 text-center"><h2 class="group-hover:text-secondary-950 text-lg font-medium transition dark:text-white">Architecture MCP</h2><p class="text-foreground">Le multi-agents orchestré via MCP est reconnu comme l'état de l'art, celui de Darkmoon.</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden sm:col-span-3 lg:col-span-2"><div class="p-6 pt-6"><div class="pt-6 lg:px-6"><img class="" src="picto-fleches.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:386/123"></div><div class="relative z-10 mt-14 space-y-2 text-center"><h2 class="text-lg font-medium transition">Coûts &lt; 1 € / test</h2><p class="text-foreground">0,30-0,60 $ par test documenté, contre des milliers d'€ en manuel.</p></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-ciblage.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="group-hover:text-secondary-950 text-lg font-medium text-zinc-800 transition dark:text-white">Validation humaine</h2><p class="text-foreground">La recherche garde l'humain dans la boucle. C'est le choix de Darkmoon.</p></div></div><div class="relative mt-6 flex h-full items-center justify-center p-6 sm:ml-6"><img class="" src="picto-scenario.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:100%;aspect-ratio:366/231;padding:0 22%"></div></div></div><div class="rounded-lg border bg-card text-card-foreground shadow-sm relative col-span-full overflow-hidden lg:col-span-3"><div class="p-6 grid h-full pt-6 sm:grid-cols-2"><div class="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6"><div class="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5"><img class="m-auto" src="picto-attaque.svg" alt="" style="object-fit:contain;box-sizing:border-box;width:22px;height:22px"></div><div class="space-y-2"><h2 class="text-lg font-medium transition">L'Active Directory réel reste la vraie difficulté</h2><p class="text-foreground">et c'est justement la couverture de Darkmoon (au-delà du web).</p></div></div><div class="relative mt-6 sm:-my-6 sm:-mr-6" style="padding-left:2.25rem"><div class="relative flex h-full flex-col justify-center space-y-6 py-6"><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">PentestMCP, 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">RapidPen, 2025</span></div><div class="relative flex items-center gap-2"><span class="relative block h-fit w-fit rounded-full border text-xs shadow-sm before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5" style="padding:.3rem .95rem">AutoPentester, 2025</span></div></div></div></div></div></div></div></div></section></div>
-<div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>07 / 12</span></div>
-<script>
-// La slide fait 1280 x 720 ; le composant est composé à sa largeur naturelle
-// (1024 + gouttières) puis mis à l'échelle d'un bloc. Rien n'est recomposé :
-// on change l'échelle, pas la mise en page.
-//
-// On cale sur la SECTION entière, pas sur la grille : les 8rem de `md:py-32`
-// font partie du composant, les garder est ce qui donne aux cartes leur
-// taille juste. Les rogner remplissait la slide mais rendait tout trop gros.
-const L = 1088, scene = document.getElementById('scene');
-scene.style.width = L + 'px';
-function caler() {
-  scene.style.transform = 'none';
-  const h = scene.getBoundingClientRect().height;
-  const k = Math.min(window.innerWidth / L, window.innerHeight / h);
-  scene.style.transform = 'translate(-50%,-50%) scale(' + k + ')';
-}
-caler();
-window.addEventListener('resize', caler);
-</script>
+<div id="scene">
+  <div class="haut">
+    <p class="titre">Three ways to adopt Darkmoon.</p>
+    <p class="chapeau">Pentest on Demand, 799 € per engagement. Our experts run it, legal framework included.</p>
+  </div>
+  <button class="bascule" id="bascule" type="button" aria-pressed="false">
+    <span class="piste"><i></i></span>
+    <b>Annual billing</b><span>same price</span></button>
+  <div class="grille"><div class="bg-card offre"><div class="dos"></div><div class="dedans"><p class="nom">Community</p><div class="prixrang"><span class="prix" data-mois="Free" data-an="Free">Free</span><span class="periode" data-mois="" data-an=""></span></div><p class="precision" data-mois="Open source, self-hosted" data-an="Open source, self-hosted">Open source, self-hosted</p><div class="lignes"><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Autonomous engine on GitHub</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>GPLv3, auditable and modifiable</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>18 AI agents, 80 tools</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Execution under MCP control</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Community support</span></div></div><div class="filet"></div><div class="bouton">Star on GitHub</div><p class="pieddecarte">For technical teams.</p></div></div><div class="bg-card offre vedette"><div class="dos"></div><div class="populaire"><svg   class="lucide lucide-star"   xmlns="http://www.w3.org/2000/svg"   width="14"   height="14"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /> </svg><span>Popular</span></div><div class="dedans"><p class="nom">Pro</p><div class="prixrang"><span class="prix" data-mois="149 €" data-an="1788 €">149 €</span><span class="periode" data-mois="per month" data-an="per year">per month</span></div><p class="precision" data-mois="Billed 1788 € a year" data-an="That is 149 € a month, no extra cost">Billed 1788 € a year</p><div class="lignes"><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Everything in Community, plus</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Hardened and sealed runtime</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Live command centre</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Every report, branded PDF</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Licence bound to the hardware</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Priority support</span></div></div><div class="filet"></div><div class="bouton">Get Darkmoon</div><p class="pieddecarte">For pentesters and security teams.</p></div></div><div class="bg-card offre"><div class="dos"></div><div class="dedans"><p class="nom">Custom</p><div class="prixrang"><span class="prix" data-mois="On request" data-an="On request">On request</span><span class="periode" data-mois="" data-an=""></span></div><p class="precision" data-mois="Shaped to your perimeter" data-an="Shaped to your perimeter">Shaped to your perimeter</p><div class="lignes"><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Everything in Pro, plus</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Multi-user workspace</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Reports in your own branding</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Partner programme</span></div><div class="ligne"><svg   class="lucide lucide-check"   xmlns="http://www.w3.org/2000/svg"   width="15"   height="15"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   stroke-width="2"   stroke-linecap="round"   stroke-linejoin="round" >   <path d="M20 6 9 17l-5-5" /> </svg><span>Dedicated support, SLA</span></div></div><div class="filet"></div><div class="bouton">Talk to the team</div><p class="pieddecarte">For enterprises, MSSPs and resellers.</p></div></div></div>
+</div>
+<div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>10 / 12</span></div>
+
 <script>
 // ── tables de 1024 valeurs et acces `& 1023`, comme le composant
 const SIN = new Float32Array(1024), COS = new Float32Array(1024);
@@ -609,13 +550,56 @@ function rendre() {
 }
 rendre();
 
-// ── Ouverture : le rideau noir se leve, les cartes montent derriere
+</script>
+<script>
+// ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
+function cinema(el, base) {
+  const mots = el.textContent.split(' ');
+  el.textContent = '';
+  const spans = mots.map((m, i) => {
+    const e = document.createElement('span');
+    e.className = 'mot';
+    e.textContent = m;
+    e.style.transitionDuration = (1.8 + Math.cos(i * 0.3) * 0.24) + 's';
+    e.style.transitionDelay = (i * 0.062) + 's';
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' +
+      (0.92 + Math.sin(i * 0.2) * 0.04) + ') rotateX(-12deg)';
+    el.appendChild(e);
+    return e;
+  });
+  setTimeout(() => spans.forEach(e => {
+    e.style.opacity = 1;
+    e.style.filter = 'blur(0px) brightness(1)';
+    e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+  }), base);
+  setTimeout(() => spans.forEach(e => e.classList.add('pose')),
+             base + 2200 + mots.length * 62);
+}
+
+// ── L'interrupteur de facturation ────────────────────────────────────────
+// Il ne decore pas : il bascule vraiment l'affichage des trois cartes entre
+// le prix mensuel et le prix annuel. Chez Darkmoon l'annee vaut douze mois,
+// il n'y a pas de remise, et la carte le dit.
+const bascule = document.getElementById('bascule');
+let annuel = false;
+bascule.addEventListener('click', () => {
+  annuel = !annuel;
+  bascule.classList.toggle('on', annuel);
+  bascule.setAttribute('aria-pressed', annuel);
+  document.querySelectorAll('[data-mois]').forEach(e => {
+    e.textContent = annuel ? e.dataset.an : e.dataset.mois;
+  });
+});
+
+// ── Ouverture cinematique ────────────────────────────────────────────────
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
-// le decor : `ether` sur la slide 2, `neo` ici. On prend celui qui est la.
-const decor = document.getElementById('neo') || document.getElementById('ether');
-const cartes = [...document.querySelectorAll('.bg-card')];
+const decor = document.getElementById('ether');
+const offres = [...document.querySelectorAll('.offre')];
+const hauts = [...document.querySelectorAll('.haut p')];
 const COURBE = 'cubic-bezier(.6,.04,.22,1)';
 let animations = [], derniereOuverture = 0;
 
@@ -624,33 +608,32 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 2480, easing: COURBE, fill: 'backwards' }),
-    decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' }),
-    ...cartes.map((c, i) => c.animate([
-      { opacity: 0, transform: 'translateY(26px) scale(.985)', filter: 'blur(16px)' },
-      { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 2050, delay: 50 + i * 188, easing: COURBE, fill: 'backwards' }))
+      { duration: 2180, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2480, easing: COURBE, fill: 'backwards' })] : []),
+    // les cartes arrivent en se redressant, chacune vers son inclinaison
+    ...offres.map((c, i) => {
+      const fin = getComputedStyle(c).transform;
+      return c.animate(
+        [{ opacity: 0, filter: 'blur(14px)' },
+         { opacity: 1, filter: 'blur(0px)' }],
+        { duration: 1600, delay: 80 + i * 174, easing: COURBE,
+          fill: 'backwards' });
+    }),
+    ...[...document.querySelectorAll('.ligne, .bouton, .prixrang')].map((e, i) => e.animate(
+      [{ opacity: 0, transform: 'translateY(8px)' },
+       { opacity: 1, transform: 'none' }],
+      { duration: 930, delay: 140 + i * 54, easing: COURBE,
+        fill: 'backwards' }))
   ];
+  hauts.forEach((e, i) => cinema(e, 150 + i * 240));
 }
 ouvrir();
 
-// Rejouer a chaque retour sur la slide.
-//
-// Le lecteur ne masque pas les slides voisines : il les translate hors du
-// cadre. Le navigateur ne gele donc pas nos rAF, il les BRIDE (une image par
-// seconde environ pour une iframe hors ecran). Un simple trou entre deux
-// images se produit donc aussi pendant qu'on est ailleurs — c'est ce qui
-// faisait jouer l'ouverture dans le vide, et il ne restait rien a voir en
-// arrivant.
-//
-// Le signal fiable n'est pas le trou, c'est la REPRISE d'une cadence pleine :
-// on attend six images consecutives a moins de 40 ms apres un trou.
-let precedent = performance.now();
-let reprise = false, rapides = 0;
+// Rejouer au retour sur la slide.
+let precedent = performance.now(), reprise = false, rapides = 0;
 (function veille() {
-  const t = performance.now();
-  const dt = t - precedent;
+  const t = performance.now(), dt = t - precedent;
   precedent = t;
   if (dt > 400) { reprise = true; rapides = 0; }
   else if (reprise) {
@@ -663,9 +646,10 @@ let reprise = false, rapides = 0;
   requestAnimationFrame(veille);
 })();
 </script>
+
 <div class="langue">
-  <a class="on" href="../acad/" data-l="fr">FR</a><span class="filet"></span><a
-      href="../acad-en/" data-l="en">EN</a>
+  <a  href="../tarifs/" data-l="fr">FR</a><span class="filet"></span><a
+     class="on" href="../tarifs-en/" data-l="en">EN</a>
 </div>
 <script>
 document.querySelectorAll('.langue a').forEach(function (a) {

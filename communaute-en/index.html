@@ -1,5 +1,5 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8">
-<title>Darkmoon, une communauté depuis plus de 10 ans</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Darkmoon, a community for more than 10 years</title>
 <style>
   *,*::before,*::after{box-sizing:border-box}
   html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
@@ -77,7 +77,7 @@
   .langue .filet{width:1px;height:10px;background:rgb(255 255 255 / .22)}
 </style><script>
 (function(){
-  var ici = 'fr', jumelle = '../communaute-en/';
+  var ici = 'en', jumelle = '../communaute/';
   try {
     var choisi = localStorage.getItem('darkmoon-deck-langue');
     if (choisi && choisi !== ici) location.replace(jumelle);
@@ -94,7 +94,7 @@
   <div class="grain"></div>
 </div>
 <div id="cadre"><div id="plan"><div id="piste"></div></div></div>
-<div id="texte"><p>Communauté et adoption. Une communauté depuis plus de 10 ans, de la communauté open source à l'offre Pro, puis aux entreprises et MSSP.</p></div>
+<div id="texte"><p>Community and adoption. A community for more than 10 years, from the open source community to the Pro edition, then to enterprises and MSSPs.</p></div>
 <div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>12 / 12</span></div>
 
 <script>
@@ -104,7 +104,7 @@
 // liste repetee trois fois, ecart de 0,9 x le corps, et surtout la mise au
 // point par mot, floutee et attenuee selon la distance au centre.
 const CORPS = 64, ECART = CORPS * 0.9, PAR_IMAGE = 2, IPS = 30;
-const MOTS = ["30 000 utilisateurs", "+ 10 ans d'existence", "Open source GPLv3", "GitHub & MS Store"];
+const MOTS = ["30,000 users", "10+ years running", "Open source GPLv3", "GitHub & MS Store"];
 const piste = document.getElementById('piste');
 const cadre = document.getElementById('cadre');
 
@@ -213,8 +213,8 @@ let precedent = performance.now(), reprise = false, rapides = 0;
 </script>
 
 <div class="langue">
-  <a class="on" href="../communaute/" data-l="fr">FR</a><span class="filet"></span><a
-      href="../communaute-en/" data-l="en">EN</a>
+  <a  href="../communaute/" data-l="fr">FR</a><span class="filet"></span><a
+     class="on" href="../communaute-en/" data-l="en">EN</a>
 </div>
 <script>
 document.querySelectorAll('.langue a').forEach(function (a) {

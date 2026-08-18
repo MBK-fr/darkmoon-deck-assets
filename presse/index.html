@@ -118,7 +118,28 @@
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
-</style></head><body>
+
+  .langue{position:absolute;top:22px;right:72px;z-index:6;display:flex;
+          align-items:center;gap:9px;font-size:11px;letter-spacing:.16em;
+          text-transform:uppercase;font-weight:500;
+          font-family:'Avenir Next','Avenir',system-ui,sans-serif;
+          -webkit-user-select:none;user-select:none}
+  .langue a{color:rgb(255 255 255 / .38);text-decoration:none;
+            padding:3px 5px;border-radius:7px;line-height:1;
+            transition:color .22s ease,background-color .22s ease}
+  .langue a:hover{color:rgb(255 255 255 / .72);
+                  background:rgb(255 255 255 / .05)}
+  .langue a.on{color:rgb(255 255 255 / .92)}
+  .langue .filet{width:1px;height:10px;background:rgb(255 255 255 / .22)}
+</style><script>
+(function(){
+  var ici = 'fr', jumelle = '../presse-en/';
+  try {
+    var choisi = localStorage.getItem('darkmoon-deck-langue');
+    if (choisi && choisi !== ici) location.replace(jumelle);
+  } catch (e) {}
+})();
+</script></head><body>
 <div id="ether">
   <video class="fluide" autoplay muted loop playsinline preload="auto"
          disablepictureinpicture tabindex="-1" aria-hidden="true"
@@ -212,4 +233,15 @@ let precedent = performance.now(), reprise = false, rapides = 0;
 })();
 </script>
 
+<div class="langue">
+  <a class="on" href="../presse/" data-l="fr">FR</a><span class="filet"></span><a
+      href="../presse-en/" data-l="en">EN</a>
+</div>
+<script>
+document.querySelectorAll('.langue a').forEach(function (a) {
+  a.addEventListener('click', function () {
+    try { localStorage.setItem('darkmoon-deck-langue', a.dataset.l); } catch (e) {}
+  });
+});
+</script>
 </body></html>

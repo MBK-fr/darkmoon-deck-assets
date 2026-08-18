@@ -1,0 +1,247 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Darkmoon, in the press</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;
+            font-family:'Avenir Next',Avenir,ui-sans-serif,system-ui,sans-serif;
+            -webkit-font-smoothing:antialiased}
+  #scene{position:absolute;inset:0;z-index:2}
+
+  /* ── Le texte, posé par-dessus le mur, avec son voile ────────────────── */
+  #gauche{position:absolute;left:72px;top:50%;transform:translateY(-50%);
+          width:520px;z-index:4}
+  #voile-texte{position:absolute;inset:0 auto 0 0;width:56%;z-index:3;
+    pointer-events:none;
+    background:linear-gradient(to right,rgb(0 0 0 / .92) 0%,
+      rgb(0 0 0 / .82) 42%, rgb(0 0 0 / .5) 72%, transparent 100%)}
+  #gauche p{margin:0;white-space:nowrap}
+  .titre{font-size:1.9rem;font-weight:300;line-height:1.35;
+         letter-spacing:-.012em;color:rgb(255 255 255 / .96);
+         text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
+  .guillemet{margin:22px 0 0;font-size:3.4rem;line-height:.6;
+             color:rgb(220 234 244 / .38)}
+  #gauche .citation{margin:16px 0 0;font-size:1.24rem;font-weight:300;
+            line-height:1.5;color:#fff;white-space:normal;max-width:26ch;
+            text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
+  .signature{margin:14px 0 0;font-size:.95rem;font-weight:300;
+             color:rgb(255 255 255 / .55)}
+
+  /* ── Le mur, à la géométrie du composant ─────────────────────────────── */
+  /* Le mur occupe toute la slide. La perspective du composant est de
+     300 px sur une boîte de 800 : sur 1280 elle écrasait les cartes et le
+     texte en ressortait mou. On l'ouvre à 900 px, la géométrie reste, la
+     déformation par pixel diminue. */
+  #mur{position:absolute;inset:0;z-index:1;display:flex;flex-direction:row;
+       align-items:center;justify-content:center;gap:6px;overflow:hidden;
+       perspective:900px}
+  #plan{display:flex;flex-direction:row;align-items:center;gap:18px;
+        transform:translateX(-40px) translateY(0px) translateZ(-100px)
+                  rotateX(20deg) rotateY(-10deg) rotateZ(20deg)}
+  .colonne{display:flex;flex-direction:column;overflow:hidden;padding:8px;
+           gap:16px;--duree:40s}
+  .colonne .train{display:flex;flex-direction:column;gap:16px;flex-shrink:0;
+                  will-change:transform;
+                  justify-content:space-around;
+                  animation:defile var(--duree) linear infinite}
+  .colonne.inverse .train{animation-direction:reverse}
+  @keyframes defile{
+    from{transform:translateY(0)}
+    to{transform:translateY(calc(-100% - 16px))}}
+
+  /* la carte : celle du composant, habillée aux couleurs du deck */
+  /* La carte etait a 72 pour cent d'opacite : le decor passait au travers
+     et son liseré se lisait comme une bordure translucide, un effet de verre
+     bon marché. Elle est maintenant pleine, comme dans le composant d'origine
+     qui pose ses cartes sur `bg-background`. Le liseré reste, en retrait. */
+  .media{width:238px;flex-shrink:0;border-radius:12px;padding:16px;
+         background:#0b0d12;
+         box-shadow:inset 0 0 0 1px rgb(220 234 244 / .08),
+                    0 12px 34px rgb(0 0 0 / .58)}
+  .media .haut{display:flex;align-items:center;gap:11px}
+  /* sans `min-width:0`, un élément flex ne se laisse pas rétrécir et son
+     texte sort de la carte au lieu d'être coupé */
+  .media .qui{min-width:0;flex:1;display:block;overflow:hidden}
+  .media .rond{width:38px;height:38px;flex:none;border-radius:9999px;
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    background:rgb(255 255 255 / .06);
+    box-shadow:inset 0 0 0 1px rgb(255 255 255 / .1)}
+  .media .rond img{width:100%;height:100%;object-fit:contain}
+  .media .rond b{font-size:.95rem;font-weight:500;color:rgb(220 234 244)}
+  .media .nom{display:block;font-size:.95rem;font-weight:500;color:#fff;
+              line-height:1.25;white-space:nowrap;overflow:hidden;
+              text-overflow:ellipsis}
+  .media .dom{display:block;margin-top:2px;font-size:.74rem;font-weight:300;
+              color:rgb(255 255 255 / .5);white-space:nowrap;
+              overflow:hidden;text-overflow:ellipsis}
+  .media .quoi{margin:11px 0 0;font-size:.86rem;font-weight:300;
+               color:rgb(255 255 255 / .72)}
+
+  /* Le composant fond ses bords avec quatre dégradés vers la couleur du
+     fond. Ici le fond est un décor animé : un aplat noir y ferait une boîte.
+     On garde l'effet mais au masque, donc le décor passe au travers. */
+  #mur{-webkit-mask-image:
+         linear-gradient(to bottom,transparent 0,#000 22%,#000 78%,
+                         transparent 100%),
+         linear-gradient(to right,transparent 0,#000 20%,#000 80%,
+                         transparent 100%);
+       -webkit-mask-composite:source-in;mask-composite:intersect;
+       mask-image:
+         linear-gradient(to bottom,transparent 0,#000 22%,#000 78%,
+                         transparent 100%),
+         linear-gradient(to right,transparent 0,#000 20%,#000 80%,
+                         transparent 100%)}
+
+  .pied{position:absolute;left:72px;right:72px;bottom:22px;display:flex;
+        justify-content:space-between;font-size:11px;letter-spacing:.16em;
+        text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
+  /* Le pied porte les deux logos et plus de texte : Darkmoon avec son mot,
+     puis le logotype ASC-IT, separes par un filet. */
+  .pied .marque{display:flex;align-items:center;gap:12px}
+  .pied .lg-dm{height:17px;width:auto;display:block;opacity:.9}
+  .pied .lg-asc{height:12px;width:auto;display:block;opacity:.62}
+  .pied .tiret{width:1px;height:12px;background:rgb(255 255 255 / .22);
+               display:block}
+  #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
+          opacity:0}
+  .mot{display:inline-block;margin-right:.28em;
+       transition-property:opacity,filter,transform;
+       transition-timing-function:cubic-bezier(.6,.04,.22,1);
+       will-change:filter,transform,opacity;transform-style:preserve-3d;
+       backface-visibility:hidden}
+  .mot.pose{will-change:auto;transform-style:flat;backface-visibility:visible;
+            filter:none;transform:none}
+
+  #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+  #ether .fluide{position:absolute;inset:0;width:100%;height:100%;
+                 object-fit:cover;object-position:center;
+                 pointer-events:none;border:0;display:block}
+  #ether .grain{position:absolute;inset:0;
+                background-image:url('../ether/noise.png');
+                background-size:240px;background-repeat:repeat;opacity:.5}
+
+  .langue{position:absolute;top:22px;right:72px;z-index:6;display:flex;
+          align-items:center;gap:9px;font-size:11px;letter-spacing:.16em;
+          text-transform:uppercase;font-weight:500;
+          font-family:'Avenir Next','Avenir',system-ui,sans-serif;
+          -webkit-user-select:none;user-select:none}
+  .langue a{color:rgb(255 255 255 / .38);text-decoration:none;
+            padding:3px 5px;border-radius:7px;line-height:1;
+            transition:color .22s ease,background-color .22s ease}
+  .langue a:hover{color:rgb(255 255 255 / .72);
+                  background:rgb(255 255 255 / .05)}
+  .langue a.on{color:rgb(255 255 255 / .92)}
+  .langue .filet{width:1px;height:10px;background:rgb(255 255 255 / .22)}
+</style><script>
+(function(){
+  var ici = 'en', jumelle = '../presse/';
+  try {
+    var choisi = localStorage.getItem('darkmoon-deck-langue');
+    if (choisi && choisi !== ici) location.replace(jumelle);
+  } catch (e) {}
+})();
+</script></head><body>
+<div id="ether">
+  <video class="fluide" autoplay muted loop playsinline preload="auto"
+         disablepictureinpicture tabindex="-1" aria-hidden="true"
+         poster="../ether/silk-pose.jpg">
+    <source src="../ether/silk.webm" type="video/webm">
+    <source src="../ether/silk.mp4" type="video/mp4">
+  </video>
+  <div class="grain"></div>
+</div>
+<div id="scene">
+  <div id="gauche">
+    <p class="titre">A solution people already noticed.</p>
+    <p class="guillemet">&ldquo;</p>
+    <p class="citation">Most AI pentest tools stop at the web. Darkmoon goes further.</p>
+    <p class="signature">Mehdi Boutayeb, founder</p>
+  </div>
+  <div id="mur">
+    <div id="plan"><div class="colonne"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="tf1.png" alt=""></span><span><span class="nom">TF1 Info</span><span class="dom">tf1info.fr</span></span></div><p class="quoi">French cybersecurity</p></div><div class="media"><div class="haut"><span class="rond"><img src="linuxsecurity.png" alt=""></span><span><span class="nom">LinuxSecurity</span><span class="dom">linuxsecurity.com</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="cyberwebspider.png" alt=""></span><span><span class="nom">CyberWebSpider</span><span class="dom">cyberwebspider.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><b>E</b></span><span><span class="nom">Everyday AI</span><span class="dom">everyday-ai.com</span></span></div><p class="quoi">Newsletter</p></div><div class="media"><div class="haut"><span class="rond"><img src="youtube.png" alt=""></span><span><span class="nom">YouTube</span><span class="dom">youtube.com</span></span></div><p class="quoi">Demo</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="tf1.png" alt=""></span><span><span class="nom">TF1 Info</span><span class="dom">tf1info.fr</span></span></div><p class="quoi">French cybersecurity</p></div><div class="media"><div class="haut"><span class="rond"><img src="linuxsecurity.png" alt=""></span><span><span class="nom">LinuxSecurity</span><span class="dom">linuxsecurity.com</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="cyberwebspider.png" alt=""></span><span><span class="nom">CyberWebSpider</span><span class="dom">cyberwebspider.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><b>E</b></span><span><span class="nom">Everyday AI</span><span class="dom">everyday-ai.com</span></span></div><p class="quoi">Newsletter</p></div><div class="media"><div class="haut"><span class="rond"><img src="youtube.png" alt=""></span><span><span class="nom">YouTube</span><span class="dom">youtube.com</span></span></div><p class="quoi">Demo</p></div></div></div><div class="colonne inverse"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="helpnet.png" alt=""></span><span><span class="nom">Help Net Security</span><span class="dom">helpnetsecurity.com</span></span></div><p class="quoi">June 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="undernews.png" alt=""></span><span><span class="nom">UnderNews</span><span class="dom">undernews.fr</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="opennhp.png" alt=""></span><span><span class="nom">OpenNHP</span><span class="dom">opennhp.org</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="businessfrance.png" alt=""></span><span><span class="nom">Business France</span><span class="dom">businessfrance.fr</span></span></div><p class="quoi">MWC 2025</p></div><div class="media"><div class="haut"><span class="rond"><b>T</b></span><span><span class="nom">The Cyber News</span><span class="dom">x.com</span></span></div><p class="quoi">May 2026</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="helpnet.png" alt=""></span><span><span class="nom">Help Net Security</span><span class="dom">helpnetsecurity.com</span></span></div><p class="quoi">June 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="undernews.png" alt=""></span><span><span class="nom">UnderNews</span><span class="dom">undernews.fr</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="opennhp.png" alt=""></span><span><span class="nom">OpenNHP</span><span class="dom">opennhp.org</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="businessfrance.png" alt=""></span><span><span class="nom">Business France</span><span class="dom">businessfrance.fr</span></span></div><p class="quoi">MWC 2025</p></div><div class="media"><div class="haut"><span class="rond"><b>T</b></span><span><span class="nom">The Cyber News</span><span class="dom">x.com</span></span></div><p class="quoi">May 2026</p></div></div></div><div class="colonne"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="csn.png" alt=""></span><span><span class="nom">Cyber Security News</span><span class="dom">cybersecuritynews.com</span></span></div><p class="quoi">May 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="linuxtoday.png" alt=""></span><span><span class="nom">Linux Today</span><span class="dom">linuxtoday.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="ossir.png" alt=""></span><span><span class="nom">OSSIR Paris</span><span class="dom">ossir.org</span></span></div><p class="quoi">June 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="exploreai.png" alt=""></span><span><span class="nom">ExploreAI Tools</span><span class="dom">exploreai.tools</span></span></div><p class="quoi">July 2026</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="csn.png" alt=""></span><span><span class="nom">Cyber Security News</span><span class="dom">cybersecuritynews.com</span></span></div><p class="quoi">May 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="linuxtoday.png" alt=""></span><span><span class="nom">Linux Today</span><span class="dom">linuxtoday.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="ossir.png" alt=""></span><span><span class="nom">OSSIR Paris</span><span class="dom">ossir.org</span></span></div><p class="quoi">June 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="exploreai.png" alt=""></span><span><span class="nom">ExploreAI Tools</span><span class="dom">exploreai.tools</span></span></div><p class="quoi">July 2026</p></div></div></div><div class="colonne inverse"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="producthunt.png" alt=""></span><span><span class="nom">Product Hunt</span><span class="dom">producthunt.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="linuxlinks.png" alt=""></span><span><span class="nom">LinuxLinks</span><span class="dom">linuxlinks.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="ubuntufr.png" alt=""></span><span><span class="nom">Ubuntu-fr</span><span class="dom">doc.ubuntu-fr.org</span></span></div><p class="quoi">Documentation</p></div><div class="media"><div class="haut"><span class="rond"><img src="toolradar.png" alt=""></span><span><span class="nom">ToolRadar</span><span class="dom">toolradar.com</span></span></div><p class="quoi">July 2026</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="producthunt.png" alt=""></span><span><span class="nom">Product Hunt</span><span class="dom">producthunt.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="linuxlinks.png" alt=""></span><span><span class="nom">LinuxLinks</span><span class="dom">linuxlinks.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="ubuntufr.png" alt=""></span><span><span class="nom">Ubuntu-fr</span><span class="dom">doc.ubuntu-fr.org</span></span></div><p class="quoi">Documentation</p></div><div class="media"><div class="haut"><span class="rond"><img src="toolradar.png" alt=""></span><span><span class="nom">ToolRadar</span><span class="dom">toolradar.com</span></span></div><p class="quoi">July 2026</p></div></div></div><div class="colonne"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="securitybrief.png" alt=""></span><span><span class="nom">SecurityBrief UK</span><span class="dom">securitybrief.co.uk</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><b>C</b></span><span><span class="nom">Cyber Sec. Intelligence</span><span class="dom">cybersecurityintelligence.com</span></span></div><p class="quoi">Vendor listing</p></div><div class="media"><div class="haut"><span class="rond"><b>K</b></span><span><span class="nom">Kubuntu-fr</span><span class="dom">wiki.kubuntu-fr.org</span></span></div><p class="quoi">Wiki</p></div><div class="media"><div class="haut"><span class="rond"><img src="everybodywiki.png" alt=""></span><span><span class="nom">EverybodyWiki</span><span class="dom">everybodywiki.com</span></span></div><p class="quoi">Entry</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="securitybrief.png" alt=""></span><span><span class="nom">SecurityBrief UK</span><span class="dom">securitybrief.co.uk</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><b>C</b></span><span><span class="nom">Cyber Sec. Intelligence</span><span class="dom">cybersecurityintelligence.com</span></span></div><p class="quoi">Vendor listing</p></div><div class="media"><div class="haut"><span class="rond"><b>K</b></span><span><span class="nom">Kubuntu-fr</span><span class="dom">wiki.kubuntu-fr.org</span></span></div><p class="quoi">Wiki</p></div><div class="media"><div class="haut"><span class="rond"><img src="everybodywiki.png" alt=""></span><span><span class="nom">EverybodyWiki</span><span class="dom">everybodywiki.com</span></span></div><p class="quoi">Entry</p></div></div></div><div class="colonne inverse"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="developpez.png" alt=""></span><span><span class="nom">Developpez.com</span><span class="dom">developpez.com</span></span></div><p class="quoi">2019, upd. 2024</p></div><div class="media"><div class="haut"><span class="rond"><img src="planetewarez.png" alt=""></span><span><span class="nom">Planète Warez</span><span class="dom">planete-warez.net</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="framalibre.png" alt=""></span><span><span class="nom">Framalibre</span><span class="dom">framalibre.org</span></span></div><p class="quoi">Entry</p></div><div class="media"><div class="haut"><span class="rond"><img src="wikimonde.png" alt=""></span><span><span class="nom">Wikimonde</span><span class="dom">wikimonde.com</span></span></div><p class="quoi">Entry</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="developpez.png" alt=""></span><span><span class="nom">Developpez.com</span><span class="dom">developpez.com</span></span></div><p class="quoi">2019, upd. 2024</p></div><div class="media"><div class="haut"><span class="rond"><img src="planetewarez.png" alt=""></span><span><span class="nom">Planète Warez</span><span class="dom">planete-warez.net</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="framalibre.png" alt=""></span><span><span class="nom">Framalibre</span><span class="dom">framalibre.org</span></span></div><p class="quoi">Entry</p></div><div class="media"><div class="haut"><span class="rond"><img src="wikimonde.png" alt=""></span><span><span class="nom">Wikimonde</span><span class="dom">wikimonde.com</span></span></div><p class="quoi">Entry</p></div></div></div><div class="colonne"><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="linuxfr.png" alt=""></span><span><span class="nom">LinuxFr.org</span><span class="dom">linuxfr.org</span></span></div><p class="quoi">Dark Moon X</p></div><div class="media"><div class="haut"><span class="rond"><img src="letsdatascience.png" alt=""></span><span><span class="nom">Let's Data Science</span><span class="dom">letsdatascience.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="mybroadband.png" alt=""></span><span><span class="nom">MyBroadband</span><span class="dom">mybroadband.co.za</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="songe.png" alt=""></span><span><span class="nom">Songe Studio</span><span class="dom">songe-studio.com</span></span></div><p class="quoi">Case study</p></div></div><div class="train"><div class="media"><div class="haut"><span class="rond"><img src="linuxfr.png" alt=""></span><span><span class="nom">LinuxFr.org</span><span class="dom">linuxfr.org</span></span></div><p class="quoi">Dark Moon X</p></div><div class="media"><div class="haut"><span class="rond"><img src="letsdatascience.png" alt=""></span><span><span class="nom">Let's Data Science</span><span class="dom">letsdatascience.com</span></span></div><p class="quoi">2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="mybroadband.png" alt=""></span><span><span class="nom">MyBroadband</span><span class="dom">mybroadband.co.za</span></span></div><p class="quoi">July 2026</p></div><div class="media"><div class="haut"><span class="rond"><img src="songe.png" alt=""></span><span><span class="nom">Songe Studio</span><span class="dom">songe-studio.com</span></span></div><p class="quoi">Case study</p></div></div></div></div>
+  </div>
+  <div id="voile-texte"></div>
+</div>
+<div class="pied"><span class="marque"><img class="lg-dm" src="../logo-horizontal-alice.svg" alt="Darkmoon"><span class="tiret"></span><img class="lg-asc" src="../asc-it-logomark-blanc.svg" alt="ASC-IT"></span><span>11 / 12</span></div>
+
+<script>
+// ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
+function cinema(el, base) {
+  const mots = el.textContent.split(' ');
+  el.textContent = '';
+  const spans = mots.map((m, i) => {
+    const e = document.createElement('span');
+    e.className = 'mot';
+    e.textContent = m;
+    e.style.transitionDuration = (1.8 + Math.cos(i * 0.3) * 0.24) + 's';
+    e.style.transitionDelay = (i * 0.062) + 's';
+    e.style.opacity = 0;
+    e.style.filter = 'blur(' + (10 + (i % 6)) + 'px) brightness(.6)';
+    e.style.transform = 'translateY(14px) scale(' +
+      (0.92 + Math.sin(i * 0.2) * 0.04) + ') rotateX(-12deg)';
+    el.appendChild(e);
+    return e;
+  });
+  setTimeout(() => spans.forEach(e => {
+    e.style.opacity = 1;
+    e.style.filter = 'blur(0px) brightness(1)';
+    e.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+  }), base);
+  setTimeout(() => spans.forEach(e => e.classList.add('pose')),
+             base + 2200 + mots.length * 62);
+}
+
+// ── Ouverture ────────────────────────────────────────────────────────────
+const rideau = document.createElement('div');
+rideau.id = 'rideau';
+document.body.appendChild(rideau);
+const decor = document.getElementById('ether');
+const mur = document.getElementById('mur');
+const textes = [...document.querySelectorAll('#gauche p')];
+const COURBE = 'cubic-bezier(.6,.04,.22,1)';
+let animations = [], derniereOuverture = 0;
+
+function ouvrir() {
+  derniereOuverture = performance.now();
+  animations.forEach(a => a.cancel());
+  animations = [
+    rideau.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: 2180, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2480, easing: COURBE, fill: 'backwards' })] : []),
+    mur.animate(
+      [{ opacity: 0, filter: 'blur(18px)' },
+       { opacity: 1, filter: 'blur(0px)' }],
+      { duration: 2180, delay: 190, easing: COURBE, fill: 'backwards' })
+  ];
+  textes.forEach((e, i) => cinema(e, 150 + i * 260));
+}
+ouvrir();
+
+let precedent = performance.now(), reprise = false, rapides = 0;
+(function veille() {
+  const t = performance.now(), dt = t - precedent;
+  precedent = t;
+  if (dt > 400) { reprise = true; rapides = 0; }
+  else if (reprise) {
+    rapides = dt < 40 ? rapides + 1 : 0;
+    if (rapides >= 6) {
+      reprise = false; rapides = 0;
+      if (t - derniereOuverture > 2500) ouvrir();
+    }
+  }
+  requestAnimationFrame(veille);
+})();
+</script>
+
+<div class="langue">
+  <a  href="../presse/" data-l="fr">FR</a><span class="filet"></span><a
+     class="on" href="../presse-en/" data-l="en">EN</a>
+</div>
+<script>
+document.querySelectorAll('.langue a').forEach(function (a) {
+  a.addEventListener('click', function () {
+    try { localStorage.setItem('darkmoon-deck-langue', a.dataset.l); } catch (e) {}
+  });
+});
+</script>
+</body></html>
