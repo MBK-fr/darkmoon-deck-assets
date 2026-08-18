@@ -7,10 +7,10 @@
             -webkit-font-smoothing:antialiased}
   #scene{position:absolute;inset:0;z-index:2;padding:56px 104px 64px;
          display:flex;flex-direction:column;align-items:center}
-  .intro{margin:0;font-size:1.42rem;font-weight:300;line-height:1.5;
+  .intro{margin:0;font-size:1.32rem;font-weight:300;line-height:1.55;
          text-align:center;color:rgb(255 255 255 / .96);max-width:60ch;
          text-shadow:0 0 12px rgba(0,0,0,.9), 0 6px 30px rgba(0,0,0,.8)}
-  .diff{margin:14px 0 0;font-size:.85rem;font-weight:300;line-height:1.6;
+  .diff{margin:16px 0 0;font-size:.92rem;font-weight:300;line-height:1.6;
         text-align:center;color:rgb(255 255 255 / .5);max-width:78ch}
   .duo{margin:auto 0;display:grid;grid-template-columns:1fr 1fr;gap:56px;
        width:100%}
@@ -18,15 +18,20 @@
         justify-content:space-between;font-size:11px;letter-spacing:.16em;
         text-transform:uppercase;color:rgb(255 255 255 / .38);z-index:4}
 
-  /* Le châssis vient de la slide 3, le contenu des deux composants. */
-  .bg-card{display:flex;flex-direction:column;padding:24px 26px 20px;
-           border-radius:var(--radius)}
-  .titre{margin:0;display:flex;align-items:center;gap:10px;font-size:1.06rem;
-         font-weight:600;color:#fff}
-  .pastille{display:inline-flex;align-items:center;gap:5px;border-radius:9999px;
-    padding:2px 10px;font-size:.72rem;font-weight:600;
-    color:#a8c2ff;background:rgb(107 142 230 / .12)}
-  .periode{margin:5px 0 0;font-size:.82rem;font-weight:300;
+  /* Les cartes : une surface propre, sans grain ni vague. Un verre sombre,
+     un filet à 8 %, une ombre douce, et c'est tout. */
+  .carte{display:flex;flex-direction:column;padding:26px 28px 22px;
+         border-radius:18px;background:rgb(10 12 16 / .68);
+         -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+         box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08),
+                    0 40px 90px rgb(0 0 0 / .55)}
+  /* Une seule police, deux corps : celui du texte et celui des repères. */
+  .titre{margin:0;display:flex;align-items:baseline;gap:12px;
+         font-size:1.32rem;font-weight:300;letter-spacing:.002em;color:#fff}
+  .pastille{display:inline-flex;align-items:center;gap:6px;border-radius:9999px;
+    padding:3px 11px;font-size:.8rem;font-weight:300;
+    color:#dceaf4;background:rgb(220 234 244 / .10)}
+  .periode{margin:8px 0 0;font-size:.92rem;font-weight:300;
            color:rgb(255 255 255 / .5)}
   .toile{margin-top:auto;padding-top:18px}
   .toile svg{display:block;max-width:100%;height:auto}
@@ -35,261 +40,17 @@
   .fnl-boite{position:relative;margin-top:auto;padding-top:14px}
   .etg{position:absolute;top:14px;bottom:0;display:flex;flex-direction:column;
        align-items:center;justify-content:space-between;pointer-events:none}
-  .etg .v{font-size:.82rem;font-weight:600;color:#fff}
-  .etg .pct{border-radius:9999px;background:#fff;color:#0a0b0d;
-            padding:2px 9px;font-size:.66rem;font-weight:700;
-            box-shadow:0 1px 2px rgb(0 0 0 / .3)}
-  .etg .l{font-size:.68rem;font-weight:500;color:rgb(255 255 255 / .55)}
-</style><style>
-  :root{ --radius:14px; --border:0 0% 100%; --color-border:rgb(255 255 255 / .25); }
-  /* Les gris du composant features-8 sont regles pour une carte quasi noire ;
-     sur ce fond ils virent au trait sombre. On garde le rapport voulu (un peu
-     plus clair que la carte) en les passant en blanc a faible alpha. */
-  .text-muted,.dark\:text-muted{color:rgb(255 255 255 / .20)}
-  .text-muted-foreground,.dark\:text-muted-foreground{color:rgb(255 255 255 / .55)}
-  .text-zinc-400{color:rgb(255 255 255 / .38)}
-  .dark\:text-zinc-600{color:rgb(255 255 255 / .30)}
-  .text-primary\/15{color:rgb(255 255 255 / .15)}
-  .dark\:text-primary\/35{color:rgb(255 255 255 / .35)}
-  .text-zinc-800{color:#fff}
-  *,*::before,*::after{border-color:rgb(255 255 255 / .25)}
-  .ring-background{--tw-ring-color:rgb(255 255 255 / .22)}
-
-  /* `gap-4` n'est pas dans le port CSS : le composant ne s'en sert pas, mais
-     le nettoyage de la carte 1 en a besoin pour separer le picto du nombre. */
-  .gap-4{gap:1rem}
-  /* `shadow-sm` du composant est neutralise : sur fond noir cette ombre
-     noire ne se voit pas, autant ne rien peindre */
-  /* filet blanc de 2 px, et une ombre noire large et franche pour detacher
-     les cartes du fond etheral, qui est clair par endroits */
-  /* ── Filet des cartes : RETIRE pour essai le 10/08/2026 ────────────────
-     Etat precedent, a remettre tel quel si besoin :
-         border: 2px solid rgb(220 234 244 / .8);
-     soit l'Alice de la charte (#DCEAF4, celle des pictogrammes) a 80 %,
-     retenue apres le blanc pur juge trop eclatant. Luminance mesuree du
-     trait : 167/255 contre 255 pour le blanc pur.
-     L'ombre noire ci-dessous, elle, est conservee. */
-  /* ── Habillage de bord : equerres + balayage ──────────────────────────
-     Pas de cadre ferme. Quatre equerres d'angle, dans la grammaire carree de
-     la charte — c'est la meme forme que les pictogrammes — et un filet d'un
-     pixel sur lequel une lumiere fait le tour de la carte en sept secondes.
-     La carte se detache par ses angles, pas par un trait continu. */
-  /* le composant pose la classe `border` sur ses cartes : sans ce zero,
-     il reste un trait d'un pixel sous la lueur, exactement celui que
-     Mehdi voyait encore */
-  /* blanc pur demande, et angles tres arrondis. `--radius` pilote a la fois
-     la carte (`rounded-lg`) et le cadre du fond anime : les deux restent
-     alignes, sinon le canevas deborderait en carre derriere les coins. */
-  /* ── Le filet est dessine par un pseudo-element, pas par `border` ──────
-     Les cartes sont soeurs dans la grille et leurs ombres noires debordent
-     largement (90 px de flou, 40 de propagation, pour 18 px de gouttiere).
-     Chaque carte peignait donc son ombre PAR-DESSUS le filet de ses voisines
-     de gauche et du dessus : le blanc tombait de 255 a 148 vers le bas et la
-     droite, ce qui se lisait comme un degrade de bordure.
-     Pose en pseudo-element avec un `z-index` positif, le filet passe apres
-     toutes les ombres des soeurs et reste uniforme. */
-  /* ── Le relief est calcule, plus dessine ───────────────────────────────
-     Une `box-shadow` ne sait pas ce qu'est une surface : elle etale une
-     couleur, et quel que soit le soin mis aux valeurs, ca reste une tache.
-     Un vrai biseau se calcule : on part d'une carte de hauteur, on en deduit
-     la normale en chaque point, et on eclaire.
-     C'est exactement ce que font `feDiffuseLighting` et `feSpecularLighting`.
-     La carte de hauteur est l'alpha de la forme, floute : le flou cree la
-     PENTE au bord, plate au centre. Le speculaire de Phong s'allume la ou la
-     normale pointe vers la lumiere, et s'eteint physiquement ailleurs, avec
-     un exposant qui regle la durete du materiau. C'est ce que l'oeil sait
-     lire comme du volume, et c'est ce qu'aucun degrade conique ne donne. */
-  .bg-card{border-width:0;background:#000;position:relative;
-           box-shadow:0 130px 260px rgb(0 0 0 / 1),
-                      0 80px 170px rgb(0 0 0 / 1),
-                      0 44px 100px rgb(0 0 0 / 1),
-                      0 20px 52px rgb(0 0 0 / .98),
-                      0 6px 20px rgb(0 0 0 / .95),
-                      0 0 60px rgb(0 0 0 / .9);}
-  /* ── La lisiere : plus de trait, un flou bleu ─────────────────────────
-     Aucune bordure nette. Le bord est une lueur floue, prise dans les deux
-     bleus deja presents : celui du decor, releve a rgb(40,67,95), teinte
-     211 degres, et celui de la texture des cartes, qui tourne autour de
-     196 a 213. Elle deborde legerement dehors et rentre a l'interieur, sans
-     jamais faire de ligne.
-     Le degrade a 135 degres la garde plus dense au coin haut gauche, du cote
-     de la lumiere de la slide. */
-  .bg-card::after{content:"";position:absolute;inset:0;z-index:6;
-    pointer-events:none;border-radius:inherit;
-    /* Resserree et assombrie : le flou de 22 et 44 px debordait sur toute
-       la carte et remontait son niveau, d'ou l'impression de tout flou et
-       trop clair. On garde le principe, une lueur sans trait, mais courte :
-       6 px dedans, 9 px dehors, et des opacites divisees par deux. */
-    box-shadow:inset 0 0 6px 1px rgb(78 118 178 / .13),
-               inset 0 0 2px 0 rgb(120 158 210 / .10),
-               0 0 9px 0 rgb(58 92 152 / .12),
-               0 0 18px 1px rgb(40 66 116 / .07);
-    -webkit-mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .55) 45%,rgb(0 0 0 / .34) 68%,
-      rgb(0 0 0 / .2) 88%,rgb(0 0 0 / .14) 100%);
-    mask-image:linear-gradient(135deg,rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / .8) 22%,rgb(0 0 0 / .55) 45%,rgb(0 0 0 / .34) 68%,
-      rgb(0 0 0 / .2) 88%,rgb(0 0 0 / .14) 100%)}
-  /* ── Le bord en verre ─────────────────────────────────────────────────
-     Aucune ombre blanche : la clarte ne vient pas d'une couleur posee, elle
-     vient de la MATIERE deja presente. Une bande de verre court le long du
-     bord et refracte ce qu'il y a dessous, c'est-a-dire le motif anime de la
-     carte : `backdrop-filter` le floute, le remonte en clarte et le sature
-     un peu. Le bord prend donc les teintes du motif, sombres par nature, et
-     change avec lui. C'est le meme principe que le decor de la slide, qui
-     fabrique ses vagues en deformant une image sombre au lieu de peindre
-     des degrades clairs.
-     Le masque est fait de deux degrades doux, un vertical et un horizontal,
-     additionnes : ca decoupe un cadre sans passer par `mask-composite`, qui
-     crenele les angles arrondis. */
-  .verre{position:absolute;inset:0;z-index:5;pointer-events:none;
-    border-radius:inherit;
-    -webkit-backdrop-filter:blur(9px) brightness(1.75) saturate(1.35);
-    backdrop-filter:blur(9px) brightness(1.75) saturate(1.35);
-    -webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
-        transparent 91%,#000 100%),
-      linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%);
-    mask-image:linear-gradient(to bottom,#000 0,transparent 9%,
-        transparent 91%,#000 100%),
-      linear-gradient(to right,#000 0,transparent 7%,transparent 93%,#000 100%)}
-
-  /* Une seconde passe en diffus a ete essayee pour assombrir la paroi qui
-     tourne le dos a la lumiere. Mesure faite, elle ne changeait rien : de ce
-     cote-la le creux est deja noir, et multiplier du noir par 0,5 donne du
-     noir. Elle est retiree plutot que gardee pour la forme. */
-  /* l'occlusion au PIED de la paroi : un halo sombre qui deborde du sol vers
-     la paroi, donc la paroi s'assombrit en descendant, comme une vraie pente.
-     Sans ce degrade en travers, la paroi reste un aplat et ne tourne pas. */
-  .bg-card::before{content:"";position:absolute;inset:0;z-index:0;
-    border-radius:var(--radius);pointer-events:none;
-    box-shadow:0 0 3px 1px rgb(0 0 0 / .95), 0 0 8px rgb(0 0 0 / .6)}
-  /* la gouttiere du composant fait 12 px : on l'ouvre un peu */
-  .grid.gap-3{gap:18px}
-  .bg-card>*:not(.fond){position:relative;z-index:1}
-  /* Le lisere est porte par la CARTE, pas par son fond, et avec un z-index
-     positif : `.fond` est un contexte d'empilement, un lisere pose dedans
-     serait repeint par l'ombre de la carte voisine, qui passe apres dans
-     l'ordre du document. C'est ce qui l'assombrissait par le bas et la droite.
-     Vraie bordure arrondie, lissee par le navigateur, eteinte par un masque
-     en degrade : l'anneau decoupe au `mask-composite` crenelait les coins. */
-  /* ESSAI : plus aucun trait, l'arete est faite d'ombre des deux cotes.
-     A l'interieur, des ombres `inset` qui creusent le bord ; a l'exterieur,
-     l'ombre portee de la carte. Le bord se lit comme un creux, pas comme un
-     cadre. L'etat precedent, lisere blanc masque en degrade, est en memoire. */
-  /* ── Le cadre, en objet et non en trait ────────────────────────────────
-     Un `ridge` CSS ne connait que deux nuances, posees a plat : ca donne un
-     biseau de boite de dialogue, pas une matiere. Le cadre est donc monte en
-     couches, avec UNE source de lumiere en haut a gauche, comme le lavis qui
-     eclaire deja l'interieur de la carte :
-       1. l'arete du dessus accroche la lumiere, franche et fine ;
-       2. les flancs la recoivent de biais, donc plus faible a droite ;
-       3. la sous-face ne recoit qu'un rebond, plus doux et plus large ;
-       4. une couture sombre separe le cadre du verre ;
-       5. le verre est EN RETRAIT : son ombre portee tombe a l'interieur,
-          plus dense sous l'arete haute que partout ailleurs.
-     Les `inset` suivent le rayon avec anticrenelage, contrairement a un
-     anneau decoupe au `mask-composite` qui sortait en escalier dans les
-     angles. Le degrade de l'etat de reference reste en masque : la matiere
-     est franche au coin haut gauche et s'eteint le long du bord. */
-  /* ── Les ondes, transposees du groupe de gauche du pen flo__/vYLObxK ───
-     Ce n'est pas le meme dessin que la carte creusee : le pen y empile trois
-     formes concentriques qui portent CHACUNE la meme paire d'ombres, une
-     fois a l'interieur et une fois a l'exterieur. Releve dans sa feuille :
-         .shadow--wave        { rgb(255,255,255)        4px  4px 6px inset,
-                                rgba(174,174,192,.2)  -4px -4px 6px inset }
-         .shadow--wave::before{ rgb(255,255,255)        4px  4px 6px,
-                                rgba(174,174,192,.2)  -4px -4px 6px }
-     La clarte est en +4 +4, donc en HAUT A GAUCHE, et l'ombre en bas a
-     droite. C'est l'inverse de la carte creusee essayee avant, et c'est ce
-     sens-la qui va avec la slide : la lumiere y vient du haut gauche, comme
-     le lavis des cartes et comme le decor, plus clair de ce cote. Un reflet
-     pose en bas a droite se lisait comme un eclairage qui n'existe pas.
-     Le blanc pur est abandonne : sur ce fond noir il claquait. La clarte est
-     une lumiere BLEUE ET BASSE, prise dans l'animation des cartes, et elle
-     faiblit d'une onde a l'autre en s'enfoncant, comme une ride qui meurt.
-     Les formes restent rectangulaires et gardent le rayon de la carte : les
-     bords se superposent au lieu de se concentrer en cercles. */
-
-  /* Rien ici : la carte « Made by Google » n'a PAS de bordure.
-     Releve dans le CSS calcule de store.google.com, element .K8B11d.qtFyJc :
-         border-radius: 28px
-         border: 0px none
-         background-color: rgb(23, 26, 17)
-         box-shadow: none
-     Ce que je prenais pour un filet dans la capture n'etait que la lisiere
-     entre son fond, un vert tres sombre, et le noir de la page. La carte se
-     detache par un aplat un peu plus clair que son fond, rien d'autre. */
-
-  /* Filet simple, sans rien autour : les reperes d'angle, le semis de
-     points, la lisiere neon, la bordure floue et les equerres sont tous
-     retires. Voir la memoire du projet pour leurs valeurs. */
-  /* Le fond de carte doit etre OPAQUE : sans lui, le groupe est
-     transparent et le grain en `overlay` n'a rien contre quoi se melanger,
-     il se pose alors en gris plein. Mesure du defaut : la carte remontait
-     de 11 a 41 sur 255. */
-  .fond{position:absolute;inset:0;z-index:0;border-radius:var(--radius);
-        overflow:hidden;background:#000}
-
-  .verre{display:none}
-  /* La vague est jolie mais elle monte trop haut sous le texte : on baisse
-     son niveau general, et un voile l'eteint la ou la typographie se pose,
-     en bas des cartes. Les hautes lumieres survivent en haut, ou il n'y a
-     rien a lire, donc le mouvement reste visible. */
-  .fond canvas{display:block;width:100%;height:100%;opacity:.62}
-  /* ── Le grain, version argentique ─────────────────────────────────────
-     Ce qui rendait les essais precedents bas de gamme : une texture de 88 px
-     etiree, donc un motif repete et flou, posee en `screen`, mode qui ajoute
-     de la lumiere partout et delave les noirs.
-     Ici le grain est fabrique a la resolution de l'ecran, un point de bruit
-     par pixel physique, jamais agrandi, et pose en `overlay`.
-     Le choix du mode a ete tranche par la mesure. En `screen`, le grain
-     ajoute de la lumiere partout et delave les noirs. En `soft-light`, la
-     formule prend une racine carree sur les fonds sombres : mesure, elle
-     remontait la carte de 21 niveaux, puis de 9 apres compensation, et le
-     noir profond de 4. En `overlay`, le fond sombre est simplement multiplie
-     par le bruit : le grain module les demi-teintes et DISPARAIT dans les
-     noirs, exactement comme l'argentique, ou l'ombre est lisse.
-     Il ne couvre que la surface des cartes, sous le texte, pas le decor,
-     qui a deja son propre bruit. */
-  .fond .grain-fin{position:absolute;inset:0;z-index:2;pointer-events:none;
-    mix-blend-mode:overlay;opacity:.62}
-  .fond::after{content:"";position:absolute;inset:0;z-index:1;
-    pointer-events:none;border-radius:inherit;
-    background:linear-gradient(to bottom,rgb(0 0 0 / .10) 0%,
-      rgb(0 0 0 / .30) 42%,rgb(0 0 0 / .55) 76%,rgb(0 0 0 / .66) 100%)}
-  /* La lumiere du bord fait partie de l'IMAGE de la carte Google, elle n'est
-     pas une bordure CSS : sur la page, l'element porte `border: 0px none` et
-     ses visuels sont des <img> en `border-radius: 28px`. Le lisere clair est
-     donc peint dans l'artwork.
-     On fait pareil : la lumiere est posee dans le fond de la carte, pas sur
-     son contour. Un lisere d'un pixel au plus pres du bord, plus une nappe
-     diagonale qui l'eteint, aux valeurs relevees dans la capture :
-     74/255 au coin haut gauche, 43 au quart, 15 a la moitie, 0 ensuite. */
-  /* la nappe : l'interieur de la carte s'eclaire au coin haut gauche */
-  /* la lumiere interieure, peinte dans le fond de la carte */
-  .fond::before{content:"";position:absolute;inset:0;pointer-events:none;
-    border-radius:inherit;z-index:2;
-    background:linear-gradient(135deg,rgb(255 255 255 / .085) 0%,
-      rgb(255 255 255 / .02) 32%,rgb(255 255 255 / 0) 58%)}
-  /* le lisere : un anneau d'un pixel dont la couleur vient du meme degre, il
-     s'eteint donc le long du bord comme dans l'artwork de la reference.
-     Un `box-shadow: inset` aurait donne un lisere d'intensite constante,
-     c'etait la l'erreur : mesure a 70 sur toute la longueur au lieu de
-     74 puis 43 puis 15 puis 0. */
-
-
-  /* ── Ouverture cinematique : la slide sort du noir ─────────────────────
-     Rien n'est fait en transitions CSS. L'etat AU REPOS est l'etat final
-     (carte visible, aucun filtre, rideau invisible) ; l'ouverture est jouee
-     par l'API Web Animations en `fill: backwards`, qui applique la premiere
-     image pendant le delai puis rend l'element a son etat naturel.
-     Deux problemes disparaissent ensemble : plus de calque composite
-     residuel qui ramollit le texte, et le rejeu est immediat, alors qu'en
-     transitions retirer la classe relancait l'animation A REBOURS. */
+  .etg .v{font-size:.92rem;font-weight:300;color:#fff}
+  .etg .pct{border-radius:9999px;background:rgb(220 234 244 / .92);
+            color:#0a0b0d;padding:2px 10px;font-size:.72rem;font-weight:500}
+  .etg .l{font-size:.78rem;font-weight:300;color:rgb(255 255 255 / .55)}
   #rideau{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;
           opacity:0}
+  /* l'arrivée : les étages s'ouvrent l'un après l'autre, les étiquettes
+     suivent, exactement au tempo du composant (0,12 s de décalage) */
+  .fnl g{transform-origin:left center}
+  .duo .carte{will-change:transform,opacity}
 
-  
   #ether{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
   #ether .fluide{position:absolute;inset:-100px;
                  filter:url(#ether-filtre) blur(4px)}
@@ -310,10 +71,6 @@
   #ether .grain{position:absolute;inset:0;
                 background-image:url('../ether/noise.png');
                 background-size:240px;background-repeat:repeat;opacity:.5}
-
-  #scene{z-index:1}
-  /* Pas de voile sur ce fond-la : mesure faite, le texte blanc y tient a
-     12,6:1 sans aide. La carte montre le composant, rien d'autre. */
 </style></head><body>
 <div id="ether">
   <div class="fluide">
@@ -340,131 +97,33 @@
 <div id="scene">
   <p class="intro">Un marché à +15 %/an, et une couverture qui va bien au-delà du web.</p>
   <p class="diff">Ouverture, open source. Souveraineté IA, commercial ou EU ou 100 % locale. Données, restent anonymisées, proxy si IA externe. Couverture, web + AD + K8s + réseau.</p>
-  <div class="duo"><div class="bg-card"><p class="titre">Le marché du pentest<span class="pastille"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>+15 %/an</span></p><p class="periode">2024 &ndash; 2030, en milliards de dollars, de ≈ 2 Md$ → 4,4-5,5 Md$</p><div class="toile"><svg viewBox="0 0 420 208" width="420" height="208"><defs><filter id="lueur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="10" result="flou"/><feComposite in="SourceGraphic" in2="flou" operator="over"/></filter></defs><line x1="14" y1="180.0" x2="398" y2="180.0" stroke="rgb(255 255 255 / .08)"/><line x1="14" y1="124.0" x2="398" y2="124.0" stroke="rgb(255 255 255 / .08)"/><line x1="14" y1="68.0" x2="398" y2="68.0" stroke="rgb(255 255 255 / .08)"/><line x1="14" y1="12.0" x2="398" y2="12.0" stroke="rgb(255 255 255 / .08)"/><g filter="url(#lueur)"><path d="M14.00,124.00 C46.00,124.00 46.00,113.36 78.00,113.36 C110.00,113.36 110.00,100.76 142.00,100.76 C174.00,100.76 174.00,85.92 206.00,85.92 C238.00,85.92 238.00,68.00 270.00,68.00 C302.00,68.00 302.00,47.00 334.00,47.00 C366.00,47.00 366.00,26.00 398.00,26.00" fill="none" stroke="#6b8ee6" stroke-width="2.4" stroke-linecap="round"/><path d="M14.00,124.00 C46.00,124.00 46.00,116.72 78.00,116.72 C110.00,116.72 110.00,108.60 142.00,108.60 C174.00,108.60 174.00,99.36 206.00,99.36 C238.00,99.36 238.00,88.72 270.00,88.72 C302.00,88.72 302.00,72.20 334.00,72.20 C366.00,72.20 366.00,56.80 398.00,56.80" fill="none" stroke="#41609f" stroke-width="2.4" stroke-linecap="round"/></g><text x="14.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .52)">2024</text><text x="142.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .52)">2026</text><text x="270.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .52)">2028</text><text x="398.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .52)">2030</text></svg></div></div><div class="bg-card"><p class="titre">La couverture, plan par plan<span class="pastille">50 sous-agents</span></p><p class="periode">Les cinq plans les plus fournis, sur les 50 fiches de conf/agents</p><div class="fnl-boite"><svg class="fnl" viewBox="0 0 420 186" width="420" height="186"><defs><linearGradient id="fg0" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#9fbcff"/><stop offset="100%" stop-color="#8aa9f5"/></linearGradient><linearGradient id="fg1" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#8aa9f5"/><stop offset="100%" stop-color="#6b8ee6"/></linearGradient><linearGradient id="fg2" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#6b8ee6"/><stop offset="100%" stop-color="#5474c4"/></linearGradient><linearGradient id="fg3" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#5474c4"/><stop offset="100%" stop-color="#41609f"/></linearGradient><linearGradient id="fg4" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#41609f"/><stop offset="100%" stop-color="#41609f"/></linearGradient></defs><rect x="0.0" y="0" width="80.8" height="186" fill="rgb(255 255 255 / .022)"/><rect x="169.6" y="0" width="80.8" height="186" fill="rgb(255 255 255 / .022)"/><rect x="339.2" y="0" width="80.8" height="186" fill="rgb(255 255 255 / .022)"/><g transform="translate(0.0,0)"><path d="M 0 11.16 C 44.44 11.16, 36.36 38.44, 80.80 38.44 L 80.80 147.56 C 36.36 147.56, 44.44 174.84, 0 174.84 Z" fill="#9fbcff" opacity="0.180"/><path d="M 0 20.71 C 44.44 20.71, 36.36 44.81, 80.80 44.81 L 80.80 141.19 C 36.36 141.19, 44.44 165.29, 0 165.29 Z" fill="#9fbcff" opacity="0.505"/><path d="M 0 30.26 C 44.44 30.26, 36.36 51.17, 80.80 51.17 L 80.80 134.83 C 36.36 134.83, 44.44 155.74, 0 155.74 Z" fill="url(#fg0)" opacity="0.830"/></g><g transform="translate(84.8,0)"><path d="M 0 38.44 C 44.44 38.44, 36.36 38.44, 80.80 38.44 L 80.80 147.56 C 36.36 147.56, 44.44 147.56, 0 147.56 Z" fill="#8aa9f5" opacity="0.180"/><path d="M 0 44.81 C 44.44 44.81, 36.36 44.81, 80.80 44.81 L 80.80 141.19 C 36.36 141.19, 44.44 141.19, 0 141.19 Z" fill="#8aa9f5" opacity="0.505"/><path d="M 0 51.17 C 44.44 51.17, 36.36 51.17, 80.80 51.17 L 80.80 134.83 C 36.36 134.83, 44.44 134.83, 0 134.83 Z" fill="url(#fg1)" opacity="0.830"/></g><g transform="translate(169.6,0)"><path d="M 0 38.44 C 44.44 38.44, 36.36 38.44, 80.80 38.44 L 80.80 147.56 C 36.36 147.56, 44.44 147.56, 0 147.56 Z" fill="#6b8ee6" opacity="0.180"/><path d="M 0 44.81 C 44.44 44.81, 36.36 44.81, 80.80 44.81 L 80.80 141.19 C 36.36 141.19, 44.44 141.19, 0 141.19 Z" fill="#6b8ee6" opacity="0.505"/><path d="M 0 51.17 C 44.44 51.17, 36.36 51.17, 80.80 51.17 L 80.80 134.83 C 36.36 134.83, 44.44 134.83, 0 134.83 Z" fill="url(#fg2)" opacity="0.830"/></g><g transform="translate(254.4,0)"><path d="M 0 38.44 C 44.44 38.44, 36.36 47.53, 80.80 47.53 L 80.80 138.47 C 36.36 138.47, 44.44 147.56, 0 147.56 Z" fill="#5474c4" opacity="0.180"/><path d="M 0 44.81 C 44.44 44.81, 36.36 52.84, 80.80 52.84 L 80.80 133.16 C 36.36 133.16, 44.44 141.19, 0 141.19 Z" fill="#5474c4" opacity="0.505"/><path d="M 0 51.17 C 44.44 51.17, 36.36 58.14, 80.80 58.14 L 80.80 127.86 C 36.36 127.86, 44.44 134.83, 0 134.83 Z" fill="url(#fg3)" opacity="0.830"/></g><g transform="translate(339.2,0)"><path d="M 0 47.53 C 44.44 47.53, 36.36 47.53, 80.80 47.53 L 80.80 138.47 C 36.36 138.47, 44.44 138.47, 0 138.47 Z" fill="#41609f" opacity="0.180"/><path d="M 0 52.84 C 44.44 52.84, 36.36 52.84, 80.80 52.84 L 80.80 133.16 C 36.36 133.16, 44.44 133.16, 0 133.16 Z" fill="#41609f" opacity="0.505"/><path d="M 0 58.14 C 44.44 58.14, 36.36 58.14, 80.80 58.14 L 80.80 127.86 C 36.36 127.86, 44.44 127.86, 0 127.86 Z" fill="url(#fg4)" opacity="0.830"/></g><line x1="82.8" y1="0" x2="82.8" y2="186" stroke="rgb(255 255 255 / .08)"/><line x1="167.6" y1="0" x2="167.6" y2="186" stroke="rgb(255 255 255 / .08)"/><line x1="252.4" y1="0" x2="252.4" y2="186" stroke="rgb(255 255 255 / .08)"/><line x1="337.2" y1="0" x2="337.2" y2="186" stroke="rgb(255 255 255 / .08)"/></svg><div class="etg" style="left:0.0px;width:80.8px"><span class="v">9</span><span class="pct">100%</span><span class="l">Stacks web</span></div><div class="etg" style="left:84.8px;width:80.8px"><span class="v">6</span><span class="pct">67%</span><span class="l">Web et CMS</span></div><div class="etg" style="left:169.6px;width:80.8px"><span class="v">6</span><span class="pct">67%</span><span class="l">Cloud et socle</span></div><div class="etg" style="left:254.4px;width:80.8px"><span class="v">6</span><span class="pct">67%</span><span class="l">CI/CD et IaC</span></div><div class="etg" style="left:339.2px;width:80.8px"><span class="v">5</span><span class="pct">56%</span><span class="l">Identité</span></div></div></div></div>
+  <div class="duo"><div class="carte"><p class="titre">Le marché du pentest<span class="pastille"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>+15 %/an</span></p><p class="periode">De ≈ 2 Md$ à 4,4-5,5 Md$, 2024 à 2030</p><div class="toile"><svg viewBox="0 0 420 208" width="420" height="208"><defs><filter id="lueur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="10" result="flou"/><feComposite in="SourceGraphic" in2="flou" operator="over"/></filter></defs><line x1="14" y1="180.0" x2="398" y2="180.0" stroke="rgb(255 255 255 / .07)"/><line x1="14" y1="124.0" x2="398" y2="124.0" stroke="rgb(255 255 255 / .07)"/><line x1="14" y1="68.0" x2="398" y2="68.0" stroke="rgb(255 255 255 / .07)"/><line x1="14" y1="12.0" x2="398" y2="12.0" stroke="rgb(255 255 255 / .07)"/><g filter="url(#lueur)"><path class="trace" d="M14.00,124.00 C46.00,124.00 46.00,113.36 78.00,113.36 C110.00,113.36 110.00,100.76 142.00,100.76 C174.00,100.76 174.00,85.92 206.00,85.92 C238.00,85.92 238.00,68.00 270.00,68.00 C302.00,68.00 302.00,47.00 334.00,47.00 C366.00,47.00 366.00,26.00 398.00,26.00" fill="none" stroke="#cfe1f2" stroke-width="2.4" stroke-linecap="round"/><path class="trace" d="M14.00,124.00 C46.00,124.00 46.00,116.72 78.00,116.72 C110.00,116.72 110.00,108.60 142.00,108.60 C174.00,108.60 174.00,99.36 206.00,99.36 C238.00,99.36 238.00,88.72 270.00,88.72 C302.00,88.72 302.00,72.20 334.00,72.20 C366.00,72.20 366.00,56.80 398.00,56.80" fill="none" stroke="#7691d4" stroke-width="2.4" stroke-linecap="round"/></g><text x="14.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .5)">2024</text><text x="142.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .5)">2026</text><text x="270.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .5)">2028</text><text x="398.0" y="202" font-size="11" text-anchor="middle" fill="rgb(255 255 255 / .5)">2030</text></svg></div></div><div class="carte"><p class="titre">La couverture, plan par plan<span class="pastille">50 sous-agents</span></p><p class="periode">Les cinq plans les plus fournis</p><div class="fnl-boite"><svg class="fnl" viewBox="0 0 420 186" width="420" height="186"><defs><linearGradient id="fg0" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#c9dcef"/><stop offset="100%" stop-color="#a9c2e6"/></linearGradient><linearGradient id="fg1" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#a9c2e6"/><stop offset="100%" stop-color="#8aa6dc"/></linearGradient><linearGradient id="fg2" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#8aa6dc"/><stop offset="100%" stop-color="#6d8ad0"/></linearGradient><linearGradient id="fg3" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#6d8ad0"/><stop offset="100%" stop-color="#5470c6"/></linearGradient><linearGradient id="fg4" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#5470c6"/><stop offset="100%" stop-color="#5470c6"/></linearGradient></defs><rect x="0.0" y="0" width="80.8" height="186" fill="rgb(255 255 255 / .022)"/><rect x="169.6" y="0" width="80.8" height="186" fill="rgb(255 255 255 / .022)"/><rect x="339.2" y="0" width="80.8" height="186" fill="rgb(255 255 255 / .022)"/><g transform="translate(0.0,0)"><path d="M 0 11.16 C 44.44 11.16, 36.36 38.44, 80.80 38.44 L 80.80 147.56 C 36.36 147.56, 44.44 174.84, 0 174.84 Z" fill="#c9dcef" opacity="0.180"/><path d="M 0 20.71 C 44.44 20.71, 36.36 44.81, 80.80 44.81 L 80.80 141.19 C 36.36 141.19, 44.44 165.29, 0 165.29 Z" fill="#c9dcef" opacity="0.505"/><path d="M 0 30.26 C 44.44 30.26, 36.36 51.17, 80.80 51.17 L 80.80 134.83 C 36.36 134.83, 44.44 155.74, 0 155.74 Z" fill="url(#fg0)" opacity="0.830"/></g><g transform="translate(84.8,0)"><path d="M 0 38.44 C 44.44 38.44, 36.36 38.44, 80.80 38.44 L 80.80 147.56 C 36.36 147.56, 44.44 147.56, 0 147.56 Z" fill="#a9c2e6" opacity="0.180"/><path d="M 0 44.81 C 44.44 44.81, 36.36 44.81, 80.80 44.81 L 80.80 141.19 C 36.36 141.19, 44.44 141.19, 0 141.19 Z" fill="#a9c2e6" opacity="0.505"/><path d="M 0 51.17 C 44.44 51.17, 36.36 51.17, 80.80 51.17 L 80.80 134.83 C 36.36 134.83, 44.44 134.83, 0 134.83 Z" fill="url(#fg1)" opacity="0.830"/></g><g transform="translate(169.6,0)"><path d="M 0 38.44 C 44.44 38.44, 36.36 38.44, 80.80 38.44 L 80.80 147.56 C 36.36 147.56, 44.44 147.56, 0 147.56 Z" fill="#8aa6dc" opacity="0.180"/><path d="M 0 44.81 C 44.44 44.81, 36.36 44.81, 80.80 44.81 L 80.80 141.19 C 36.36 141.19, 44.44 141.19, 0 141.19 Z" fill="#8aa6dc" opacity="0.505"/><path d="M 0 51.17 C 44.44 51.17, 36.36 51.17, 80.80 51.17 L 80.80 134.83 C 36.36 134.83, 44.44 134.83, 0 134.83 Z" fill="url(#fg2)" opacity="0.830"/></g><g transform="translate(254.4,0)"><path d="M 0 38.44 C 44.44 38.44, 36.36 47.53, 80.80 47.53 L 80.80 138.47 C 36.36 138.47, 44.44 147.56, 0 147.56 Z" fill="#6d8ad0" opacity="0.180"/><path d="M 0 44.81 C 44.44 44.81, 36.36 52.84, 80.80 52.84 L 80.80 133.16 C 36.36 133.16, 44.44 141.19, 0 141.19 Z" fill="#6d8ad0" opacity="0.505"/><path d="M 0 51.17 C 44.44 51.17, 36.36 58.14, 80.80 58.14 L 80.80 127.86 C 36.36 127.86, 44.44 134.83, 0 134.83 Z" fill="url(#fg3)" opacity="0.830"/></g><g transform="translate(339.2,0)"><path d="M 0 47.53 C 44.44 47.53, 36.36 47.53, 80.80 47.53 L 80.80 138.47 C 36.36 138.47, 44.44 138.47, 0 138.47 Z" fill="#5470c6" opacity="0.180"/><path d="M 0 52.84 C 44.44 52.84, 36.36 52.84, 80.80 52.84 L 80.80 133.16 C 36.36 133.16, 44.44 133.16, 0 133.16 Z" fill="#5470c6" opacity="0.505"/><path d="M 0 58.14 C 44.44 58.14, 36.36 58.14, 80.80 58.14 L 80.80 127.86 C 36.36 127.86, 44.44 127.86, 0 127.86 Z" fill="url(#fg4)" opacity="0.830"/></g><line x1="82.8" y1="0" x2="82.8" y2="186" stroke="rgb(255 255 255 / .07)"/><line x1="167.6" y1="0" x2="167.6" y2="186" stroke="rgb(255 255 255 / .07)"/><line x1="252.4" y1="0" x2="252.4" y2="186" stroke="rgb(255 255 255 / .07)"/><line x1="337.2" y1="0" x2="337.2" y2="186" stroke="rgb(255 255 255 / .07)"/></svg><div class="etg" style="left:0.0px;width:80.8px"><span class="v">9</span><span class="pct">100%</span><span class="l">Stacks</span></div><div class="etg" style="left:84.8px;width:80.8px"><span class="v">6</span><span class="pct">67%</span><span class="l">CMS</span></div><div class="etg" style="left:169.6px;width:80.8px"><span class="v">6</span><span class="pct">67%</span><span class="l">Cloud</span></div><div class="etg" style="left:254.4px;width:80.8px"><span class="v">6</span><span class="pct">67%</span><span class="l">CI/CD</span></div><div class="etg" style="left:339.2px;width:80.8px"><span class="v">5</span><span class="pct">56%</span><span class="l">Identité</span></div></div></div></div>
 </div>
 <div class="pied"><span>DARKMOON · ASC-IT</span><span>10 / 14</span></div>
 
 <script>
-// ── tables de 1024 valeurs et acces `& 1023`, comme le composant
-const SIN = new Float32Array(1024), COS = new Float32Array(1024);
-for (let i = 0; i < 1024; i++) {
-  const a = i / 1024 * Math.PI * 2;
-  SIN[i] = Math.sin(a); COS[i] = Math.cos(a);
-}
-const fastSin = x => SIN[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 1023];
-const fastCos = x => COS[Math.floor(x % (Math.PI * 2) / (Math.PI * 2) * 1024) & 1023];
-
-// Cout du fond des cartes, mesure : a pleine resolution il fallait 614 000
-// pixels calcules en JavaScript par image, soit 149 ms, et la slide tombait a
-// 7 images par seconde ; le decor etheral, lui, saccadait faute de temps.
-// Le champ est une nappe tres basse frequence : on le calcule sur une petite
-// grille et on le remonte en lissage bilineaire, ce qui ne se voit pas, et on
-// ne le recalcule que 20 fois par seconde. Environ 25 fois moins de travail.
-const RES = 0.25, IMAGES_PAR_SECONDE = 20;
-const LENTEUR = 0.35;         // ralentissement demande plus tot
-const DEPHASAGE = [0, 6.4, 12.9, 19.7, 26.2];
-const boucles = [];
-
-document.querySelectorAll('.bg-card').forEach((carte, k) => {
-  const fond = document.createElement('div');
-  fond.className = 'fond';
-  const toile = document.createElement('canvas');
-  fond.append(toile);
-  // le grain : une nappe de bruit gaussien, un point par pixel physique
-  const grain = document.createElement('canvas');
-  grain.className = 'grain-fin';
-  fond.append(grain);
-  const semer = () => {
-    const d = Math.min(2, window.devicePixelRatio || 1);
-    const gl = Math.round(fond.clientWidth * d), gh = Math.round(fond.clientHeight * d);
-    if (gl < 2 || gh < 2 || (grain.width === gl && grain.height === gh)) return;
-    grain.width = gl; grain.height = gh;
-    grain.style.width = fond.clientWidth + 'px';
-    grain.style.height = fond.clientHeight + 'px';
-    const c = grain.getContext('2d');
-    const img = c.createImageData(gl, gh), D = img.data;
-    for (let i = 0; i < D.length; i += 4) {
-      // gaussienne par somme de deux tirages, ecart-type 18 autour de 128,
-      // qui est le point neutre de `soft-light`
-      const g = 128 + (Math.random() + Math.random() - 1) * 30;
-      const v = g < 0 ? 0 : g > 255 ? 255 : g;
-      D[i] = D[i + 1] = D[i + 2] = v; D[i + 3] = 255;
-    }
-    c.putImageData(img, 0, 0);
-  };
-  semer();
-  new ResizeObserver(semer).observe(fond);
-  carte.prepend(fond);
-
-
-  const ctx = toile.getContext('2d');
-  let w = 0, h = 0, image = null, data = null;
-
-  // clientWidth, pas getBoundingClientRect : la scene porte un `scale`, le
-  // rect renvoie la taille a l'ecran et le canevas serait trop petit.
-  const dpr = 1;
-  boucles.push(secondes => {
-    const cw = Math.max(2, Math.round(fond.clientWidth * dpr));
-    const ch = Math.max(2, Math.round(fond.clientHeight * dpr));
-    if (toile.width !== cw || toile.height !== ch) {
-      toile.width = cw; toile.height = ch;
-      // RES etait une FRACTION : la carte large, six fois plus grande que
-      // les petites, se retrouvait agrandie d'autant plus, d'ou son flou.
-      // On fixe le facteur d'agrandissement a 2 pour toutes les cartes.
-      w = Math.max(2, Math.round(cw / 2)); h = Math.max(2, Math.round(ch / 2));
-      image = ctx.createImageData(w, h); data = image.data;
-    }
-    const t = secondes + DEPHASAGE[k % DEPHASAGE.length];
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const px = (2 * x - w) / h;
-        const py = (2 * y - h) / h;
-        let a = 0, b = 0;
-        for (let i = 0; i < 4; i++) {
-          a += fastCos(i - b + t * .5 - a * px);
-          b += fastSin(i * py + a);
-        }
-        const s = .3 + .4 * ((fastSin(a) + fastCos(b)) * .5);
-        const base = .1 + .15 * fastCos(px + py + t * .3);
-        const d1 = .2 * fastSin(a * 1.5 + t * .2);
-        const d2 = .15 * fastCos(b * 2 + t * .1);
-        const r = Math.max(0, Math.min(1, base + d2 * .8)) * s;
-        const g = Math.max(0, Math.min(1, base + d1 * .6)) * s;
-        const bl = Math.max(0, Math.min(1, base + d1 * 1.2 + d2 * .4)) * s;
-        const j = (y * w + x) * 4;
-        data[j] = r * 255; data[j + 1] = g * 255; data[j + 2] = bl * 255;
-        data[j + 3] = 255;
-      }
-    }
-    ctx.putImageData(image, 0, 0);
-    // le composant remonte son image en plus-proche-voisin, ce qui donne
-    // des blocs visibles une fois la scene mise a l'echelle : on lisse
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(toile, 0, 0, w, h, 0, 0, toile.width, toile.height);
-  });
-});
-
-const depart = performance.now();
-let dernierRendu = 0;
-function rendre() {
-  const maintenant = performance.now();
-  if (maintenant - dernierRendu >= 1000 / IMAGES_PAR_SECONDE) {
-    dernierRendu = maintenant;
-    const t = (maintenant - depart) / 1e3 * LENTEUR;
-    for (const b of boucles) b(t);
-  }
-  requestAnimationFrame(rendre);
-}
-rendre();
-
-// ── Ouverture : le rideau noir se leve, les cartes montent derriere
+// ── Ouverture cinematique ────────────────────────────────────────────────
+// Rien en transitions CSS : l'etat au repos est l'etat final, l'ouverture est
+// jouee par l'API Web Animations en `fill: backwards`. Le tempo des deux
+// composants est respecte : l'entonnoir ouvre ses etages avec le decalage de
+// 0,12 s du composant, ses etiquettes suivent a +0,25 s, et la courbe se
+// trace d'un trait.
 const rideau = document.createElement('div');
 rideau.id = 'rideau';
 document.body.appendChild(rideau);
-// le decor : `ether` sur la slide 2, `neo` ici. On prend celui qui est la.
-const decor = document.getElementById('neo') || document.getElementById('ether');
-const cartes = [...document.querySelectorAll('.bg-card')];
+const decor = document.getElementById('ether');
+const cartes = [...document.querySelectorAll('.carte')];
+const intro = document.querySelector('.intro');
+const diff = document.querySelector('.diff');
+const etages = [...document.querySelectorAll('.fnl g')];
+const etiq = [...document.querySelectorAll('.etg')];
+const traits = [...document.querySelectorAll('.trace')];
+traits.forEach(t => {
+  const L = t.getTotalLength();
+  t.style.strokeDasharray = L;
+});
 const COURBE = 'cubic-bezier(.22,.61,.36,1)';
+const STAG = 120;                      // le `staggerDelay` du composant
 let animations = [], derniereOuverture = 0;
 
 function ouvrir() {
@@ -472,33 +131,44 @@ function ouvrir() {
   animations.forEach(a => a.cancel());
   animations = [
     rideau.animate([{ opacity: 1 }, { opacity: 0 }],
-      { duration: 2400, easing: COURBE, fill: 'backwards' }),
-    decor.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: 2600, easing: COURBE, fill: 'backwards' }),
-    ...cartes.map((c, i) => c.animate([
-      { opacity: 0, transform: 'translateY(26px) scale(.985)', filter: 'blur(16px)' },
-      { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
-      { duration: 1900, delay: 350 + i * 190, easing: COURBE, fill: 'backwards' }))
+      { duration: 2000, easing: COURBE, fill: 'backwards' }),
+    ...(decor ? [decor.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: 2400, easing: COURBE, fill: 'backwards' })] : []),
+    ...[intro, diff].map((e, i) => e.animate(
+      [{ opacity: 0, transform: 'translateY(14px)', filter: 'blur(8px)' },
+       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
+      { duration: 1400, delay: 150 + i * 160, easing: COURBE,
+        fill: 'backwards' })),
+    ...cartes.map((c, i) => c.animate(
+      [{ opacity: 0, transform: 'translateY(26px) scale(.985)',
+         filter: 'blur(14px)' },
+       { opacity: 1, transform: 'none', filter: 'blur(0px)' }],
+      { duration: 1500, delay: 520 + i * 180, easing: COURBE,
+        fill: 'backwards' })),
+    // l'entonnoir : un etage a la fois, comme le composant
+    ...etages.map((g, i) => g.animate(
+      [{ transform: 'scaleX(0)' }, { transform: 'none' }],
+      { duration: 650, delay: 900 + i * STAG, easing: COURBE,
+        fill: 'backwards' })),
+    ...etiq.map((e, i) => e.animate(
+      [{ opacity: 0 }, { opacity: 1 }],
+      { duration: 350, delay: 1150 + i * STAG, easing: 'ease-out',
+        fill: 'backwards' })),
+    // la courbe se trace, puis la lueur s'allume
+    ...traits.map((t, i) => t.animate(
+      [{ strokeDashoffset: t.getTotalLength() }, { strokeDashoffset: 0 }],
+      { duration: 1700, delay: 800 + i * 220, easing: COURBE,
+        fill: 'backwards' }))
   ];
 }
 ouvrir();
 
-// Rejouer a chaque retour sur la slide.
-//
-// Le lecteur ne masque pas les slides voisines : il les translate hors du
-// cadre. Le navigateur ne gele donc pas nos rAF, il les BRIDE (une image par
-// seconde environ pour une iframe hors ecran). Un simple trou entre deux
-// images se produit donc aussi pendant qu'on est ailleurs — c'est ce qui
-// faisait jouer l'ouverture dans le vide, et il ne restait rien a voir en
-// arrivant.
-//
-// Le signal fiable n'est pas le trou, c'est la REPRISE d'une cadence pleine :
-// on attend six images consecutives a moins de 40 ms apres un trou.
-let precedent = performance.now();
-let reprise = false, rapides = 0;
+// Rejouer au retour sur la slide : le lecteur translate les voisines hors du
+// cadre sans les masquer, le signal fiable est la reprise d'une cadence
+// pleine apres un trou.
+let precedent = performance.now(), reprise = false, rapides = 0;
 (function veille() {
-  const t = performance.now();
-  const dt = t - precedent;
+  const t = performance.now(), dt = t - precedent;
   precedent = t;
   if (dt > 400) { reprise = true; rapides = 0; }
   else if (reprise) {
@@ -511,4 +181,5 @@ let reprise = false, rapides = 0;
   requestAnimationFrame(veille);
 })();
 </script>
+
 </body></html>
