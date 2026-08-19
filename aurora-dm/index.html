@@ -32,7 +32,8 @@ out vec4 fragColor;
 void main() {
   vec2 fragCoord = gl_FragCoord.xy;
   vec2 r = u_resolution.xy;
-  vec2 p = (fragCoord + fragCoord - r) / r.y;
+  vec2 p = ((fragCoord + fragCoord - r) / r.y) * 0.62 + vec2(0.0, 0.10);  // le champ est cadre plus serre : sa frontiere, une arete noire
+  // franche, tombait dans l'image sur la couverture et la cloture
   vec2 z = vec2(0.5);
   vec2 i = vec2(0.1);
   vec2 f = p * (z += 5. - 6. * exp(.4 - dot(p, p)));
