@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_3" data-name="Calque 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 305.57 94.83">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #dceaf4;
+      }
+    </style>
+  </defs>
+  <g id="Calque_1" data-name="Calque 1">
+    <g>
+      <g>
+        <rect class="cls-1" x="63.23" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="84.31" y="21.08" width="10.52" height="10.52"/>
+        <polygon class="cls-1" points="115.84 52.66 115.84 52.66 115.89 52.66 115.89 42.14 115.84 42.14 105.37 42.14 105.32 42.14 105.32 52.66 115.84 52.66"/>
+        <rect class="cls-1" x="84.31" y="63.23" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="63.23" y="84.31" width="10.52" height="10.52"/>
+      </g>
+      <g>
+        <rect class="cls-1" x="126.46" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="147.54" y="21.08" width="10.52" height="10.52"/>
+        <polygon class="cls-1" points="179.07 52.66 179.07 52.66 179.12 52.66 179.12 42.14 179.07 42.14 168.6 42.14 168.55 42.14 168.55 52.66 179.07 52.66"/>
+        <rect class="cls-1" x="147.54" y="63.23" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="126.46" y="84.31" width="10.52" height="10.52"/>
+      </g>
+      <g>
+        <rect class="cls-1" x="189.69" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="210.77" y="21.08" width="10.52" height="10.52"/>
+        <polygon class="cls-1" points="242.3 52.66 242.3 52.66 242.35 52.66 242.35 42.14 242.3 42.14 231.83 42.14 231.78 42.14 231.78 52.66 242.3 52.66"/>
+        <rect class="cls-1" x="210.77" y="63.23" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="189.69" y="84.31" width="10.52" height="10.52"/>
+      </g>
+      <g>
+        <rect class="cls-1" x="252.91" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="274" y="21.08" width="10.52" height="10.52"/>
+        <polygon class="cls-1" points="305.53 52.66 305.53 52.66 305.57 52.66 305.57 42.14 305.53 42.14 295.06 42.14 295.01 42.14 295.01 52.66 305.53 52.66"/>
+        <rect class="cls-1" x="274" y="63.23" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="252.91" y="84.31" width="10.52" height="10.52"/>
+      </g>
+      <g>
+        <rect class="cls-1" width="10.52" height="10.52"/>
+        <rect class="cls-1" x="21.08" y="21.08" width="10.52" height="10.52"/>
+        <polygon class="cls-1" points="52.61 52.66 52.61 52.66 52.66 52.66 52.66 42.14 52.61 42.14 42.14 42.14 42.09 42.14 42.09 52.66 52.61 52.66"/>
+        <rect class="cls-1" x="21.08" y="63.23" width="10.52" height="10.52"/>
+        <rect class="cls-1" y="84.31" width="10.52" height="10.52"/>
+      </g>
+    </g>
+  </g>
+</svg>
