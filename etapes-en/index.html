@@ -720,6 +720,9 @@ function compteur(el, cible, duree) {
 const ORB_TEMPS = [["entry", "Reachable from the internet"], ["webapp", "Web application &middot; authentication is too weak"], ["database", "Database &middot; password hashes exposed"], ["files", "Files (/ftp) &middot; sensitive data exposed"]];
 let visite = null;
 
+window.poserLegende = poserVisite;
+window.arreterVisite = () => clearInterval(visite);
+
 function poserVisite(k) {
   const t = ORB_TEMPS[k];
   const svg = document.getElementById('ig');
@@ -888,6 +891,328 @@ let precedent = performance.now(), reprise = false, rapides = 0;
   }
   requestAnimationFrame(veille);
 })();
+</script>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+ "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const NOEUDS = [{"id": "database", "ring": 0, "ang": 40, "label": "Database", "sev": "critical", "count": 8, "entry": false}, {"id": "adminconfig", "ring": 0, "ang": 130, "label": "Admin Config", "sev": "high", "count": 3, "entry": false}, {"id": "sessionkey", "ring": 0, "ang": 220, "label": "Session Key", "sev": "high", "count": 3, "entry": false}, {"id": "files", "ring": 0, "ang": 310, "label": "Files (/ftp)", "sev": "high", "count": 4, "entry": false}, {"id": "webapp", "ring": 1, "ang": 22, "label": "Web Application", "sev": "critical", "count": 37, "entry": false}, {"id": "metrics", "ring": 1, "ang": 88, "label": "Metrics", "sev": "medium", "count": 2, "entry": false}, {"id": "apidocs", "ring": 1, "ang": 150, "label": "API Docs", "sev": null, "count": 0, "entry": false}, {"id": "frontend", "ring": 1, "ang": 208, "label": "Frontend", "sev": null, "count": 0, "entry": false}, {"id": "realtime", "ring": 1, "ang": 270, "label": "Realtime", "sev": null, "count": 0, "entry": false}, {"id": "nosql", "ring": 1, "ang": 332, "label": "NoSQL Store", "sev": null, "count": 0, "entry": false}, {"id": "entry", "ring": 2, "ang": 180, "label": "Server (Internet)", "sev": null, "count": 0, "entry": true}, {"id": "webserver", "ring": 2, "ang": 138, "label": "Web Server", "sev": null, "count": 0, "entry": false}, {"id": "webserverhttps", "ring": 2, "ang": 222, "label": "Web Server (HTTPS)", "sev": null, "count": 0, "entry": false}, {"id": "reverseproxy", "ring": 2, "ang": 82, "label": "Reverse Proxy", "sev": null, "count": 0, "entry": false}, {"id": "target", "ring": 2, "ang": 20, "label": "Target", "sev": null, "count": 0, "entry": false}, {"id": "websocket", "ring": 2, "ang": 300, "label": "WebSocket", "sev": null, "count": 0, "entry": false}];
+const ARETES = [["entry", "webserver"], ["entry", "webserverhttps"], ["entry", "reverseproxy"], ["webserver", "webapp"], ["target", "webapp"], ["websocket", "realtime"], ["webapp", "metrics"], ["webapp", "apidocs"], ["webapp", "frontend"], ["webapp", "realtime"], ["webapp", "nosql"], ["webapp", "database"], ["webapp", "files"], ["webapp", "sessionkey"], ["webapp", "adminconfig"]];
+const ATTAQUE = ["entry", "webserver", "webapp", "database"];
+const BRANCHES = [["webapp", "files"], ["webapp", "adminconfig"], ["webapp", "sessionkey"]];
+const TEMPS = [["entry", "Reachable from the internet"], ["webapp", "Web application &middot; authentication is too weak"], ["database", "Database &middot; password hashes exposed"], ["files", "Files (/ftp) &middot; sensitive data exposed"]];
+
+const SEV = {critical:0xef4444, high:0xf97316, medium:0xeab308,
+             low:0x22c55e, info:0x3b82f6};
+const SEV_HEX = {critical:'#ef4444', high:'#f97316', medium:'#eab308',
+                 low:'#22c55e', info:'#3b82f6'};
+const RING_R = [0.34, 0.62, 0.9];
+
+function texteBadge(t, hex) {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  g.beginPath(); g.arc(32, 32, 26, 0, Math.PI * 2);
+  g.fillStyle = hex; g.fill();
+  g.lineWidth = 5; g.strokeStyle = '#000'; g.stroke();
+  g.fillStyle = '#fff';
+  g.font = "700 34px 'Space Mono', ui-monospace, monospace";
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, 32, 35);
+  const x = new THREE.CanvasTexture(c); x.anisotropy = 2; return x;
+}
+function texteAlerte(hex) {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  g.fillStyle = hex;
+  g.font = "800 48px 'Space Mono', ui-monospace, monospace";
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('!', 32, 36);
+  return new THREE.CanvasTexture(c);
+}
+
+const racine = document.querySelector('.infra-graph-wrap');
+const poster = document.getElementById('ig');
+if (racine) {
+  const toile = document.createElement('canvas');
+  toile.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
+  const calque = document.createElement('div');
+  calque.style.cssText = 'position:absolute;inset:0;overflow:hidden;' +
+                         'pointer-events:none';
+  racine.appendChild(toile); racine.appendChild(calque);
+
+  const byId = Object.fromEntries(NOEUDS.map(n => [n.id, n]));
+  const pos = {};
+  for (const n of NOEUDS) {
+    const r = RING_R[n.ring], a = n.ang * Math.PI / 180;
+    pos[n.id] = new THREE.Vector3(Math.sin(a) * r, -Math.cos(a) * r, 0);
+  }
+  const W = () => racine.clientWidth || 640;
+  const H = () => racine.clientHeight || 420;
+  const rendu = new THREE.WebGLRenderer({canvas: toile, antialias: true,
+                                         alpha: true});
+  rendu.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  rendu.setSize(W(), H(), false);
+  rendu.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(52, W() / H(), 0.01, 60);
+  cam.position.set(0, 0.02, 2.35); cam.lookAt(0, 0, 0);
+  const disque = new THREE.Group();
+  disque.rotation.x = -0.62;            // le plan incline, d'ou la profondeur
+  scene.add(disque);
+
+  const composer = new EffectComposer(rendu);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  composer.setSize(W(), H());
+  composer.addPass(new RenderPass(scene, cam));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W(), H()),
+                                       0.14, 0.4, 0.62));
+
+  // la brume d'etoiles derriere le disque
+  const nEt = 240, ge = new Float32Array(nEt * 3);
+  for (let i = 0; i < nEt; i++) {
+    const r = 1.6 + Math.random() * 2.4, a = Math.random() * Math.PI * 2,
+          e = (Math.random() - .5) * 2.2;
+    ge[i * 3] = Math.cos(a) * r; ge[i * 3 + 1] = e;
+    ge[i * 3 + 2] = Math.sin(a) * r - 1.5;
+  }
+  const gEt = new THREE.BufferGeometry();
+  gEt.setAttribute('position', new THREE.BufferAttribute(ge, 3));
+  const etoiles = new THREE.Points(gEt, new THREE.PointsMaterial(
+      {color: 0x8aa0c8, size: .009, transparent: true, opacity: .22}));
+  scene.add(etoiles);
+
+  const trait = (pts, couleur, op, boucle) => {
+    const g = new THREE.BufferGeometry().setFromPoints(pts);
+    const m = new THREE.LineBasicMaterial({color: couleur, transparent: true,
+                                           opacity: op});
+    disque.add(boucle ? new THREE.LineLoop(g, m) : new THREE.Line(g, m));
+  };
+  RING_R.forEach(r => {
+    const p = [];
+    for (let i = 0; i <= 96; i++) {
+      const a = i / 96 * Math.PI * 2;
+      p.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, 0));
+    }
+    trait(p, 0x5a6a86, .16, true);
+    const seg = [];
+    for (let k = 0; k < 48; k++) {
+      const a = k / 48 * Math.PI * 2, d = k % 4 === 0 ? .014 : .007;
+      seg.push(new THREE.Vector3(Math.cos(a) * (r - d), Math.sin(a) * (r - d), 0),
+               new THREE.Vector3(Math.cos(a) * (r + d), Math.sin(a) * (r + d), 0));
+    }
+    disque.add(new THREE.LineSegments(
+        new THREE.BufferGeometry().setFromPoints(seg),
+        new THREE.LineBasicMaterial({color: 0x5a6a86, transparent: true,
+                                     opacity: .12})));
+  });
+
+  const courbe = (a, b) => {
+    const p = pos[a], q = pos[b];
+    if (!p || !q) return null;
+    const mid = p.clone().add(q).multiplyScalar(.5).multiplyScalar(.82);
+    return new THREE.QuadraticBezierCurve3(p, new THREE.Vector3(mid.x, mid.y, 0), q);
+  };
+  const flux = [];
+  ARETES.forEach(([a, b]) => { const c = courbe(a, b);
+    if (c) { trait(c.getPoints(16), 0x3a4256, .3); flux.push({c, atk: false}); } });
+  BRANCHES.forEach(([a, b]) => { const c = courbe(a, b);
+    if (c) { trait(c.getPoints(16), 0xef4444, .45); flux.push({c, atk: true}); } });
+
+  // le trafic : des paquets qui circulent sur chaque lien
+  const paquets = [], coulP = [];
+  flux.forEach(({c, atk}) => {
+    const n = atk ? 3 : 2;
+    for (let i = 0; i < n; i++) {
+      paquets.push({c, off: i / n + Math.random() * .08,
+                    spd: (atk ? .34 : .15) * (.8 + Math.random() * .5)});
+      if (atk) coulP.push(1, .35, .22); else coulP.push(.42, .63, 1);
+    }
+  });
+  const arrP = new Float32Array(paquets.length * 3);
+  const geoP = new THREE.BufferGeometry();
+  geoP.setAttribute('position', new THREE.BufferAttribute(arrP, 3));
+  geoP.setAttribute('color', new THREE.BufferAttribute(new Float32Array(coulP), 3));
+  disque.add(new THREE.Points(geoP, new THREE.PointsMaterial(
+      {size: .013, vertexColors: true, transparent: true, opacity: .6,
+       depthTest: false, blending: THREE.AdditiveBlending})));
+
+  // le chemin d'attaque qui se dessine, ses projectiles et sa pulsation
+  const ptsA = ATTAQUE.map(id => pos[id]).filter(Boolean);
+  const courbeA = new THREE.CatmullRomCurve3(ptsA);
+  const pleinA = courbeA.getPoints(120);
+  const geoA = new THREE.BufferGeometry().setFromPoints(pleinA);
+  const ligneA = new THREE.Line(geoA, new THREE.LineBasicMaterial(
+      {color: 0xef4444, transparent: true, opacity: .95}));
+  geoA.setDrawRange(0, 2); disque.add(ligneA);
+  const decA = [0, .34, .68], arrA = new Float32Array(decA.length * 3);
+  const geoPA = new THREE.BufferGeometry();
+  geoPA.setAttribute('position', new THREE.BufferAttribute(arrA, 3));
+  disque.add(new THREE.Points(geoPA, new THREE.PointsMaterial(
+      {color: 0xff5a3d, size: .02, transparent: true, opacity: .82,
+       depthTest: false, blending: THREE.AdditiveBlending})));
+  const pouls = new THREE.Mesh(new THREE.CircleGeometry(.012, 16),
+      new THREE.MeshBasicMaterial({color: 0xff5a3d}));
+  disque.add(pouls);
+
+  // les noeuds : coeur gris, anneau de severite, pastille de comptage,
+  // marqueur d'entree, halo de selection
+  const groupes = {}, halos = {}, cacheAlerte = {};
+  NOEUDS.forEach(n => {
+    const g = new THREE.Group();
+    g.position.copy(pos[n.id]).setZ(.001); groupes[n.id] = g;
+    g.add(new THREE.Mesh(new THREE.CircleGeometry(.014, 20),
+        new THREE.MeshBasicMaterial({color: 0x97a2b6})));
+    if (n.sev) {
+      const rr = n.sev === 'critical' ? .036 : n.sev === 'high' ? .03 : .026;
+      g.add(new THREE.Mesh(new THREE.RingGeometry(rr - .004, rr, 32),
+          new THREE.MeshBasicMaterial({color: SEV[n.sev],
+                                       side: THREE.DoubleSide})));
+      if (n.sev === 'critical' || n.sev === 'high') {
+        cacheAlerte[n.sev] = cacheAlerte[n.sev] || texteAlerte(SEV_HEX[n.sev]);
+        const s = new THREE.Sprite(new THREE.SpriteMaterial(
+            {map: cacheAlerte[n.sev], transparent: true, depthTest: false}));
+        s.scale.set(.028, .028, 1); s.position.set(rr + .02, rr, .002); g.add(s);
+      }
+    }
+    if (n.count) {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial(
+          {map: texteBadge(String(n.count), SEV_HEX[n.sev || 'info']),
+           transparent: true, depthTest: false}));
+      s.scale.set(.05, .05, 1); s.position.set(.03, .03, .003); g.add(s);
+    }
+    if (n.entry) {
+      const p2 = [];
+      for (let i = 0; i <= 40; i++) {
+        const a = i / 40 * Math.PI * 2;
+        p2.push(new THREE.Vector3(Math.cos(a) * .03, Math.sin(a) * .03, 0));
+      }
+      g.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(p2),
+          new THREE.LineDashedMaterial({color: 0x818cf8, dashSize: .01,
+              gapSize: .01, transparent: true, opacity: .9}))
+          .computeLineDistances());
+    }
+    const halo = new THREE.Mesh(new THREE.RingGeometry(.04, .046, 32),
+        new THREE.MeshBasicMaterial({color: 0x818cf8, transparent: true,
+                                     opacity: 0, side: THREE.DoubleSide}));
+    g.add(halo); halos[n.id] = halo;
+    disque.add(g);
+  });
+
+  // les etiquettes restent en DOM : elles sont nettes a toute distance
+  const etiq = {};
+  NOEUDS.forEach(n => {
+    const d = document.createElement('div');
+    d.textContent = n.label;
+    d.style.cssText = 'position:absolute;transform:translate(-50%,-50%);' +
+      "white-space:nowrap;font:500 10px/1.1 'Space Mono',ui-monospace," +
+      'monospace;color:#c3cee0;text-shadow:0 1px 4px #000;pointer-events:none';
+    calque.appendChild(d); etiq[n.id] = d;
+  });
+  const etiqAnneau = [
+    {el: document.createElement('div'),
+     v: new THREE.Vector3(0, -(RING_R[0] + .06), 0), t: 'DATA & SECRETS'},
+    {el: document.createElement('div'),
+     v: new THREE.Vector3(0, -(RING_R[2] + .04), 0), t: 'INTERNET-FACING'}];
+  etiqAnneau.forEach(r => {
+    r.el.textContent = r.t;
+    r.el.style.cssText = 'position:absolute;transform:translate(-50%,-50%);' +
+      "white-space:nowrap;font:700 8px/1 'Space Mono',ui-monospace,monospace;" +
+      'letter-spacing:1.4px;color:#55627a;pointer-events:none';
+    calque.appendChild(r.el);
+  });
+
+  const projeter = v => {
+    const w = disque.localToWorld(v.clone()).project(cam);
+    return {x: (w.x * .5 + .5) * W(), y: (-w.y * .5 + .5) * H(), vis: w.z < 1};
+  };
+  new ResizeObserver(() => {
+    rendu.setSize(W(), H(), false); composer.setSize(W(), H());
+    cam.aspect = W() / H(); cam.updateProjectionMatrix();
+  }).observe(racine);
+
+  // le poster s'efface : la scene prend la main
+  if (poster) { poster.style.transition = 'opacity .6s ease';
+                poster.style.opacity = '0'; }
+  if (window.arreterVisite) window.arreterVisite();
+
+  const t0 = performance.now();
+  let pas = 0, dernier = t0;
+  const MAISON = new THREE.Vector3(0, .02, 2.35);
+  const regard = new THREE.Vector3(0, 0, 0);
+  const cible = MAISON.clone(), cibleR = new THREE.Vector3(0, 0, 0);
+  const _wp = new THREE.Vector3(), _dir = new THREE.Vector3(),
+        _pk = new THREE.Vector3();
+  if (window.poserLegende) window.poserLegende(0);
+
+  (function boucle() {
+    const now = performance.now();
+    if (document.visibilityState === 'visible') {
+      const t = (now - t0) / 1000;
+      disque.rotation.z = t * .018;
+      disque.rotation.x = -.62 + Math.sin(t * .16) * .025;
+      const seg = Math.min(1, (now - t0) / 2400);
+      geoA.setDrawRange(0, Math.max(2, Math.floor(seg * pleinA.length)));
+      pouls.position.copy(courbeA.getPointAt((now / 2400) % 1));
+      for (let i = 0; i < paquets.length; i++) {
+        const p = paquets[i];
+        p.c.getPoint((t * p.spd + p.off) % 1, _pk);
+        arrP[i * 3] = _pk.x; arrP[i * 3 + 1] = _pk.y;
+        arrP[i * 3 + 2] = _pk.z + .0015;
+      }
+      geoP.attributes.position.needsUpdate = true;
+      for (let i = 0; i < decA.length; i++) {
+        courbeA.getPointAt((t * .22 + decA[i]) % 1, _pk);
+        arrA[i * 3] = _pk.x; arrA[i * 3 + 1] = _pk.y;
+        arrA[i * 3 + 2] = _pk.z + .003;
+      }
+      geoPA.attributes.position.needsUpdate = true;
+      if (now - dernier > 2800) {
+        pas = (pas + 1) % TEMPS.length; dernier = now;
+        if (window.poserLegende) window.poserLegende(pas);
+      }
+      const actif = TEMPS[pas][0];
+      if (actif && pos[actif]) {
+        _wp.copy(pos[actif]); disque.localToWorld(_wp);
+        _dir.subVectors(MAISON, _wp).normalize();
+        cible.copy(_wp).addScaledVector(_dir, 1.05);
+        cible.x += Math.sin(t * .5) * .18;
+        cible.y += .12 + Math.sin(t * .35) * .05;
+        cibleR.copy(_wp);
+      }
+      cam.position.lerp(cible, .05);
+      regard.lerp(cibleR, .07);
+      cam.up.set(Math.sin(t * .25) * .08, 1, 0).normalize();
+      cam.lookAt(regard);
+      for (const id in groupes) {
+        const g = groupes[id];
+        g.scale.setScalar(g.scale.x + ((id === actif ? 1.6 : 1) - g.scale.x) * .12);
+      }
+      for (const id in halos) {
+        const m = halos[id].material;
+        m.opacity += ((id === actif ? .95 : 0) - m.opacity) * .15;
+      }
+      etoiles.rotation.y = t * .02;
+      for (const n of NOEUDS) {
+        const s = projeter(pos[n.id]), d = etiq[n.id];
+        if (s.vis) { d.style.opacity = '1'; d.style.left = s.x + 'px';
+                     d.style.top = (s.y + 17) + 'px'; }
+        else d.style.opacity = '0';
+      }
+      for (const r of etiqAnneau) {
+        const s = projeter(r.v);
+        r.el.style.left = s.x + 'px'; r.el.style.top = s.y + 'px';
+      }
+      composer.render();
+    }
+    requestAnimationFrame(boucle);
+  })();
+}
 </script>
 
 <div class="langue">
