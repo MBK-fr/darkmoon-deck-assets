@@ -177,7 +177,10 @@ function tourner() {
 
 // ── Le texte : le moteur de la slide 2, mot a mot ────────────────────────
 function cinema(el, base) {
-  const mots = el.textContent.split(' ');
+  // le texte d'origine est garde : apres un premier passage le contenu
+  // n'est plus qu'une suite de spans colles, sans espace a redecouper
+  if (!el.dataset.texte) el.dataset.texte = el.textContent;
+  const mots = el.dataset.texte.split(' ');
   el.textContent = '';
   const spans = mots.map((m, i) => {
     const e = document.createElement('span');
